@@ -22,7 +22,7 @@
 namespace n2n\util\ini;
 
 use n2n\core\SysTextUtils;
-use n2n\dispatch\target\ArrayItem;
+use n2n\web\dispatch\target\ArrayItem;
 
 class ArrayProperty extends ContentPartAdapter implements Property {
 	private $name;

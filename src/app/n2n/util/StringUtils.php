@@ -23,7 +23,7 @@ namespace n2n\util;
 
 use n2n\core\N2nRuntimeException;
 use n2n\reflection\ReflectionUtils;
-use n2n\N2N;
+use n2n\core\N2N;
 
 class StringUtils {
 	const CRLF = "\r\n";
@@ -193,7 +193,7 @@ class StringUtils {
 	 */
 	public static function unserialize($serializedStr) {
 		
-		if (class_exists('n2n\N2N') && N2N::isInitialized()) {
+		if (class_exists('n2n\core\N2N') && N2N::isInitialized()) {
 			N2N::getExceptionHandler()->ignoreNextTriggeredErrNo(E_NOTICE);
 			
 			$obj = unserialize($serializedStr);
