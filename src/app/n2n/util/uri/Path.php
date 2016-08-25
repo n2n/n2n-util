@@ -111,8 +111,9 @@ final class Path {
 	}
 	
 	public function getFirstPathPart(bool $required = true) {
-		if (!empty($this->pathParts)) {
-			return reset($this->pathParts);
+		$pathParts = $this->getPathParts();
+		if (!empty($pathParts)) {
+			return reset($pathParts);
 		}
 		
 		if (!$required) return null;
@@ -196,7 +197,7 @@ final class Path {
 	public function ext(...$pathPartExts): Path {
 		if (empty($pathPartExts)) return $this;
 		
-		ArgUtils::valArray($pathPartExts, ['scalar', Path::class, 'array']);
+		ArgUtils::valArray($pathPartExts, ['scalar', Path::class, 'array', null]);
 		
 		$leadingDelimiter = false;
 		$endingDelimiter = false;
