@@ -21,13 +21,31 @@
  */
 namespace n2n\util\uri;
 
-use n2n\util\ex\NotYetImplementedException;
-
+use n2n\util\StringUtils;
 class Query {
-	private $attrs;
+	private $attrs = array();
 	
 	public function __construct(array $attrs) {
-		$this->attrs = $attrs;
+		$this->attrs = $this->normalizeAttrs($attrs);
+	}
+	
+	private function normalizeAttrs($attrs) {
+		foreach ($attrs as $key => $value) {
+			if ($value === null || is_scalar($value)) continue;
+				
+			try {
+				if (is_array($value)) {
+					$attrs[$key] = $this->normalizeAttrs($value);
+					continue;
+				}
+				
+				$attrs[$key] = StringUtils::strOf($value);
+			} catch (\InvalidArgumentException $e) {
+				throw new \InvalidArgumentException('Invalid query field: ' . $key);
+			}
+		}
+		
+		return $attrs;
 	}
 	
 	public function isEmpty() {
