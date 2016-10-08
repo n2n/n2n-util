@@ -186,7 +186,10 @@ class FileCacheStore implements CacheStore {
 		
 		$attrs = null;
 		try {
+// 			$time_start = microtime(true);
 			$attrs = StringUtils::unserialize($contents);
+// 			$time_end = microtime(true);
+// 			test($time_end - $time_start);
 		} catch (UnserializationFailedException $e) {
 			throw new CorruptedCacheStoreException('Could not retrive file: ' . $filePath, 0, $e);
 		}
@@ -197,9 +200,10 @@ class FileCacheStore implements CacheStore {
 		}
 
 
-		return new CacheItem($name, $attrs['characteristics'], $attrs['data'], 
+		$ci = new CacheItem($name, $attrs['characteristics'], null, 
 				DateUtils::createDateTimeFromTimestamp($attrs['lastMod']));
-
+		$ci->data = &$attrs['data'];
+		return $ci;
 	}
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::get()

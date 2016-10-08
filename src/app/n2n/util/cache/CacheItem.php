@@ -24,7 +24,7 @@ namespace n2n\util\cache;
 class CacheItem {
 	private $name;
 	private $characteristics;
-	private $data;
+	public $data;
 	/**
 	 * @param string $name
 	 * @param array $characteristics
