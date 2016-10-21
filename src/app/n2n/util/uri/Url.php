@@ -184,7 +184,7 @@ class Url {
 	}
 	
 	public function queryExt($query) {
-		return new Url($this->scheme, $this->authority, $this->getPath(), $this->query->ext($query), $this->fragment);
+		return new Url($this->scheme, $this->authority, $this->getPath(), $this->getQuery()->ext($query), $this->fragment);
 	}
 	
 	/**
