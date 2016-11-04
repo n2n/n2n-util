@@ -19,15 +19,20 @@
  * Bert Hofmänner.......: Idea, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\uri;
+namespace n2n\web\http\nav;
 
-use n2n\util\uri\Url;
+use n2n\web\http\HttpRuntimeException;
 
-interface Linkable {
-	
-	/**
-	 * @throws UnavailableLinkException 
-	 * @return \n2n\util\uri\Url
-	 */
-	public function toUrl(string &$suggestedLabel = null): Url;
+class UnavailableLinkException extends HttpRuntimeException {
+	private $critical;
+
+	public function __construct(bool $critical, string $message = null, $code = null, \Throwable $previous = null) {
+		parent::__construct($message, $code, $previous);
+
+		$this->critical = $critical;
+	}
+
+	public function isCritical(): bool {
+		return $this->critical;
+	}
 }
