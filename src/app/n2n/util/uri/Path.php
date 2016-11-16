@@ -24,7 +24,6 @@ namespace n2n\util\uri;
 use n2n\util\StringUtils;
 use n2n\reflection\ArgUtils;
 use n2n\util\ex\IllegalStateException;
-use n2n\reflection\ReflectionUtils;
 
 final class Path {
 	const DELIMITER = '/';
