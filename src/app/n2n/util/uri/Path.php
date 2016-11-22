@@ -134,7 +134,7 @@ final class Path {
 		}	
 
 		foreach ($this->pathParts as $pathPart) {
-			$encArray[] = urlencode($pathPart);
+			$encArray[] = rawurlencode($pathPart);
 		}
 		
 		return $encArray;
