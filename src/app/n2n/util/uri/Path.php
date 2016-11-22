@@ -259,7 +259,7 @@ final class Path {
 			$paths[] = Path::create($pathExt);
 		}
 		
-		return $this->ext(...$pathExts);
+		return $this->ext(...$paths);
 	}
 	
 	public function getParent(): Path {
