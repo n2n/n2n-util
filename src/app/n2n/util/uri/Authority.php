@@ -71,13 +71,29 @@ class Authority {
 	}
 	
 	public function __toString(): string {
+		return $this->buildString();
+	}
+	
+	/**
+	 * Converts host to IDNA ASCII form.
+	 * @return string
+	 */
+	public function toIdnaAsciiString() {
+		return $this->buildString(false);
+	}
+		
+	private function buildString($idn = true) {
 		$str = '';
 		
 		if ($this->userInfo !== null) {
 			$str = $this->userInfo . self::USER_INFO_SUFFIX;
 		}
 		
-		$str .= $this->host;
+		if ($idn) {
+			$str .= $this->host;
+		} else {
+			$str .= idn_to_ascii($this->host);
+		}
 		
 		if ($this->port !== null) {
 			$str .= self::PORT_PREFIX . $this->port;
