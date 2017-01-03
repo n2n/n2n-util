@@ -266,20 +266,36 @@ class Url {
 	 * @return string
 	 */
 	public function __toString(): string {
+		return $this->buildString();
+	}
+	
+	public function isRelative() {
+		return $this->scheme === null && ($this->authority === null || $this->authority->isEmpty());
+	}
+	
+	/**
+	 * Converts host name to IDNA ASCII form.
+	 * @return string
+	 */
+	public function toIdnaAsciiString() {
+		return $this->buildString(false);
+	}
+		
+	private function buildString(bool $idn = true) {
 		$str = '';
 		
 		$leadingPathDelimiter = null;
 		
 		if ($this->scheme !== null) {
-		 	$str .= $this->scheme . self::SCHEME_SEPARATOR;
+			$str .= $this->scheme . self::SCHEME_SEPARATOR;
 		}
 		
 		if ($this->authority !== null && !$this->authority->isEmpty()) {
-			$str .= self::AUTHORITY_PREFIX . $this->authority;
+			$str .= self::AUTHORITY_PREFIX . ($idn ? $this->authority : $this->authority->toIdnaAsciiString());
 			$leadingPathDelimiter = $this->path !== null && !$this->path->isEmpty();
 		}
-
-		if ($this->path !== null) { 
+		
+		if ($this->path !== null) {
 			$str .= $this->path->toRealString($leadingPathDelimiter);
 		}
 		
@@ -292,9 +308,5 @@ class Url {
 		}
 		
 		return $str;
-	}
-	
-	public function isRelative() {
-		return $this->scheme === null && ($this->authority === null || $this->authority->isEmpty());
 	}
 }

@@ -351,6 +351,9 @@ class StringUtils {
 		return implode($chars);
 	}
 	
+	public static function stripNl(string $str, string $replacement = ' ', bool $strpWhitespacePrefixes = true) {
+		return preg_replace('/' . ($strpWhitespacePrefixes ? '\\s*' : '') . '[\\r\\n]+/', $replacement, $str);
+	}
 }
 
 
