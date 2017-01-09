@@ -22,6 +22,7 @@
 namespace n2n\util\uri;
 
 use n2n\util\ex\NotYetImplementedException;
+
 class Authority {
 	const USER_INFO_SUFFIX = '@';
 	const PORT_PREFIX = ':';
