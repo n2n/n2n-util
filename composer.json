@@ -1,25 +1,28 @@
 {
-    "name": "n2n/n2n-util",
-    "type": "library",
-    "description": "n2n util library",
-    "keywords": ["n2n","util"],
-    "homepage": "http://www.n2n.ch",
-    "license": "GNU LGPL",
     "authors": [
         {
-            "name": "Andreas von Burg",
             "email": "a@von-burg.net",
-            "homepage": "http://www.von-burg.net"
+            "homepage": "http://www.von-burg.net",
+            "name": "Andreas von Burg"
         }
     ],
-    "require": {
-        "php": ">=7.0",
-        "n2n/n2n-io": "7.1.x-dev",
-        "n2n/n2n-reflection": "7.1.x-dev"
-    },
     "autoload": {
         "psr-4": {
             "n2n\\util\\": "src/app/n2n/util"
         }
-    }
+    },
+    "description": "n2n util library",
+    "homepage": "http://www.n2n.ch",
+    "keywords": [
+        "n2n",
+        "util"
+    ],
+    "license": "GNU LGPL",
+    "name": "n2n/n2n-util",
+    "require": {
+        "n2n/n2n-io": "^7.1.11",
+        "n2n/n2n-reflection": "^7.1.11",
+        "php": ">=7.0"
+    },
+    "type": "library"
 }
