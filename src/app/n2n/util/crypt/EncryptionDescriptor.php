@@ -118,7 +118,7 @@ class EncryptionDescriptor {
 	}
 	
 	public static function getAvailableAlgorithms() {
-		return mcrypt_list_algorithms();
+		return @mcrypt_list_algorithms();
 	}
 	
 	public static function isModeAvailable($mode) {
@@ -126,6 +126,6 @@ class EncryptionDescriptor {
 	}
 	
 	public static function getAvailableModes() {
-		return mcrypt_list_modes();
+		return @mcrypt_list_modes();
 	}
 }
