@@ -29,16 +29,16 @@ class Url {
 	const PATH_PREFIX = Path::DELIMITER;
 	const QUERY_PREFIX = '?';
 	const FRAGMENT_PREFIX = '#';
-	
+
 	protected $scheme;
 	protected $userInfo;
 	protected $authority;
 	protected $path;
 	protected $query;
 	protected $fragment;
-	
-	public function __construct($scheme = null, Authority $authority = null, Path $path = null, 
-			Query $query = null, $fragment = null) {
+
+	public function __construct($scheme = null, Authority $authority = null, Path $path = null,
+								Query $query = null, $fragment = null) {
 		$this->scheme = ArgUtils::stringOrNull($scheme);
 		$this->authority = $authority;
 		$this->path = $path;
@@ -46,12 +46,12 @@ class Url {
 		$this->fragment = ArgUtils::stringOrNull($fragment);
 	}
 	/**
-	 * @return string 
+	 * @return string
 	 */
 	public function getScheme() {
 		return $this->scheme;
 	}
-	
+
 	public function hasScheme() {
 		return null !== $this->scheme;
 	}
@@ -62,7 +62,7 @@ class Url {
 		if ($this->authority === null) {
 			return new Authority();
 		}
-		
+
 		return $this->authority;
 	}
 	/**
@@ -110,7 +110,7 @@ class Url {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function chUserInfo($userInfo) {
-		if ($this->getAuthority()->getUserInfo() === $userInfo) return $this; 
+		if ($this->getAuthority()->getUserInfo() === $userInfo) return $this;
 		return new Url($this->scheme, $this->getAuthority()->chUserInfo($userInfo), $this->path, $this->query, $this->fragment);
 	}
 	/**
@@ -118,7 +118,7 @@ class Url {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function chHost($host) {
-		if ($this->getAuthority()->getHost() === $host) return $this; 
+		if ($this->getAuthority()->getHost() === $host) return $this;
 		return new Url($this->scheme, $this->getAuthority()->chHost($host), $this->path, $this->query, $this->fragment);
 	}
 	/**
@@ -153,13 +153,13 @@ class Url {
 		if ($fragment === $this->fragment) return $this;
 		return new Url($this->scheme, $this->authority, $this->path, $this->query, $fragment);
 	}
-	
+
 	public function ext($relativeUrl) {
 		$relativeUrl = Url::create($relativeUrl);
 		if (!$relativeUrl->isRelative()) {
 			throw new \InvalidArgumentException('Passed url is not relative: ' . $relativeUrl);
 		}
-	
+
 		return $this->extR($relativeUrl->getPath(), $relativeUrl->getQuery(), $relativeUrl->getFragment());
 	}
 	/**
@@ -170,23 +170,23 @@ class Url {
 	 */
 	public function extR($pathExt = null, $queryExt = null, $fragment = null) {
 		if ($pathExt === null && $queryExt === null && $fragment === null) return $this;
-		
+
 		return new Url($this->scheme, $this->authority, $this->getPath()->ext($pathExt), $this->getQuery()->ext($queryExt),
-				($fragment === null ? $this->fragment : $fragment));
+			($fragment === null ? $this->fragment : $fragment));
 	}
-	
+
 	public function pathExt(...$pathPartExts) {
 		return new Url($this->scheme, $this->authority, $this->getPath()->ext(...$pathPartExts), $this->query, $this->fragment);
 	}
-		
+
 	public function pathExtEnc(...$pathExts) {
-		return new Url($this->scheme, $this->authority, $this->getPath()->extEnc(...$pathExts), $this->query, $this->fragment); 
+		return new Url($this->scheme, $this->authority, $this->getPath()->extEnc(...$pathExts), $this->query, $this->fragment);
 	}
-	
+
 	public function queryExt($query) {
 		return new Url($this->scheme, $this->authority, $this->getPath(), $this->getQuery()->ext($query), $this->fragment);
 	}
-	
+
 	/**
 	 * @param number $num
 	 * @return \n2n\util\uri\Url
@@ -208,11 +208,11 @@ class Url {
 	public function toRelativeUrl() {
 		return new Url(null, null, $this->path, $this->query, $this->fragment);
 	}
-	
+
 	public static function createRelativeUrl($path = null, $query = null, $fragment = null) {
 		return new Url(null, null, Path::create($path), Query::create($query), $fragment);
 	}
-	
+
 	/**
 	 * @param unknown $expression
 	 * @throws \InvalidArgumentException
@@ -222,34 +222,35 @@ class Url {
 		if ($expression instanceof Url) {
 			return $expression;
 		}
-		
+
 		if ($expression instanceof Authority) {
 			return new Url(null, $expression);
 		}
-	
+
 		if ($expression instanceof Path) {
 			return new Url(null, null, $expression);
 		}
-		
+
 		if (is_array($expression)) {
 			return new Url(null, null, Path::create($expression));
 		}
-	
+
 		if ($expression instanceof Query) {
 			return new Url(null, null, null, $expression);
 		}
-		
+
 		$uriMap = parse_url((string) $expression);
 		if ($uriMap === null) {
 			throw new \InvalidArgumentException('Invalid uri: ' . $expression);
 		}
-		
+
 		$uri = new Url();
 		if (isset($uriMap['scheme'])) {
 			$uri->scheme = $uriMap['scheme'];
 		}
-		if (isset($uriMap['host'])) {
-			$uri->authority = new Authority(null, $uriMap['host']);
+		if (isset($uriMap['host']) || isset($uriMap['user'])) {
+			$uri->authority = new Authority($uriMap['host'] ?? null, $uriMap['port'] ?? null, $uriMap['user'] ?? null,
+					$uriMap['pass'] ?? null);
 		}
 		if (isset($uriMap['path'])) {
 			$uri->path = Path::create($uriMap['path'], $lenient);
@@ -262,17 +263,18 @@ class Url {
 		}
 		return $uri;
 	}
+
 	/**
 	 * @return string
 	 */
 	public function __toString(): string {
 		return $this->buildString();
 	}
-	
+
 	public function isRelative() {
 		return $this->scheme === null && ($this->authority === null || $this->authority->isEmpty());
 	}
-	
+
 	/**
 	 * Converts host name to IDNA ASCII form.
 	 * @return string
@@ -280,33 +282,33 @@ class Url {
 	public function toIdnaAsciiString() {
 		return $this->buildString(false);
 	}
-		
+
 	private function buildString(bool $idn = true) {
 		$str = '';
-		
+
 		$leadingPathDelimiter = null;
-		
+
 		if ($this->scheme !== null) {
 			$str .= $this->scheme . self::SCHEME_SEPARATOR;
 		}
-		
+
 		if ($this->authority !== null && !$this->authority->isEmpty()) {
 			$str .= self::AUTHORITY_PREFIX . ($idn ? $this->authority : $this->authority->toIdnaAsciiString());
 			$leadingPathDelimiter = $this->path !== null && !$this->path->isEmpty();
 		}
-		
+
 		if ($this->path !== null) {
 			$str .= $this->path->toRealString($leadingPathDelimiter);
 		}
-		
+
 		if ($this->query !== null && !$this->query->isEmpty()) {
 			$str .= self::QUERY_PREFIX . $this->query;
 		}
-		
+
 		if ($this->fragment !== null) {
 			$str .= self::FRAGMENT_PREFIX . $this->fragment;
 		}
-		
+
 		return $str;
 	}
 }
