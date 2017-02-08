@@ -21,60 +21,70 @@
  */
 namespace n2n\util\uri;
 
+use n2n\reflection\ArgUtils;
 use n2n\util\ex\NotYetImplementedException;
 
 class Authority {
+	const USER_PASS_SEPARATOR = ':';
 	const USER_INFO_SUFFIX = '@';
 	const PORT_PREFIX = ':';
-	
-	private $userInfo;
+
+	private $user;
+	private $password;
 	private $host;
 	private $port;
-	
-	public function __construct($userInfo = null, $host = null, $port = null) {
-		$this->userInfo = $userInfo;
+
+	public function __construct($host = null, $port = null, $user = null, $password = null) {
+		ArgUtils::assertTrue($user !== null || $password === null);
+
+		$this->user = $user;
+		$this->password = $password;
 		$this->host = $host;
 		$this->port = $port;
 	}
-	
-	public function getUserInfo() {
-		return $this->userInfo;
+
+	public function getUser() {
+		return $this->user;
 	}
-	
+
 	public function hasUserInfo() {
-		return $this->userInfo !== null;
+		return $this->user !== null;
 	}
-	
+
+	public function getPassword() {
+		return $this->password;
+	}
+
 	public function getHost() {
 		return $this->host;
 	}
-	
+
 	public function hasHost() {
 		return $this->host !== null;
 	}
-	
+
 	public function getPort() {
 		return $this->port;
 	}
-	
+
 	public function hasPort() {
 		return $this->port !== null;
 	}
-	
+
 	public function isEmpty() {
-		return $this->userInfo === null && $this->host === null && $this->port === null;
+		return $this->user === null && $this->host === null && $this->port === null;
 	}
-	
+
 	public function chHost($host) {
 		if ($this->host === $host) return $this;
-		
-		return new Authority($this->userInfo, $host, $this->port);
+
+		return new Authority($host, $this->port, $this->user, $this->password);
 	}
-	
+
 	public function __toString(): string {
 		return $this->buildString();
 	}
-	
+
 	/**
 	 * Converts host to IDNA ASCII form.
 	 * @return string
@@ -82,32 +92,36 @@ class Authority {
 	public function toIdnaAsciiString() {
 		return $this->buildString(false);
 	}
-		
+
 	private function buildString($idn = true) {
 		$str = '';
-		
-		if ($this->userInfo !== null) {
-			$str = $this->userInfo . self::USER_INFO_SUFFIX;
+
+		if ($this->user !== null) {
+			$str = rawurlencode($this->user);
+			if ($this->password !== null) {
+				$str .= self::USER_PASS_SEPARATOR . rawurlencode($this->password);
+			}
+			$str .= self::USER_INFO_SUFFIX;
 		}
-		
+
 		if ($idn) {
 			$str .= $this->host;
 		} else {
 			$str .= idn_to_ascii($this->host);
 		}
-		
+
 		if ($this->port !== null) {
 			$str .= self::PORT_PREFIX . $this->port;
 		}
-		
+
 		return $str;
 	}
-	
+
 	public static function create($param) {
 		if ($param instanceof Authority) {
 			return $param;
 		}
-		
+
 		throw new NotYetImplementedException();
 	}
 }
