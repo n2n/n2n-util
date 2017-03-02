@@ -3,16 +3,19 @@
     "type": "library",
     "description": "n2n util library",
     "keywords": ["n2n","util"],
-    "homepage": "http://www.n2n.ch",
+    "homepage": "https://n2n.rocks/",
     "license": "GNU LGPL",
     "authors": [
         {
-            "name": "Thomas Jansen",
-            "email": "jansen@hnm.ch"
+            "name": "Andreas von Burg",
+            "email": "a@von-burg.net",
+            "homepage": "http://www.von-burg.net"
         }
     ],
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.0",
+        "n2n/n2n-io": "master-dev",
+        "n2n/n2n-reflection": "master-dev"
     },
     "autoload": {
         "psr-4": {
