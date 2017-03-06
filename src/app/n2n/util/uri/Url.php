@@ -37,13 +37,13 @@ class Url {
 	protected $query;
 	protected $fragment;
 
-	public function __construct($scheme = null, Authority $authority = null, Path $path = null,
-								Query $query = null, $fragment = null) {
+	public function __construct(string $scheme = null, Authority $authority = null, Path $path = null,
+			Query $query = null, string $fragment = null) {
 		$this->scheme = ArgUtils::stringOrNull($scheme);
 		$this->authority = $authority;
 		$this->path = $path;
 		$this->query = $query;
-		$this->fragment = ArgUtils::stringOrNull($fragment);
+		$this->fragment = $fragment;
 	}
 	/**
 	 * @return string
@@ -93,7 +93,7 @@ class Url {
 	 * @param string $scheme
 	 * @return \n2n\util\uri\Url
 	 */
-	public function chScheme($scheme) {
+	public function chScheme(string $scheme = null) {
 		if ($scheme === $this->scheme) return $this;
 		return new Url($scheme, $this->authority, $this->path, $this->query, $this->fragment);
 	}
@@ -117,7 +117,7 @@ class Url {
 	 * @param mixed $host
 	 * @return \n2n\util\uri\Url
 	 */
-	public function chHost($host) {
+	public function chHost(string $host = null) {
 		if ($this->getAuthority()->getHost() === $host) return $this;
 		return new Url($this->scheme, $this->getAuthority()->chHost($host), $this->path, $this->query, $this->fragment);
 	}
@@ -125,7 +125,7 @@ class Url {
 	 * @param mixed $port
 	 * @return \n2n\util\uri\Url
 	 */
-	public function chPort($port) {
+	public function chPort(int $port = null) {
 		if ($this->getAuthority()->getPort() === $port) return $this;
 		return new Url($this->scheme, $this->getAuthority()->chPort($port), $this->path, $this->query, $this->fragment);
 	}
@@ -133,7 +133,7 @@ class Url {
 	 * @param mixed $path
 	 * @return \n2n\util\uri\Url
 	 */
-	public function chPath($path) {
+	public function chPath(string $path = null) {
 		if ($path === $this->path) return $this;
 		return new Url($this->scheme, $this->authority, Path::create($path), $this->query, $this->fragment);
 	}
