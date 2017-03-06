@@ -34,7 +34,7 @@ class Authority {
 	private $host;
 	private $port;
 
-	public function __construct($host = null, $port = null, $user = null, $password = null) {
+	public function __construct(string $host = null, int $port = null, string $user = null, string $password = null) {
 		ArgUtils::assertTrue($user !== null || $password === null);
 
 		$this->user = $user;
