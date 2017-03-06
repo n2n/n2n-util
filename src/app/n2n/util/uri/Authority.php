@@ -75,7 +75,7 @@ class Authority {
 		return $this->user === null && $this->host === null && $this->port === null;
 	}
 
-	public function chHost($host) {
+	public function chHost(string $host = null) {
 		if ($this->host === $host) return $this;
 
 		return new Authority($host, $this->port, $this->user, $this->password);
