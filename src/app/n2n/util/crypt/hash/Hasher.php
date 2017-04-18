@@ -83,7 +83,7 @@ class Hasher {
 	}
 	
 	public static function compare($raw, $hash) {
-		return $hash == crypt($raw, $hash);
+		return $hash == crypt((string) $raw, $hash);
 	}
 	
 	private function getSaltRegExp() {

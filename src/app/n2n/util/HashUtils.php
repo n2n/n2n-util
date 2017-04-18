@@ -22,6 +22,7 @@
 namespace n2n\util;
 
 use n2n\util\col\Hashable;
+
 class HashUtils {
 	public static function base36Md5Hash($str, $length = null) {
 		$hash = base_convert(md5((string) $str), 16, 36);
