@@ -108,7 +108,7 @@ final class Path {
 		}
 		return $this->pathParts;
 	}
-	
+		
 	public function getFirstPathPart(bool $required = true) {
 		$pathParts = $this->getPathParts();
 		if (!empty($pathParts)) {
@@ -334,6 +334,10 @@ final class Path {
 	public function chEndingDelimiter($endingDelimiter) {
 		if ($this->endingDelimiter == $endingDelimiter) return $this;
 		return new Path($this->getPathParts(), $this->leadingDelimiter, $endingDelimiter);
+	}
+	
+	public function chPathParts(array $pathParts) {
+		return new Path($pathParts, $this->leadingDelimiter, $this->endingDelimiter);
 	}
 	
 	public function equals($obj) {
