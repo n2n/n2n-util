@@ -121,7 +121,11 @@ class Authority {
 			return $param;
 		}
 		
-		return new Authority(parse_url($param, PHP_URL_HOST), parse_url($param, PHP_URL_PORT), 
-				parse_url($param, PHP_URL_USER));
+		ArgUtils::valScalar($param);
+		
+		$urlParam = '//' . $param;
+		
+		return new Authority(parse_url($urlParam, PHP_URL_HOST), parse_url($urlParam, PHP_URL_PORT), 
+				parse_url($urlParam, PHP_URL_USER));
 	}
 }
