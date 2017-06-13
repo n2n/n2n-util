@@ -22,7 +22,6 @@
 namespace n2n\util\uri;
 
 use n2n\reflection\ArgUtils;
-use n2n\util\ex\NotYetImplementedException;
 
 class Authority {
 	const USER_PASS_SEPARATOR = ':';
@@ -121,7 +120,8 @@ class Authority {
 		if ($param instanceof Authority) {
 			return $param;
 		}
-
-		throw new NotYetImplementedException();
+		
+		return new Authority(parse_url($param, PHP_URL_HOST), parse_url($param, PHP_URL_PORT), 
+				parse_url($param, PHP_URL_USER));
 	}
 }
