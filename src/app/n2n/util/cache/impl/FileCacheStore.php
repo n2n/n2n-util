@@ -293,6 +293,11 @@ class FileCacheStore implements CacheStore {
 	 */
 	public function removeAll(string $name, array $characteristicNeedles = null) {
 		foreach ($this->findFilePaths($name, $characteristicNeedles) as $filePath) {
+			if (empty($characteristicNeedles)) {
+				$this->unlink($filePath);
+				continue;
+			}
+			
 			$cacheItem = $this->read($name, $filePath);
 			if ($cacheItem === null) continue;
 			
