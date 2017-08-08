@@ -161,7 +161,7 @@ class EncryptionDescriptor {
 	
 	public function setAlgorithm($algorithm) {
 		if (!self::isAlgorithmAvailable($algorithm)) {
-			throw new \InvalidArgumentException('n2n_error_crypt_algorithm_is_not_available');
+			throw new \InvalidArgumentException('n2n_error_crypt_algorithm_is_not_available: ' . $algorithm);
 		}
 		$this->algorithm = $algorithm;
 	}
