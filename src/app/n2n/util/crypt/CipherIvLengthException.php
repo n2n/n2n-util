@@ -21,6 +21,6 @@
  */
 namespace n2n\util\crypt;
 
-class GetIvSizeFailedException extends CryptRuntimeException {
+class CipherIvLengthException extends CryptRuntimeException {
 
 }

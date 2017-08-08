@@ -23,54 +23,136 @@ namespace n2n\util\crypt;
 
 class EncryptionDescriptor {
 	
-	const ALGORITHM_3DES = MCRYPT_3DES;
-	const ALGORITHM_ARCFOUR_IV = MCRYPT_ARCFOUR_IV; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_ARCFOUR = MCRYPT_ARCFOUR; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_BLOWFISH = MCRYPT_BLOWFISH;
-	const ALGORITHM_CAST_128 = MCRYPT_CAST_128;
-	const ALGORITHM_CAST_256 = MCRYPT_CAST_256;
-	const ALGORITHM_CRYPT = MCRYPT_CRYPT;
-	const ALGORITHM_DES = MCRYPT_DES;
-	const ALGORITHM_GOST = MCRYPT_GOST;
-	const ALGORITHM_IDEA = MCRYPT_IDEA; // (non-free)
-	const ALGORITHM_LOKI97 = MCRYPT_LOKI97; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_MARS = MCRYPT_MARS; // (libmcrypt > 2.4.x only, non-free)
-	const ALGORITHM_PANAMA = MCRYPT_PANAMA; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_RIJNDAEL_128 = MCRYPT_RIJNDAEL_128; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_RIJNDAEL_192 = MCRYPT_RIJNDAEL_192; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_RIJNDAEL_256 = MCRYPT_RIJNDAEL_256; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_RC2 = MCRYPT_RC2;
-	const ALGORITHM_RC6 = MCRYPT_RC6; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_SAFER64 = MCRYPT_SAFER64;
-	const ALGORITHM_SAFER128 = MCRYPT_SAFER128;
-	const ALGORITHM_SAFERPLUS = MCRYPT_SAFERPLUS; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_SERPENT = MCRYPT_SERPENT; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_THREEWAY = MCRYPT_THREEWAY;
-	const ALGORITHM_TRIPLEDES = MCRYPT_TRIPLEDES; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_TWOFISH = MCRYPT_TWOFISH; // (for older mcrypt 2.x versions, or mcrypt > 2.4.x )
-	const ALGORITHM_WAKE = MCRYPT_WAKE; // (libmcrypt > 2.4.x only)
-	const ALGORITHM_XTEA = MCRYPT_XTEA; // (libmcrypt > 2.4.x only)
+	const ALGORITHM_AES_128_CBC = 'AES-128-CBC';
+	const ALGORITHM_AES_128_CCM = 'aes-128-ccm';
+	const ALGORITHM_AES_128_CFB = 'AES-128-CFB';
+	const ALGORITHM_AES_128_CFB1 = 'AES-128-CFB1';
+	const ALGORITHM_AES_128_CFB8 = 'AES-128-CFB8';
+	const ALGORITHM_AES_128_CTR = 'AES-128-CTR';
+	const ALGORITHM_AES_128_ECB = 'AES-128-ECB';
+	const ALGORITHM_AES_128_GCM = 'aes-128-gcm';
+	const ALGORITHM_AES_128_OFB = 'AES-128-OFB';
+	const ALGORITHM_AES_128_XTS = 'AES-128-XTS';
+	
+	const ALGORITHM_AES_192_CBC = 'AES-192-CBC';
+	const ALGORITHM_AES_192_CCM = 'aes-192-ccm';
+	const ALGORITHM_AES_192_CFB = 'AES-192-CFB';
+	const ALGORITHM_AES_192_CFB1 = 'AES-192-CFB1';
+	const ALGORITHM_AES_192_CFB8 = 'AES-192-CFB8';
+	const ALGORITHM_AES_192_CTR = 'AES-192-CTR';
+	const ALGORITHM_AES_192_ECB = 'AES-192-ECB';
+	const ALGORITHM_AES_192_GCM = 'aes-192-gcm';
+	const ALGORITHM_AES_192_OFB = 'AES-192-OFB';
+	
+	const ALGORITHM_AES_256_CBC = 'AES-256-CBC';
+	const ALGORITHM_AES_256_CFB = 'AES-256-CFB';
+	const ALGORITHM_AES_256_CCM = 'aes-256-ccm';
+	const ALGORITHM_AES_256_CFB1 = 'AES-256-CFB1';
+	const ALGORITHM_AES_256_CFB8 = 'AES-256-CFB8';
+	const ALGORITHM_AES_256_CTR = 'AES-256-CTR';
+	const ALGORITHM_AES_256_ECB = 'AES-256-ECB';
+	const ALGORITHM_AES_256_GCM = 'aes-256-gcm';
+	const ALGORITHM_AES_256_OFB = 'AES-256-OFB';
+	const ALGORITHM_AES_256_XTS = 'AES-256-XTS';
+	
+	const ALGORITHM_BF_CBC = 'BF-CBC';
+	const ALGORITHM_BF_CFB = 'BF-CFB';
+	const ALGORITHM_BF_ECB = 'BF-ECB';
+	const ALGORITHM_BF_OFB = 'BF-OFB';
 
-	const DEFAULT_CRYPT_ALGORITHM = MCRYPT_RIJNDAEL_256;
-	const DEFAULT_CRYPT_MODE = MCRYPT_MODE_CBC;
+	const ALGORITHM_CAMELLIA_128_CBC = 'CAMELLIA-128-CBC';
+	const ALGORITHM_CAMELLIA_128_CFB = 'CAMELLIA-128-CFB';
+	const ALGORITHM_CAMELLIA_128_CFB1 = 'CAMELLIA-128-CFB1';
+	const ALGORITHM_CAMELLIA_128_CFB8 = 'CAMELLIA-128-CFB8';
+	const ALGORITHM_CAMELLIA_128_ECB = 'CAMELLIA-128-ECB';
+	const ALGORITHM_CAMELLIA_128_OFB = 'CAMELLIA-128-OFB';
+
+	const ALGORITHM_CAMELLIA_192_CBC = 'CAMELLIA-192-CBC';
+	const ALGORITHM_CAMELLIA_192_CFB = 'CAMELLIA-192-CFB';
+	const ALGORITHM_CAMELLIA_192_CFB1 = 'CAMELLIA-192-CFB1';
+	const ALGORITHM_CAMELLIA_192_CFB8 = 'CAMELLIA-192-CFB8';
+	const ALGORITHM_CAMELLIA_192_ECB = 'CAMELLIA-192-ECB';
+	const ALGORITHM_CAMELLIA_192_OFB = 'CAMELLIA-192-OFB';
+
+	const ALGORITHM_CAMELLIA_256_CBC = 'CAMELLIA-256-CBC';
+	const ALGORITHM_CAMELLIA_256_CFB = 'CAMELLIA-256-CFB';
+	const ALGORITHM_CAMELLIA_256_CFB1 = 'CAMELLIA-256-CFB1';
+	const ALGORITHM_CAMELLIA_256_CFB8 = 'CAMELLIA-256-CFB8';
+	const ALGORITHM_CAMELLIA_256_ECB = 'CAMELLIA-256-ECB';
+	const ALGORITHM_CAMELLIA_256_OFB = 'CAMELLIA-256-OFB';
+	
+	const ALGORITHM_CAST5_CBC = 'CAST5-CBC';
+	const ALGORITHM_CAST5_CFB = 'CAST5-CFB';
+	const ALGORITHM_CAST5_ECB = 'CAST5-ECB';
+	const ALGORITHM_CAST5_OFB = 'CAST5-OFB';
+
+	const ALGORITHM_DES_CBC = 'DES-CBC';
+	const ALGORITHM_DES_CFB = 'DES-CFB';
+	const ALGORITHM_DES_CFB1 = 'DES-CFB1';
+	const ALGORITHM_DES_CFB8 = 'DES-CFB8';
+	const ALGORITHM_DES_ECB = 'DES-ECB';
+	const ALGORITHM_DES_OFB = 'DES-OFB';
+	
+	const ALGORITHM_DES_EDE = 'DES-EDE';
+	const ALGORITHM_DES_EDE_CBC = 'DES-EDE-CBC';
+	const ALGORITHM_DES_EDE_CFB = 'DES-EDE-CFB';
+	const ALGORITHM_DES_EDE_OFB = 'DES-EDE-OFB';
+
+	const ALGORITHM_DES_EDE3 = 'DES-EDE3';
+	const ALGORITHM_DES_EDE3_CBC = 'DES-EDE3-CBC';
+	const ALGORITHM_DES_EDE3_CFB = 'DES-EDE3-CFB';
+	const ALGORITHM_DES_EDE3_CFB1 = 'DES-EDE3-CFB1';
+	const ALGORITHM_DES_EDE3_CFB8 = 'DES-EDE3-CFB8';
+	const ALGORITHM_DES_EDE3_OFB = 'DES-EDE3-OFB';
+	
+	const ALGORITHM_DESX_CBC = 'DESX-CBC';
+	
+	const ALGORITHM_ID_AES128_CCM = 'id-aes128-CCM';
+	const ALGORITHM_ID_AES128_GCM = 'id-aes128-GCM';
+	const ALGORITHM_ID_AES128_WRAP = 'id-aes128-wrap';
+	
+	const ALGORITHM_ID_AES192_CCM = 'id-aes192-CCM';
+	const ALGORITHM_ID_AES192_GCM = 'id-aes192-GCM';
+	const ALGORITHM_ID_AES192_WRAP = 'id-aes192-wrap';
+	
+	const ALGORITHM_ID_AES256_CCM = 'id-aes256-CCM';
+	const ALGORITHM_ID_AES256_GCM = 'id-aes256-GCM';
+	const ALGORITHM_ID_AES256_WRAP = 'id-aes256-wrap';
+	
+	const ALGORITHM_ID_SMIME_ALG_CMS3DESWRAP = 'id-smime-alg-CMS3DESwrap';
+	
+	const ALGORITHM_IDEA_CBC = 'IDEA-CBC';
+	const ALGORITHM_IDEA_CFB = 'IDEA-CFB';
+	const ALGORITHM_IDEA_ECB = 'IDEA-ECB';
+	const ALGORITHM_IDEA_OFB = 'IDEA-OFB';
+	
+	const ALGORITHM_RC2_40_CBC = 'RC2-40-CBC';
+	const ALGORITHM_RC2_64_CBC = 'RC2-64-CBC';
+	const ALGORITHM_RC2_CBC = 'RC2-CBC';
+	const ALGORITHM_RC2_CFB = 'RC2-CFB';
+	const ALGORITHM_RC2_ECB = 'RC2-ECB';
+	const ALGORITHM_RC2_OFB = 'RC2-OFB';
+
+	const ALGORITHM_RC4 = 'RC4';
+	const ALGORITHM_RC4_40 = 'RC4-40';
+	const ALGORITHM_RC4_HMAC_MD5= 'RC4-HMAC-MD5';
+	
+	const ALGORITHM_SEED_CBC = 'SEED-CBC';
+	const ALGORITHM_SEED_CFB = 'SEED-CFB';
+	const ALGORITHM_SEED_ECB = 'SEED-ECB';
+	const ALGORITHM_SEED_OFB = 'SEED-OFB';
+
+	const DEFAULT_CRYPT_ALGORITHM = self::ALGORITHM_AES_256_CTR;
 	/**
-	* the mcrypt algorithm
-	* initialised with the AES algorithm aka MCRYPT_RIJNDAEL
-	* if you need a faster algorithm it is supposed to use MCRYPT_RIJNDAEL_128
+	* the openssl algorithm
+	* initialised with the AES algorithm 
+	* if you need a faster algorithm it is supposed to use ALGORITHM_AES_128_CBC
 	* @var string
 	*/
 	private $algorithm;
-	/**
-	 * the mcrypt mode.
-	 * initialised with a quite safe mode
-	 * if you need a faster mode use MCRYPT_MODE_ECB (enorm loosings in security if the text exceeds the algorithms block size)
-	 * @var string
-	 */
-	private $mode;
 	
-	public function __construct($algorithm = self::DEFAULT_CRYPT_ALGORITHM, $mode = self::DEFAULT_CRYPT_MODE) {
+	public function __construct($algorithm = self::DEFAULT_CRYPT_ALGORITHM) {
 		$this->setAlgorithm($algorithm);
-		$this->setMode($mode);
 	}
 	
 	public function getAlgorithm() {
@@ -79,38 +161,160 @@ class EncryptionDescriptor {
 	
 	public function setAlgorithm($algorithm) {
 		if (!self::isAlgorithmAvailable($algorithm)) {
-			throw new AlgorithmNotAvailableException('n2n_error_crypt_algorithm_is_not_available');
+			throw new \InvalidArgumentException('n2n_error_crypt_algorithm_is_not_available');
 		}
 		$this->algorithm = $algorithm;
 	}
 	
-	public function getMode() {
-		return $this->mode;
-	}
-	
-	public function setMode($mode) {
-		if (!self::isModeAvailable($mode)) {
-			throw new ModeNotAvailableException('n2n_error_crypt_mode_is_not_available');
-		}
-		$this->mode = $mode;
-	}
-	
 	public function generateKey() {
 		if(!($length = $this->getKeySize())) return null;
-		return CryptUtils::mcryptCreateIv($length);
+		
+		return OpenSslUtils::opensslRandomPseudoBytes($length);
 	}
 	
 	public function generateIv() {
 		if(!($length = $this->getIvSize())) return null;
-		return CryptUtils::mcryptCreateIv($length);
+		
+		return OpenSslUtils::randomPseudoBytes($length);
 	}
 	
 	public function getIvSize() {
-		return CryptUtils::mcryptGetIvSize($this->algorithm, $this->mode);
+		return OpenSslUtils::cipherIvLength($this->algorithm);
 	}
 	
+	/**
+	 * Deterined the key size using @see https://wiki.openssl.org/index.php/Manual:Enc(1)
+	 */
 	public function getKeySize() {
-		return CryptUtils::mcryptGetKeySize($this->algorithm, $this->mode);
+		switch ($this->algorithm) {
+			case self::ALGORITHM_AES_128_CBC:
+			case self::ALGORITHM_AES_128_CCM:
+			case self::ALGORITHM_AES_128_CFB:
+			case self::ALGORITHM_AES_128_CFB1:
+			case self::ALGORITHM_AES_128_CFB8:
+			case self::ALGORITHM_AES_128_CTR:
+			case self::ALGORITHM_AES_128_ECB:
+			case self::ALGORITHM_AES_128_GCM:
+			case self::ALGORITHM_AES_128_OFB:
+			case self::ALGORITHM_AES_128_XTS:
+			case self::ALGORITHM_CAMELLIA_128_CBC:
+			case self::ALGORITHM_CAMELLIA_128_CFB:
+			case self::ALGORITHM_CAMELLIA_128_CFB1:
+			case self::ALGORITHM_CAMELLIA_128_CFB8:
+			case self::ALGORITHM_CAMELLIA_128_ECB:
+			case self::ALGORITHM_CAMELLIA_128_OFB:
+			case self::ALGORITHM_ID_AES128_CCM:
+			case self::ALGORITHM_ID_AES128_GCM:
+			case self::ALGORITHM_ID_AES128_WRAP:
+			//@see: https://wiki.openssl.org/index.php/Manual:Enc(1)
+			//->Blowfish and RC5 algorithms use a 128 bit key. 
+			case self::ALGORITHM_BF_CBC:
+			case self::ALGORITHM_BF_CFB:
+			case self::ALGORITHM_BF_ECB:
+			case self::ALGORITHM_BF_OFB:
+			//@see http://www.gnu.org/software/gnu-crypto/manual/api/gnu/crypto/cipher/Cast5.html
+			//-> since the CAST5 key schedule assumes an input key of 128 bits
+			case self::ALGORITHM_CAST5_CBC:
+			case self::ALGORITHM_CAST5_CFB:
+			case self::ALGORITHM_CAST5_ECB:
+			case self::ALGORITHM_CAST5_OFB:
+			//@see https://en.wikipedia.org/wiki/International_Data_Encryption_Algorithm
+			case self::ALGORITHM_IDEA_CBC:
+			case self::ALGORITHM_IDEA_CFB:
+			case self::ALGORITHM_IDEA_ECB:
+			case self::ALGORITHM_IDEA_OFB:
+			//@see https://wiki.openssl.org/index.php/Manual:Enc(1)
+			case self::ALGORITHM_RC2_CBC:
+			case self::ALGORITHM_RC2_CFB:
+			case self::ALGORITHM_RC2_ECB:
+			case self::ALGORITHM_RC2_OFB:
+			case self::ALGORITHM_RC4:
+			case self::ALGORITHM_SEED_CBC:
+			case self::ALGORITHM_SEED_CFB:
+			case self::ALGORITHM_SEED_ECB:
+			case self::ALGORITHM_SEED_OFB:
+				return 16;
+				
+			//@asee https://www.tutorialspoint.com/cryptography/triple_des.htm
+			case self::ALGORITHM_DES_EDE:
+			case self::ALGORITHM_DES_EDE_CBC:
+			case self::ALGORITHM_DES_EDE_CFB:
+			case self::ALGORITHM_DES_EDE_OFB:
+				return 14;
+			
+			case self::ALGORITHM_AES_192_CBC:
+			case self::ALGORITHM_AES_192_CCM:
+			case self::ALGORITHM_AES_192_CFB:
+			case self::ALGORITHM_AES_192_CFB1:
+			case self::ALGORITHM_AES_192_CFB8:
+			case self::ALGORITHM_AES_192_CTR:
+			case self::ALGORITHM_AES_192_ECB:
+			case self::ALGORITHM_AES_192_GCM:
+			case self::ALGORITHM_AES_192_OFB:
+			case self::ALGORITHM_CAMELLIA_192_CBC:
+			case self::ALGORITHM_CAMELLIA_192_CFB:
+			case self::ALGORITHM_CAMELLIA_192_CFB1:
+			case self::ALGORITHM_CAMELLIA_192_CFB8:
+			case self::ALGORITHM_CAMELLIA_192_ECB:
+			case self::ALGORITHM_CAMELLIA_192_OFB:
+			case self::ALGORITHM_ID_AES192_CCM:
+			case self::ALGORITHM_ID_AES192_GCM:
+			case self::ALGORITHM_ID_AES192_WRAP:
+				return 24;
+			
+			//@asee https://www.tutorialspoint.com/cryptography/triple_des.htm
+			case self::ALGORITHM_DES_EDE3:
+			case self::ALGORITHM_DES_EDE3_CBC:
+			case self::ALGORITHM_DES_EDE3_CFB:
+			case self::ALGORITHM_DES_EDE3_CFB1:
+			case self::ALGORITHM_DES_EDE3_CFB8:
+			case self::ALGORITHM_DES_EDE3_OFB:
+				return 21;
+				
+			
+			case self::ALGORITHM_AES_256_CBC:
+			case self::ALGORITHM_AES_256_CFB:
+			case self::ALGORITHM_AES_256_CCM:
+			case self::ALGORITHM_AES_256_CFB1:
+			case self::ALGORITHM_AES_256_CFB8:
+			case self::ALGORITHM_AES_256_CTR:
+			case self::ALGORITHM_AES_256_ECB:
+			case self::ALGORITHM_AES_256_GCM:
+			case self::ALGORITHM_AES_256_OFB:
+			case self::ALGORITHM_AES_256_XTS:
+			case self::ALGORITHM_CAMELLIA_256_CB:
+			case self::ALGORITHM_CAMELLIA_256_CFB:
+			case self::ALGORITHM_CAMELLIA_256_CFB1:
+			case self::ALGORITHM_CAMELLIA_256_CFB8:
+			case self::ALGORITHM_CAMELLIA_256_ECB:
+			case self::ALGORITHM_CAMELLIA_256_OFB:
+			case self::ALGORITHM_ID_AES256_CCM:
+			case self::ALGORITHM_ID_AES256_GCM:
+			case self::ALGORITHM_ID_AES256_WRAP:
+				return 32;
+			
+			
+			//@see https://en.wikipedia.org/wiki/Data_Encryption_Standard
+			case self::ALGORITHM_DES_CBC:
+			case self::ALGORITHM_DES_CFB:
+			case self::ALGORITHM_DES_CFB1:
+			case self::ALGORITHM_DES_CFB8:
+			case self::ALGORITHM_DES_ECB:
+			case self::ALGORITHM_DES_OFB:
+			//@see https://en.wikipedia.org/wiki/DES-X
+			case self::ALGORITHM_DESX_CBC:
+				return 7;
+			
+
+			case self::ALGORITHM_RC2_40_CBC:
+ 			case self::ALGORITHM_RC4_40:
+				return 5;
+				
+ 			case self::ALGORITHM_RC2_64_CBC:
+ 				return 8;
+ 			
+			return 128;
+		}
 	}
 	
 	public static function isAlgorithmAvailable($algorithm) {
@@ -118,14 +322,6 @@ class EncryptionDescriptor {
 	}
 	
 	public static function getAvailableAlgorithms() {
-		return @mcrypt_list_algorithms();
-	}
-	
-	public static function isModeAvailable($mode) {
-		return in_array($mode, self::getAvailableModes());
-	}
-	
-	public static function getAvailableModes() {
-		return @mcrypt_list_modes();
+		return openssl_get_cipher_methods();
 	}
 }
