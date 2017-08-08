@@ -169,7 +169,7 @@ class EncryptionDescriptor {
 	public function generateKey() {
 		if(!($length = $this->getKeySize())) return null;
 		
-		return OpenSslUtils::opensslRandomPseudoBytes($length);
+		return OpenSslUtils::randomPseudoBytes($length);
 	}
 	
 	public function generateIv() {
