@@ -23,7 +23,6 @@ namespace n2n\util\config\source;
 
 use n2n\io\IoUtils;
 use n2n\util\ini\IniRepresentation;
-use n2n\core\SysTextUtils;
 
 class WritableIniFileConfigSource implements WritableConfigSource {
 	/**

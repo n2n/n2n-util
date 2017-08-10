@@ -25,6 +25,7 @@ use n2n\reflection\ReflectionUtils;
 use n2n\reflection\property\TypeConstraint;
 use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
 use n2n\util\col\ArrayUtils;
+use n2n\util\StringUtils;
 
 class Attributes {
 	private $attrs;

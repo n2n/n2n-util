@@ -23,7 +23,6 @@ namespace n2n\util\config\source;
 
 use n2n\io\IoUtils;
 use n2n\io\IoException;
-use n2n\core\SysTextUtils;
 use n2n\util\StringUtils;
 use n2n\util\ini\IniRepresentation;
 
@@ -45,9 +44,7 @@ class IniStringConfigSource implements WritableConfigSource {
 	 * @see \n2n\util\config\source\ConfigSource::createCorruptedConfigSourceException()
 	 */
 	public function createCorruptedConfigSourceException(\Exception $previous = null) {
-		throw new CorruptedConfigSourceException(
-				SysTextUtils::get('n2n_error_core_config_corrupted_ini_string',
-						array('ini_string' => StringUtils::reduce($this->iniString, 100))),
+		throw new CorruptedConfigSourceException('Corrupted ini string: ' . StringUtils::reduce($this->iniString, 100),
 				0, $previous);
 	}
 	

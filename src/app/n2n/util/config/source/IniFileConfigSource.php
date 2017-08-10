@@ -21,7 +21,6 @@
  */
 namespace n2n\util\config\source;
 
-use n2n\core\SysTextUtils;
 use n2n\io\IoUtils;
 use n2n\io\IoException;
 use n2n\util\ini\IniRepresentation;
