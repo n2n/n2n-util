@@ -66,13 +66,13 @@ class Cipher {
 	}
 	
 	public function encrypt($data) {
-		return CryptUtils::mcryptEncrypt($this->encryptionDescriptor->getAlgorithm(), $this->key, $data, 
-				$this->encryptionDescriptor->getMode(), $this->iv);
+		return OpenSslUtils::encrypt($data, $this->encryptionDescriptor->getAlgorithm(), $this->key, 
+				0, $this->iv);
 	}
 	
 	public function decrypt($data) {
-		return CryptUtils::mcryptDecrypt($this->encryptionDescriptor->getAlgorithm(), $this->key, $data, 
-				$this->encryptionDescriptor->getMode(), $this->iv);
+		return OpenSslUtils::decrypt($data, $this->encryptionDescriptor->getAlgorithm(), $this->key,
+				0, $this->iv);
 	}
 	
 }

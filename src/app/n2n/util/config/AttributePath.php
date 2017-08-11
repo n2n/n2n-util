@@ -22,7 +22,6 @@
 namespace n2n\util\config;
 
 use n2n\reflection\ReflectionUtils;
-use n2n\reflection\ArgUtils;
 
 class AttributePath {
 	private $names;
