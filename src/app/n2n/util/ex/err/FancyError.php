@@ -23,7 +23,7 @@ namespace n2n\util\ex\err;
 
 use n2n\util\ex\Documentable;
 
-class FancyErrorException extends \Error implements Documentable, EnhancedError {
+class FancyError extends \Error implements Documentable, EnhancedError {
 	private $startLine;
 	private $endLine;
 	private $documentId;
