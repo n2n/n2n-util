@@ -22,5 +22,9 @@
 namespace n2n\util;
 
 class UnserializationFailedException extends \RuntimeException {
-
+	public static function assertTrue($condition) {
+		if (true === $condition) return;
+		
+		throw new UnserializationFailedException();
+	}
 }
