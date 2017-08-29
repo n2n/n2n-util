@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2012-2016, Hofmänner New Media.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
@@ -19,13 +20,12 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
+
 namespace n2n\util\uri;
 
-interface Linkable {
-	
+interface UrlableElement {
 	/**
-	 * @throws UnavailableLinkException 
-	 * @return \n2n\util\uri\Url
+	 * @return string
 	 */
-	public function toUrl(string &$suggestedLabel = null): Url;
+	public function urlify(): string;
 }
