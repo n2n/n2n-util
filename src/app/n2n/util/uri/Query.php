@@ -21,8 +21,6 @@
  */
 namespace n2n\util\uri;
 
-use n2n\util\StringUtils;
-
 class Query {
 	private $attrs = array();
 	
@@ -40,7 +38,7 @@ class Query {
 					continue;
 				}
 				
-				$attrs[$key] = StringUtils::strOf($value);
+				$attrs[$key] = UrlUtils::urlifyPart($value);
 			} catch (\InvalidArgumentException $e) {
 				throw new \InvalidArgumentException('Invalid query field: ' . $key);
 			}

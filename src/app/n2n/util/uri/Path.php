@@ -48,6 +48,8 @@ final class Path {
 	
 	private function applyPathPartArray(array $pathParts) {
 		foreach ($pathParts as $pathPart) {
+			if (null === $pathPart) continue;
+			
 			if (is_array($pathPart)) {
 				$this->applyPathPartArray($pathPart);
 				continue;
@@ -58,7 +60,7 @@ final class Path {
 				continue;
 			}
 			
-			$patPartStr = StringUtils::strOf($pathPart);
+			$patPartStr = UrlUtils::urlifyPart($pathPart);
 			if (mb_strlen($patPartStr)) {
 				$this->pathParts[] = $patPartStr;
 			}
@@ -353,7 +355,7 @@ final class Path {
 			return new Path($expression);
 		}
 		
-		ArgUtils::assertTrue(is_scalar($expression) || $expression === null);
+		$expression = UrlUtils::urlifyPart($expression);
 		
 		if ($expression === null || !mb_strlen($expression = (string) $expression)) {
 			return new Path(array());

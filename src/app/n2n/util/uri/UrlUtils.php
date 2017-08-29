@@ -19,13 +19,21 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
+
 namespace n2n\util\uri;
 
-interface Linkable {
+use n2n\util\StringUtils;
+
+class UrlUtils {
 	
 	/**
-	 * @throws UnavailableLinkException 
-	 * @return \n2n\util\uri\Url
+	 * @param mixed $part
+	 * @return string|null
 	 */
-	public function toUrl(string &$suggestedLabel = null): Url;
+	public static function urlifyPart($part) {
+		if ($part === null) return null;
+		if ($part instanceof UrlableElement) return $part->urlify();
+		
+		return StringUtils::strOf($part);
+	}
 }
