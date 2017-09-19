@@ -21,8 +21,8 @@
  */
 namespace n2n\util\ini;
 
-use n2n\core\SysTextUtils;
 use n2n\util\StringUtils;
+
 class Group extends ContentPartAdapter implements DataContentPart {
 	
 	private $name;
@@ -44,9 +44,8 @@ class Group extends ContentPartAdapter implements DataContentPart {
 					. preg_quote(IniRepresentation::GROUP_END_IDENTIFIER) . '.*)/', '', $maskedName);
 			parent::__construct($lines);
 		} else {
-			throw new \InvalidArgumentException(
-					SysTextUtils::get('n2n_error_core_config_ini_invalid_group_structure', 
-							array('valid_structure' => '[{groupName}] ;{inlineComment}', 'line' => $line)));	
+			throw new \InvalidArgumentException('Invalid group structure in line "' . $line 
+					. '". Expexted structure: [{groupName}] ;{inlineComment}');	
 		}
 	}
 	
