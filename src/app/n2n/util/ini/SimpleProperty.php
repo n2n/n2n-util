@@ -21,8 +21,6 @@
  */
 namespace n2n\util\ini;
 
-use n2n\core\SysTextUtils;
-
 class SimpleProperty extends ContentPartAdapter implements Property, ArrayPropertyItem {
 	const VALUE_TRUE = 'true';
 	const VALUE_FALSE = 'false';
@@ -56,14 +54,11 @@ class SimpleProperty extends ContentPartAdapter implements Property, ArrayProper
 			if (null !== $this->value && null !== $this->name) {
 				parent::__construct($lines);
 			} else {
-				throw new \InvalidArgumentException(
-						SysTextUtils::get('n2n_error_core_config_ini_invalid_key_value_pair_structure', 
-								array('valid_structure' => '{key} = "{value}" ;{inlineComment}', 'line' => $line)));	
+				throw new \InvalidArgumentException('Invalid key value pair structure in line "' . $line
+						. '". Expected structure: {key} = "{value}" ;{inlineComment}');
 			}
 		} else {
-			throw new \InvalidArgumentException(
-					SysTextUtils::get('n2n_error_core_config_ini_missing_assignation_in_value_key_pair', 
-							array('line' => $line)));
+			throw new \InvalidArgumentException('Missing assignation in key value pair in line: "' . $line . '"');
 		}
 	}
 	

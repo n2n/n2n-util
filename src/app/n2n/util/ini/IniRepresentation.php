@@ -21,8 +21,8 @@
  */
 namespace n2n\util\ini;
 
-use n2n\core\SysTextUtils;
 use n2n\util\StringUtils;
+
 class IniRepresentation {
 	
 	const COMMENT_IDENTIFIER = ';';
@@ -57,8 +57,8 @@ class IniRepresentation {
 	
 	public function appendContentPart(ContentPart $contentPart) {
 		if ($contentPart instanceof Property && count($this->findGroups()) > 0) {
-			throw new \InvalidArgumentException(SysTextUtils::get(
-					'n2n_errror_core_config_ini_properties_after_groups_are_not_allowed'));
+			throw new \InvalidArgumentException('Properties are not allowed if groups are available.'
+ 					. ' Property must be appended to a group.');
 		} 
 		$this->contentParts[] = $contentPart;
 	}

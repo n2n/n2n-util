@@ -21,7 +21,6 @@
  */
 namespace n2n\util\ini;
 
-use n2n\core\SysTextUtils;
 use n2n\web\dispatch\target\ArrayItem;
 
 class ArrayProperty extends ContentPartAdapter implements Property {
@@ -41,9 +40,8 @@ class ArrayProperty extends ContentPartAdapter implements Property {
 			$this->name = $this->extractNameFromSimplePropertyName($simpleProperty->getName());
 			$this->appendItem($simpleProperty);
 		} else {
-			throw new \InvalidArgumentException(
-					SysTextUtils::get('n2n_error_core_config_ini_invalid_key_value_pair_structure', 
-							array('valid_structure' => '{key} = "{value}" ;{inlineComment}', 'line' => $line)));	
+			throw new \InvalidArgumentException('Invalid key value pair structure in line "' . $line 
+					. '". Expected structure: {key} = "{value}" ;{inlineComment}');	
 		}
 	}
 	
@@ -102,8 +100,8 @@ class ArrayProperty extends ContentPartAdapter implements Property {
 		if ($item instanceof SimpleProperty) {
 			if (!IniRepresentation::isArrayProperty($item->__toString()) || 
 					(self::extractNameFromSimplePropertyName($item->getName()) != $this->name)) {
-				throw new \InvalidArgumentException(
-						SysTextUtils::get('n2n_error_core_config_ini_not_a_valid_array_property_item'));
+						throw new \InvalidArgumentException('Invalid array property item appendage "' . $item->getName() 
+								. '" in "' . $this->name . '"given');
 			}
 		}
 	}
