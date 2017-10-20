@@ -56,7 +56,7 @@ class Url {
 		return null !== $this->scheme;
 	}
 	/**
-	 * @return string
+	 * @return Authority
 	 */
 	public function getAuthority() {
 		if ($this->authority === null) {
@@ -211,6 +211,16 @@ class Url {
 
 	public static function createRelativeUrl($path = null, $query = null, $fragment = null) {
 		return new Url(null, null, Path::create($path), Query::create($query), $fragment);
+	}
+
+	/**
+	 * @param $expression
+	 * @return Url|null
+	 */
+	public static function build($expression) {
+		if ($expression === null || $expression instanceof Url) return $expression;
+
+		return self::create($expression);
 	}
 
 	/**
