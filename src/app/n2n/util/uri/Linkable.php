@@ -24,7 +24,7 @@ namespace n2n\util\uri;
 interface Linkable {
 	
 	/**
-	 * @throws UnavailableLinkException 
+	 * @throws UnavailableUrlException 
 	 * @return \n2n\util\uri\Url
 	 */
 	public function toUrl(string &$suggestedLabel = null): Url;

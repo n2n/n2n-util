@@ -19,20 +19,22 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\web\http\nav;
+namespace n2n\util\uri;
 
-use n2n\web\http\HttpRuntimeException;
-
-class UnavailableLinkException extends HttpRuntimeException {
+class UnavailableUrlException extends \RuntimeException {
 	private $critical;
 
-	public function __construct(bool $critical, string $message = null, $code = null, \Throwable $previous = null) {
+	public function __construct(bool $critical, string $message = null, int $code = null, \Throwable $previous = null) {
 		parent::__construct($message, $code, $previous);
 
 		$this->critical = $critical;
 	}
 
-	public function isCritical(): bool {
+	/**
+	 * True if url is not available due to developer error. True will cause an exception. 
+	 * @return bool
+	 */
+	public function isCritical() {
 		return $this->critical;
 	}
 }
