@@ -155,7 +155,10 @@ class Url {
 	}
 
 	public function ext($relativeUrl) {
-		$relativeUrl = Url::create($relativeUrl);
+		$relativeUrl = Url::build($relativeUrl);
+		
+		if ($relativeUrl === null) return $this;
+		
 		if (!$relativeUrl->isRelative()) {
 			throw new \InvalidArgumentException('Passed url is not relative: ' . $relativeUrl);
 		}
