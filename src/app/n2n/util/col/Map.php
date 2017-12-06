@@ -24,7 +24,7 @@ namespace n2n\util\col;
 interface Map extends Collection, \ArrayAccess {
 	/**
 	 * < PHP 5.5 foreach compatiblity
-	 * @param unknown $ref
+	 * @param string $ref
 	 * @return mixed key
 	 */
 	public function getKeyByHashCode(string $ref);

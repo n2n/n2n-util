@@ -21,7 +21,6 @@
  */
 namespace n2n\util\config;
 
-use n2n\util\config\InvalidConfigurationException;
 use n2n\reflection\ReflectionUtils;
 
 class ConfigValueExtractor {
@@ -71,7 +70,7 @@ class ConfigValueExtractor {
 	 * @param mixed $default
 	 * @param bool $required
 	 * @throws InvalidConfigurationException
-	 * @return unknown
+	 * @return mixed
 	 */
 	protected function getLevelValue($key, $default, $required) {
 		if (array_key_exists($key, $this->data)) {
@@ -259,7 +258,7 @@ class ConfigValueExtractor {
 		return $value;
 	}
 	/**
-	 * @param unknown $property
+	 * @param mixed $property
 	 * @param array $options
 	 * @param bool $required
 	 * @param string $default

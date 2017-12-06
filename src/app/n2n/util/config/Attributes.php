@@ -63,19 +63,19 @@ class Attributes {
 	}
 	/**
 	 * 
-	 * @param unknown_type $name
-	 * @param unknown_type $value
+	 * @param string $name
+	 * @param mixed $value
 	 */
-	public function set($name, $value) {
+	public function set(string $name, $value) {
 		$this->attrs[$name] = $value;
 	}
 	/**
 	 * 
-	 * @param unknown_type $name
-	 * @param unknown_type $key
-	 * @param unknown_type $value
+	 * @param string $name
+	 * @param mixed $key scalar
+	 * @param mixed $value
 	 */
-	public function add($name, $key, $value) {
+	public function add(string $name, $key, $value) {
 		if(!isset($this->attrs[$name]) || !is_array($this->attrs[$name])) {
 			$this->attrs[$name] = array();
 		}
@@ -84,10 +84,10 @@ class Attributes {
 	}
 	/**
 	 * 
-	 * @param unknown_type $name
-	 * @param unknown_type $value
+	 * @param string $name
+	 * @param mixed $value
 	 */
-	public function push($name, $value) {
+	public function push(string $name, $value) {
 		if(!isset($this->attrs[$name]) || !is_array($this->attrs[$name])) {
 			$this->attrs[$name] = array();
 		}
@@ -125,12 +125,16 @@ class Attributes {
 	private function find(AttributePath $attributePath, $mandatory, &$found) {		
 		return $this->findR($this->attrs, $attributePath->toArray(), array(), $mandatory, $found);
 	}
+
 	/**
-	 *
-	 * @param unknown_type $name
+	 * @param string $name
+	 * @param bool $mandatory
+	 * @param mixed $defaultValue
+	 * @param TypeConstraint $typeConstraint
+	 * @throws InvalidAttributeException
 	 * @return mixed
 	 */
-	public function get($name, $mandatory = true, $defaultValue = null, TypeConstraint $typeConstraint = null) {
+	public function get(string $name, bool $mandatory = true, $defaultValue = null, TypeConstraint $typeConstraint = null) {
 		$attributePath = AttributePath::create($name);
 		
 		$found = null;
@@ -239,13 +243,17 @@ class Attributes {
 	
 	/**
 	 * 
-	 * @param unknown_type $name
+	 * @param string $name
 	 */
-	public function remove($name) {
+	public function remove(string $name) {
 		unset($this->attrs[$name]);
 	}
 	
-	public function removeKey($name, $key) {
+	/**
+	 * @param string $name
+	 * @param mixed $key scalar
+	 */
+	public function removeKey(string $name, $key) {
 		if ($this->hasKey($name, $key)) {
 			unset($this->attrs[$name][$key]);
 		}
@@ -266,7 +274,7 @@ class Attributes {
 	}
 	/**
 	 * 
-	 * @param NN6Attributes $attributes
+	 * @param Attributes $attributes
 	 */
 	public function append(Attributes $attributes) {
 		$this->appendAll($attributes->toArray());

@@ -84,17 +84,17 @@ class FileCacheStore implements CacheStore {
 		return $this->filePerm;
 	}
 	/**
-	 * @param unknown $filePath
+	 * @param string $filePath
 	 * @return \n2n\util\cache\impl\CacheFileLock
 	 */
-	private function createReadLock($filePath) {
+	private function createReadLock(string $filePath) {
 		return new CacheFileLock(new FileResourceStream($filePath . self::LOCK_FILE_SUFFIX, 'w', LOCK_SH));
 	}
 	/**
-	 * @param unknown $filePath
+	 * @param string $filePath
 	 * @return \n2n\util\cache\impl\CacheFileLock
 	 */
-	private function createWriteLock($filePath) {
+	private function createWriteLock(string $filePath) {
 		return new CacheFileLock(new FileResourceStream($filePath . self::LOCK_FILE_SUFFIX, 'w', LOCK_EX));
 	}
 	
@@ -255,7 +255,7 @@ class FileCacheStore implements CacheStore {
 		return true;
 	}
 	/**
-	 * @param unknown $name
+	 * @param string $name
 	 * @param array $characteristicNeedles
 	 * @return FsPath[]
 	 */
@@ -326,7 +326,7 @@ class CacheFileLock {
 		$this->frs = $frs;
 	}
 	/**
-	 * @param $removeLockFile unlink could collide with fopen command from another thread. Set online true 
+	 * @param bool $removeLockFile unlink could collide with fopen command from another thread. Set online true 
 	 * when necesseary. fopen will cause a permission denied exception in this case.
 	 */
 	public function release(bool $removeLockFile = false) {

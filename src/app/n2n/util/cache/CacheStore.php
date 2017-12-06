@@ -29,7 +29,7 @@ interface CacheStore {
 	 */
 	public function store(string $name, array $characteristics, $data, \DateTime $lastMod = null);
 	/**
-	 * @param unknown $name
+	 * @param string $name
 	 * @param array $characteristics
 	 * @return CacheItem or null if item does not exist
 	 * @throws CorruptedCacheStoreException
@@ -43,11 +43,11 @@ interface CacheStore {
 	/**
 	 * @param string $name
 	 * @param array $characteristicNeedles
-	 * @return CachedItem[]
+	 * @return CacheItem[]
 	 */
 	public function findAll(string $name, array $characteristicNeedles = null);
 	/**
-	 * @param unknown $name
+	 * @param string $name
 	 * @param array $characteristicNeedles
 	 */
 	public function removeAll(string $name, array $characteristicNeedles = null);

@@ -56,7 +56,7 @@ class LenientAttributeReader {
 	
 	/**
 	 *
-	 * @param unknown_type $name
+	 * @param string $name
 	 * @return mixed
 	 */
 	public function get($name, $fallbackValue = null, TypeConstraint $typeConstraint = null) {

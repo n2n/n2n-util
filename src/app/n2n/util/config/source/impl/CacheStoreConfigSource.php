@@ -21,7 +21,6 @@
  */
 namespace n2n\util\config\source\impl;
 
-use n2n\util\config\source\ConfigSource;
 use n2n\util\cache\CacheStore;
 use n2n\util\config\source\WritableConfigSource;
 
