@@ -279,6 +279,40 @@ class StringUtils {
 		return mb_substr($str, 0, $length) . $suffix;
 	}
 	
+	/**
+	 * @param string $str
+	 * @param int $length
+	 * @param string $suffix
+	 * @throws \InvalidArgumentException
+	 * @return string
+	 */
+	public function reduceWordish(string $str, int $length, string $suffix = '...') {
+		if (mb_strlen($str) <= $length) {
+			return $str;
+		}
+		$suffixLen = mb_strlen($suffix);
+		
+		if ($suffixLen > $length) {
+			throw new \InvalidArgumentException('Suffix is longer than length.');
+		}
+		
+		$str = mb_substr($str, 0, $length);
+		
+		if (preg_match_all('/[\\s\\-]/', $str, $matches, PREG_OFFSET_CAPTURE)) {
+			foreach(array_reverse($matches[0]) as $match) {
+				// match[] return ascii pos (NOT UNICODE)
+				$str = substr($str, 0, $match[1]);
+				if ((mb_strlen($str) + $suffixLen) > $length) {
+					continue;
+				}
+				
+				return mb_substr($str, 0, $match[1]) . $suffix;
+			}
+		}
+		
+		return mb_substr($str, 0, ($length - $suffixLen)) . $suffix;
+	}
+	
 // 	public static function generateBase36Uid($maxLentgh = null) {
 // 		$uid =  base_convert(uniqid(), 16, 36);
 		
