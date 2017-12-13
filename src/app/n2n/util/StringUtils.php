@@ -286,7 +286,7 @@ class StringUtils {
 	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
-	public function reduceWordish(string $str, int $length, string $suffix = '...') {
+	public static function reduceWordish(string $str, int $length, string $suffix = '...') {
 		if (mb_strlen($str) <= $length) {
 			return $str;
 		}
