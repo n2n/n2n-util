@@ -111,10 +111,31 @@ final class Path {
 		return $this->pathParts;
 	}
 		
+	/**
+	 * @param bool $required
+	 * @throws IllegalStateException
+	 * @return string|null
+	 */
 	public function getFirstPathPart(bool $required = true) {
 		$pathParts = $this->getPathParts();
 		if (!empty($pathParts)) {
 			return reset($pathParts);
+		}
+		
+		if (!$required) return null;
+		
+		throw new IllegalStateException('Path empty');
+	}
+	
+	/**
+	 * @param bool $required
+	 * @throws IllegalStateException
+	 * @return string|null
+	 */
+	public function getLastPathPart(bool $required = true) {
+		$pathParts = $this->getPathParts();
+		if (!empty($pathParts)) {
+			return end($pathParts);
 		}
 		
 		if (!$required) return null;
@@ -273,12 +294,22 @@ final class Path {
 		return new Path($pathParts, $this->leadingDelimiter);
 	}
 	
-	public function reduced($num) {
+	/**
+	 * @param int $num
+	 * @return \n2n\util\uri\Path
+	 */
+	public function reduced(int $num) {
 		return $this->sub(0, $this->size() - $num);
 	}	
 		
-	// @todo make new
-	public function sub($start, $num = null) {
+	/**
+	 * @param int $start
+	 * @param int $num
+	 * @throws \InvalidArgumentException
+	 * @return \n2n\util\uri\Path
+	 * @todo make new
+	 */
+	public function sub(int $start, int $num = null) {
 		$pathParts = $this->getPathParts();
 		$numPathParts = count($pathParts);
 		if ($start < 0) {
