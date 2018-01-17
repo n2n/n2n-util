@@ -324,4 +324,12 @@ class Url {
 
 		return $str;
 	}
+
+	/**
+	 * @param $url
+	 * @return bool
+	 */
+	public function equals($url): bool {
+		return $url instanceof Url && (string) $this  === (string) $url;
+	}
 }
