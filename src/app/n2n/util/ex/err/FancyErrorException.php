@@ -37,7 +37,7 @@ class FancyErrorException extends \ErrorException implements Documentable, Enhan
 	 * @param int $line
 	 * @param int $startLine
 	 * @param int $endLine
-	 * @param Exception $previous
+	 * @param \Exception $previous
 	 */
 	public function __construct(string $message = null, string $file = null, int $line = null, 
 			int $startLine = null, int $endLine = null, \Exception $previous = null, 

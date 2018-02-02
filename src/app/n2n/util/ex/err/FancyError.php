@@ -28,16 +28,16 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 	private $endLine;
 	private $documentId;
 	private $additionalErrors = array();
+	
 	/**
-	 * 
 	 * @param string $message
-	 * @param int $code
-	 * @param int $severity
 	 * @param string $file
 	 * @param int $line
 	 * @param int $startLine
 	 * @param int $endLine
-	 * @param Exception $previous
+	 * @param \Throwable $previous
+	 * @param mixed $documentId
+	 * @param mixed $code
 	 */
 	public function __construct(string $message = null, string $file = null, int $line = null, 
 			int $startLine = null, int $endLine = null, \Throwable $previous = null, 

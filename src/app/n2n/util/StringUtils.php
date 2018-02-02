@@ -23,7 +23,6 @@ namespace n2n\util;
 
 use n2n\core\N2nRuntimeException;
 use n2n\reflection\ReflectionUtils;
-use n2n\core\N2N;
 
 class StringUtils {
 	const CRLF = "\r\n";
@@ -225,7 +224,7 @@ class StringUtils {
 	
 	/**
 	 * 
-	 * @see json_encode - PHP Core
+	 * @see json_encode() - PHP Core
 	 * @param $json
 	 * @param $assoc
 	 * @param $depth
@@ -242,12 +241,12 @@ class StringUtils {
 	}
 	/**
 	 * 
-	 * @param unknown_type $json
-	 * @param unknown_type $assoc
-	 * @param unknown_type $depth
+	 * @param string $json
+	 * @param bool $assoc
+	 * @param int $depth
 	 * @throws JsonDecodeFailedException
 	 */
-	public static function jsonDecode($json, $assoc = false, $depth = 512) {
+	public static function jsonDecode(string $json, bool $assoc = false, int $depth = 512) {
 		$str = json_decode($json, $assoc, $depth);
 		if ($str === null) {
 			throw new JsonDecodeFailedException('JSON string could not be decoded.');
@@ -355,8 +354,8 @@ class StringUtils {
 		return (string) $param1 === (string) $param2;
 	}
 	/**
-	 * @param unknown $pattern
-	 * @param unknown $subject
+	 * @param string $pattern
+	 * @param string $subject
 	 * @param array $matches
 	 * @param number $flags
 	 * @param number $offset

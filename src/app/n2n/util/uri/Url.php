@@ -227,7 +227,7 @@ class Url {
 	}
 
 	/**
-	 * @param unknown $expression
+	 * @param mixed $expression
 	 * @throws \InvalidArgumentException
 	 * @return \n2n\util\uri\Url
 	 */

@@ -20,7 +20,6 @@
  * Thomas Günther.......: Developer, Hangar
  */
 namespace n2n\util\crypt\hash\algorithm;
-use n2n\util\crypt\hash\algorithm\HashAlgorithm;
 
 class BlowfishAlgorithm implements HashAlgorithm {
 	
