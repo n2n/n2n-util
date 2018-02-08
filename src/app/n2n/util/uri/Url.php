@@ -272,7 +272,7 @@ class Url {
 			$uri->query = Query::create($uriMap['query']);
 		}
 		if (isset($uriMap['fragment'])) {
-			$uri->fragment = $uriMap['fragment'];
+			$uri->fragment = rawurldecode($uriMap['fragment']);
 		}
 		return $uri;
 	}
@@ -319,7 +319,7 @@ class Url {
 		}
 
 		if ($this->fragment !== null) {
-			$str .= self::FRAGMENT_PREFIX . $this->fragment;
+			$str .= self::FRAGMENT_PREFIX . rawurlencode($this->fragment);
 		}
 
 		return $str;
