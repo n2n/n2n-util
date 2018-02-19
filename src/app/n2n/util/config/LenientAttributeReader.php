@@ -99,9 +99,9 @@ class LenientAttributeReader {
 		}
 	}
 	
-	public function getInt($name, $fallbackValue = null, $nullAllowed = false, $lenient = true) {
+	public function getInt(string $name, $fallbackValue = null, bool $nullAllowed = false, bool $lenient = true) {
 		try {
-			return $this->attributes->getBool($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->getInt($name, false, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
