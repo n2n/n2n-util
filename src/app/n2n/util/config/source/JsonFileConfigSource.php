@@ -28,8 +28,8 @@ use n2n\util\JsonDecodeFailedException;
 class JsonFileConfigSource implements WritableConfigSource {
 	private $filePath;
 	
-	public function __construct($filePath) {
-		$this->filePath = (string) $filePath;
+	public function __construct(string $filePath) {
+		$this->filePath = $filePath;
 	}
 	
 	public function readArray(): array {
