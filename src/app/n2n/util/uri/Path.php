@@ -233,10 +233,11 @@ final class Path {
 			}
 			$endingDelimiter = $part->hasEndingDelimiter();
 			
-			if ($pathExtStr !== null && !$part->isEmpty()) {
+			if ($part->isEmpty()) continue;
+			
+			if ($pathExtStr !== null) {
 				$pathExtStr .= Path::DELIMITER;
 			}
-			
 			$pathExtStr .= $part->toRealString(false, false);
 		}
 		
