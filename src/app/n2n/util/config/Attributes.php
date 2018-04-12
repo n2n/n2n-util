@@ -238,7 +238,7 @@ class Attributes {
 	
 	
 	public function getScalarArray($name, $mandatory = true, $defaultValue = array(), $nullAllowed = false) {
-		return $this->getArray($name, $mandatory, $defaultValue, TypeConstraint::createSimple('scalar'));
+		return $this->getArray($name, $mandatory, $defaultValue, TypeConstraint::createSimple('scalar'), $nullAllowed);
 	}
 	
 	/**
