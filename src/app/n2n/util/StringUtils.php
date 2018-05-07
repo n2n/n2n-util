@@ -312,6 +312,32 @@ class StringUtils {
 		return mb_substr($str, 0, ($length - $suffixLen)) . $suffix;
 	}
 	
+	/**
+	 * @param string|null $value
+	 * @return string
+	 */
+	public static function convertNonPrintables(?string $value) {
+		if (empty($value)) {
+			return $value;
+		}
+		
+		$ret = '';
+		$length = strlen($value);
+		for($i = 0; $i < $length; $i ++) {
+			$current = ord($value{$i});
+			
+			if (($current == 0x9) || ($current == 0xA) || ($current == 0xD)
+					|| (($current >= 0x20) && ($current <= 0xD7FF)) 
+					|| (($current >= 0xE000) && ($current <= 0xFFFD)) 
+					|| (($current >= 0x10000) && ($current <= 0x10FFFF))) {
+				$ret .= chr($current);
+			} else {
+				$ret .= ' ';
+			}
+		}
+		return $ret;
+	}
+	
 // 	public static function generateBase36Uid($maxLentgh = null) {
 // 		$uid =  base_convert(uniqid(), 16, 36);
 		
