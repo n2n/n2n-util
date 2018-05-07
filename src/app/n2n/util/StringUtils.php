@@ -55,9 +55,13 @@ class StringUtils {
 				$str));
 	}
 	
-	public static function strOf($arg) {
+	public static function strOf($arg, bool $lenient = false) {
 		if ($arg === null || is_scalar($arg) || (is_object($arg) && method_exists($arg, '__toString'))) {
 			return (string) $arg;
+		}
+		
+		if ($lenient) {
+			return ReflectionUtils::getTypeInfo($arg);
 		}
 		
 		throw new \InvalidArgumentException('Can not be converted to string: '
