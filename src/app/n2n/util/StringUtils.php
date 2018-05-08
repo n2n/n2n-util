@@ -55,9 +55,13 @@ class StringUtils {
 				$str));
 	}
 	
-	public static function strOf($arg) {
+	public static function strOf($arg, bool $lenient = false) {
 		if ($arg === null || is_scalar($arg) || (is_object($arg) && method_exists($arg, '__toString'))) {
 			return (string) $arg;
+		}
+		
+		if ($lenient) {
+			return ReflectionUtils::getTypeInfo($arg);
 		}
 		
 		throw new \InvalidArgumentException('Can not be converted to string: '
@@ -310,6 +314,32 @@ class StringUtils {
 		}
 		
 		return mb_substr($str, 0, ($length - $suffixLen)) . $suffix;
+	}
+	
+	/**
+	 * @param string|null $value
+	 * @return string
+	 */
+	public static function convertNonPrintables(?string $value) {
+		if (empty($value)) {
+			return $value;
+		}
+		
+		$ret = '';
+		$length = strlen($value);
+		for($i = 0; $i < $length; $i ++) {
+			$current = ord($value{$i});
+			
+			if (($current == 0x9) || ($current == 0xA) || ($current == 0xD)
+					|| (($current >= 0x20) && ($current <= 0xD7FF)) 
+					|| (($current >= 0xE000) && ($current <= 0xFFFD)) 
+					|| (($current >= 0x10000) && ($current <= 0x10FFFF))) {
+				$ret .= chr($current);
+			} else {
+				$ret .= ' ';
+			}
+		}
+		return $ret;
 	}
 	
 // 	public static function generateBase36Uid($maxLentgh = null) {
