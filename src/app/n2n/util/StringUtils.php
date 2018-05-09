@@ -274,7 +274,7 @@ class StringUtils {
 		return $part1 . (string) $insertStr . $part2;
 	}
 	
-	public static function reduce($str, $length, string $suffix = '') {
+	public static function reduce(string $str, int $length, string $suffix = '') {
 		if (mb_strlen($str) < $length) {
 			return $str;
 		}
