@@ -183,7 +183,7 @@ class Attributes {
 	}	
 	
 	public function getNumeric($name, $mandatory = true, $defaultValue = null, $nullAllowed = false) {
-		return $this->get($name, $mandatory, $defaultValue, TypeConstraint::createSimple('scalar', $nullAllowed));
+		return $this->get($name, $mandatory, $defaultValue, TypeConstraint::createSimple('numeric', $nullAllowed));
 	}
 	
 	public function getInt(string $name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false, $lenient = true) {
