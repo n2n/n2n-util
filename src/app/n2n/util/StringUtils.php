@@ -275,7 +275,7 @@ class StringUtils {
 	}
 	
 	public static function reduce(string $str, int $length, string $suffix = '') {
-		if (mb_strlen($str) < $length) {
+		if (mb_strlen($str) <= $length) {
 			return $str;
 		}
 		
