@@ -281,12 +281,32 @@ class StringUtils {
 		return $part1 . (string) $insertStr . $part2;
 	}
 	
+	/**
+	 * @param string $str
+	 * @param int $length
+	 * @param string $suffix
+	 * @return string
+	 */
 	public static function reduce(string $str, int $length, string $suffix = '') {
 		if (mb_strlen($str) <= $length) {
 			return $str;
 		}
 		
 		return mb_substr($str, 0, $length) . $suffix;
+	}
+	
+	/**
+	 * @param string $str
+	 * @param int $length
+	 * @param string $suffix
+	 * @return string
+	 */
+	public static function reduceFront(string $str, int $length, string $suffix = '') {
+		if (mb_strlen($str) <= $length) {
+			return $str;
+		}
+		
+		return $suffix . mb_substr($str, -$length);
 	}
 	
 	/**
