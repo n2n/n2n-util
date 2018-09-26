@@ -49,11 +49,18 @@ class StringUtils {
 		return mb_strtolower($str);
 	}
 	
+	/**
+	 * Tries to convert a tecnical string to a string which is easy readable. This method may be changed in future
+	 * releases.
+	 * @param string $str
+	 * @return string
+	 */
 	public static function pretty(string $str) {
-		return ucfirst(preg_replace_callback('/[^_-]+([A-Za-z0-9]?)/',
-				function ($found) { return ucfirst($found[0]); },
+		return ucfirst(preg_replace_callback('/[_-]+([^_-]?)/',
+				function ($found) { return ' ' . ucfirst($found[1]); },
 				$str));
 	}
+	
 	
 	public static function strOf($arg, bool $lenient = false) {
 		if ($arg === null || is_scalar($arg) || (is_object($arg) && method_exists($arg, '__toString'))) {
