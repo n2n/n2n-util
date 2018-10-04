@@ -30,7 +30,12 @@ class Query {
 	
 	private function normalizeAttrs($attrs) {
 		foreach ($attrs as $key => $value) {
-			if ($value === null || is_scalar($value)) continue;
+			if (is_scalar($value)) continue;
+			
+			if ($value === null) {
+				unset($attrs[$key]);
+				continue;
+			}
 				
 			try {
 				if (is_array($value)) {
