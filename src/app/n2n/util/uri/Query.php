@@ -23,17 +23,23 @@ namespace n2n\util\uri;
 
 class Query {
 	private $attrs = array();
+	private $empty = true;
 	
 	public function __construct(array $attrs) {
 		$this->attrs = $this->normalizeAttrs($attrs);
 	}
 	
+	/**
+	 * @param array $attrs
+	 * @throws \InvalidArgumentException
+	 * @return array
+	 */
 	private function normalizeAttrs($attrs) {
 		foreach ($attrs as $key => $value) {
-			if (is_scalar($value)) continue;
+			if ($value === null) continue;
 			
-			if ($value === null) {
-				unset($attrs[$key]);
+			if (is_scalar($value)) {
+				$this->empty = false;
 				continue;
 			}
 				
@@ -53,7 +59,7 @@ class Query {
 	}
 	
 	public function isEmpty() {
-		return 0 == count($this->attrs);
+		return $this->empty;
 	}
 	
 	public function contains($name) {
@@ -78,6 +84,9 @@ class Query {
 		return new Query($query->toArray() + $this->attrs);
 	}
 	
+	/**
+	 * @return array
+	 */
 	public function toArray() {
 		return $this->attrs;
 	}
