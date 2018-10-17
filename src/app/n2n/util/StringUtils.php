@@ -454,14 +454,14 @@ class StringUtils {
 
 
 
-class GzuncompressFailedException extends N2nRuntimeException {
+class GzuncompressFailedException extends \RuntimeException {
 	
 }
 
-class JsonEncodeFailedException extends N2nRuntimeException {
+class JsonEncodeFailedException extends \RuntimeException {
 	
 }
 
-class JsonDecodeFailedException extends N2nRuntimeException {
+class JsonDecodeFailedException extends \RuntimeException {
 	
 }
