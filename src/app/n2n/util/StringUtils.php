@@ -21,7 +21,6 @@
  */
 namespace n2n\util;
 
-use n2n\core\N2nRuntimeException;
 use n2n\reflection\ReflectionUtils;
 
 class StringUtils {
