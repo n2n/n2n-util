@@ -97,6 +97,9 @@ final class Path {
 		return $this->endingDelimiter;
 	}
 	
+	/**
+	 * @return string[]
+	 */
 	public function getPathParts() {
 		if ($this->pathParts !== null) {
 			return $this->pathParts;
