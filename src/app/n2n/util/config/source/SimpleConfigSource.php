@@ -30,7 +30,7 @@ class SimpleConfigSource implements ConfigSource {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\config\source\ConfigSource::readArray()
 	 */
-	public function readArray() {
+	public function readArray(): array {
 		return $this->array;
 	}
 	/* (non-PHPdoc)
