@@ -21,7 +21,7 @@
  */
 namespace n2n\util\uri;
 
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 class Authority {
 	const USER_PASS_SEPARATOR = ':';

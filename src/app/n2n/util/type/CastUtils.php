@@ -19,14 +19,38 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util;
+namespace n2n\util\type;
 
-use n2n\util\type\TypeUtils;
-
-class NotSerializableException extends \RuntimeException {
+class CastUtils {
 	
-	public static function createFromObject($obj, \Exception $previous = null) {
-		return new NotSerializableException('Type not serializable: ' . TypeUtils::getTypeInfo($obj), 0, 
-				$previous);
+	public static function assertTrue($arg) {
+		if ($arg === true) return;
+		
+		throw new TypeCastException();
+	}
+
+	private static function checkScalarConvertabillity($arg) {
+		return is_scalar($arg) || (is_object($arg) && !method_exists($arg, '__toString'));
+	}
+	
+	public static function stringOrNull($arg) {
+		if ($arg === null) return $arg;
+		
+		if (self::checkScalarConvertabillity($arg)) {
+			return (string) $arg;
+		}
+		
+		throw new TypeCastException('Can not cast ' . TypeUtils::getTypeInfo($arg) . ' to string: ' 
+				. TypeUtils::getTypeInfo($arg));
+	}
+	
+	public static function intOrNull($arg) {
+		if ($arg === null) return $arg;
+		
+		if (self::checkScalarConvertabillity($arg)) {
+			return (int) $arg;
+		}
+		
+		throw new TypeCastException('Can not cast ' . TypeUtils::getTypeInfo($arg) . ' to int.');
 	}
 }

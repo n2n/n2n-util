@@ -19,14 +19,20 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util;
+namespace n2n\util\magic;
 
-use n2n\util\type\TypeUtils;
-
-class NotSerializableException extends \RuntimeException {
-	
-	public static function createFromObject($obj, \Exception $previous = null) {
-		return new NotSerializableException('Type not serializable: ' . TypeUtils::getTypeInfo($obj), 0, 
-				$previous);
-	}
+interface MagicContext {
+	/**
+	 * @param string $id
+	 * @param bool $required
+	 * @return mixed
+	 * @throws MagicObjectUnavailableException only if $required is false.
+	 */
+	public function lookup($id, $required = true);
+	/**
+	 * @param \ReflectionParameter
+	 * @throws MagicObjectUnavailableException
+	 * @return mixed
+	 */
+	public function lookupParameterValue(\ReflectionParameter $parameter);
 }

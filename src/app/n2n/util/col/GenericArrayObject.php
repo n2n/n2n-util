@@ -21,7 +21,7 @@
  */
 namespace n2n\util\col;
 
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 class GenericArrayObject extends \ArrayObject implements Collection {
 	private $genericType;

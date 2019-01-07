@@ -1,7 +1,7 @@
 <?php
 namespace n2n\util\dev;
 
-use n2n\reflection\ArgUtils;
+use n2n\util\type\ArgUtils;
 
 /**
  * Represets a version according to {@link https://semver.org/}
