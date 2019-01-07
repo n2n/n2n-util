@@ -21,7 +21,7 @@
  */
 namespace n2n\util\config;
 
-use n2n\reflection\ReflectionUtils;
+use n2n\util\type\TypeUtils;
 
 class ConfigValueExtractor {
 	private $data;
@@ -104,7 +104,7 @@ class ConfigValueExtractor {
 		}
 		
 		throw new InvalidConfigurationException('Property \'' . $configProperty->__toString() 
-				. '\' must be an object or array, ' . ReflectionUtils::getTypeInfo($levelValue) 
+				. '\' must be an object or array, ' . TypeUtils::getTypeInfo($levelValue) 
 				. ' given in config source: ' . $this->configSourceName);
 	}
 	/**
@@ -162,7 +162,7 @@ class ConfigValueExtractor {
 		
 		throw new InvalidConfigurationException('Property \'' . $this->createConfigProperty($property)->__toString() 
 				. '\' must be scalar (integer, float, string or boolean), ' 
-				. ReflectionUtils::getTypeInfo($value) . ' given in config source: ' 
+				. TypeUtils::getTypeInfo($value) . ' given in config source: ' 
 				. $this->configSourceName);
 	}
 	/**
@@ -179,7 +179,7 @@ class ConfigValueExtractor {
 		}
 		
 		throw new InvalidConfigurationException('Property \'' .
-				$this->createConfigProperty($property) . '\' must be numeric, ' . ReflectionUtils::getTypeInfo($value) 
+				$this->createConfigProperty($property) . '\' must be numeric, ' . TypeUtils::getTypeInfo($value) 
 						. ' given in config source: ' . $this->configSourceName);
 	}
 // 	/**
@@ -196,7 +196,7 @@ class ConfigValueExtractor {
 // 		}
 		
 // 		throw new InvalidConfigurationException('Property \'' .
-// 				$configProperty->__toString() . '\' must be an integer, ' . ReflectionUtils::getTypeInfo($value) 
+// 				$configProperty->__toString() . '\' must be an integer, ' . TypeUtils::getTypeInfo($value) 
 // 						. ' given in config source: ' . $this->configSourceName);
 // 	}
 	/**
@@ -213,7 +213,7 @@ class ConfigValueExtractor {
 		}
 		
 		throw new InvalidConfigurationException('Property \'' .
-				ConfigProperty::create($property)->__toString() . '\' must be a boolean, ' . ReflectionUtils::getTypeInfo($value) 
+				ConfigProperty::create($property)->__toString() . '\' must be a boolean, ' . TypeUtils::getTypeInfo($value) 
 						. ' given in config source: ' . $this->configSourceName);
 	}
 	/**
@@ -230,7 +230,7 @@ class ConfigValueExtractor {
 		}
 		
 		throw new InvalidConfigurationException('Property \'' .
-				ConfigProperty::create($property)->__toString() . '\' must be an array, ' . ReflectionUtils::getTypeInfo($value) 
+				ConfigProperty::create($property)->__toString() . '\' must be an array, ' . TypeUtils::getTypeInfo($value) 
 						. ' given in config source: ' . $this->configSourceName);
 	}
 	/**
@@ -251,7 +251,7 @@ class ConfigValueExtractor {
 			
 			throw new InvalidConfigurationException('Property \'' . $this->createConfigProperty($property). '[' 
 					. $key . ']\' must be scalar (integer, float, string or boolean), ' 
-					. ReflectionUtils::getTypeInfo($value) . ' given in config source: ' 
+					. TypeUtils::getTypeInfo($value) . ' given in config source: ' 
 					. $this->configSourceName);
 		}
 		
@@ -274,7 +274,7 @@ class ConfigValueExtractor {
 		
 		throw new InvalidConfigurationException('Invalid value for property \'' 
 				. $this->createConfigProperty($property) . '\' (allowed: ' . implode(', ', $options) 
-				. '). \'' . ReflectionUtils::buildUsefullValueIdentifier($value) 
+				. '). \'' . TypeUtils::buildUsefullValueIdentifier($value) 
 				. '\' given in config source: ' . $this->configSourceName);
 	}
 	/**

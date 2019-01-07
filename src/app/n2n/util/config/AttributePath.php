@@ -21,7 +21,7 @@
  */
 namespace n2n\util\config;
 
-use n2n\reflection\ReflectionUtils;
+use n2n\util\type\TypeUtils;
 
 class AttributePath {
 	private $names;
@@ -52,7 +52,7 @@ class AttributePath {
 		}
 		
 		throw new \InvalidArgumentException('Invalid AttributePath expression type: ' 
-				. ReflectionUtils::getTypeInfo($expression));
+				. TypeUtils::getTypeInfo($expression));
 	}
 	
 	public function __toString(): string {

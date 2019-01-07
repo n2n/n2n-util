@@ -21,7 +21,7 @@
  */
 namespace n2n\util;
 
-use n2n\reflection\ReflectionUtils;
+use n2n\util\type\TypeUtils;
 
 class StringUtils {
 	const CRLF = "\r\n";
@@ -67,11 +67,11 @@ class StringUtils {
 		}
 		
 		if ($lenient) {
-			return ReflectionUtils::getTypeInfo($arg);
+			return TypeUtils::getTypeInfo($arg);
 		}
 		
 		throw new \InvalidArgumentException('Can not be converted to string: '
-				. ReflectionUtils::getTypeInfo($arg));
+				. TypeUtils::getTypeInfo($arg));
 	}
 	
 // 	public static function toText($str) {

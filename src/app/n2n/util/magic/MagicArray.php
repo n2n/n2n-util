@@ -19,14 +19,10 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util;
+namespace n2n\util\api;
 
-use n2n\util\type\TypeUtils;
+use n2n\util\magic\MagicContext;
 
-class NotSerializableException extends \RuntimeException {
-	
-	public static function createFromObject($obj, \Exception $previous = null) {
-		return new NotSerializableException('Type not serializable: ' . TypeUtils::getTypeInfo($obj), 0, 
-				$previous);
-	}
+interface MagicArray {
+	function toArray(MagicContext $magicContext): array;
 }

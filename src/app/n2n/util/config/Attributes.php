@@ -21,11 +21,11 @@
  */
 namespace n2n\util\config;
 
-use n2n\reflection\ReflectionUtils;
 use n2n\reflection\property\TypeConstraint;
 use n2n\reflection\property\ValueIncompatibleWithConstraintsException;
 use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
+use n2n\util\type\TypeUtils;
 
 class Attributes {
 	private $attrs;
@@ -105,7 +105,7 @@ class Attributes {
 		 
 		if (!is_array($attrs)) {
 			throw new InvalidAttributeException('Property \'' . new AttributePath($prevNames)
-				. '\' must be an array. ' . ReflectionUtils::getTypeInfo($attrs) . ' given.');
+				. '\' must be an array. ' . TypeUtils::getTypeInfo($attrs) . ' given.');
 		}
 		 
 		$prevNames[] = $nextName;
@@ -224,7 +224,7 @@ class Attributes {
 		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
 			throw new InvalidAttributeException('Property \'' . $attributePath 
 				. '\' must contain one of following values: ' . implode(', ', $allowedValues) 
-				. '. Given: ' . ReflectionUtils::buildScalar($value));
+				. '. Given: ' . TypeUtils::buildScalar($value));
 		}
 	
 		return $this->attrs[$name];
