@@ -342,6 +342,18 @@ class StringUtils {
 		return mb_substr($str, 0, ($length - $suffixLen)) . $suffix;
 	}
 	
+	public static function removePrefix(string $prefix, ?string $str, bool $returnAnyway = true) {
+		if ($str === null) return null;
+		
+		$len = mb_strlen($prefix);
+		
+		if ($prefix != mb_substr($str, 0, $len)) {
+			return $returnAnyway ? $str : null;
+		}
+		
+		return mb_substr($str, $len);
+	}
+	
 	/**
 	 * @param string|null $value
 	 * @return string
