@@ -22,7 +22,6 @@
 namespace n2n\util\type;
 
 use n2n\util\col\ArrayUtils;
-use n2n\reflection\property\TypeConstraint;
 
 class ArgUtils {
 // 	public static function validateEnumArgument($paramNo, array $options, $bti = 1) {
