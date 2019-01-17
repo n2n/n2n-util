@@ -260,6 +260,18 @@ class TypeConstraint {
 	
 	/**
 	 * @param string|\ReflectionClass|TypeConstraint|null $type
+	 * @return \n2n\util\type\TypeConstraint
+	 */
+	public static function build($type) {
+		if ($type === null) {
+			return null;
+		}
+		
+		return self::create($type);
+	}
+	
+	/**
+	 * @param string|\ReflectionClass|TypeConstraint|null $type
 	 * @param bool $allowsNull
 	 * @param array $whitelistTypes
 	 * @return \n2n\util\type\TypeConstraint
