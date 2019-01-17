@@ -395,6 +395,34 @@ class Attributes {
 	}
 	
 	/**
+	 * @param string|AttributePath|string[] $path
+	 * @param mixed $defaultValue
+	 * @param bool $nullAllowed
+	 * @return \n2n\util\type\attrs\Attributes|null
+	 */
+	public function reqAttributes($path, bool $nullAllowed = false) {
+		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
+			return new Attributes($array);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @param string|AttributePath|string[] $path
+	 * @param mixed $defaultValue
+	 * @param bool $nullAllowed
+	 * @return \n2n\util\type\attrs\Attributes|null
+	 */
+	public function optAttributes($path, $defaultValue = null, bool $nullAllowed = true) {
+		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
+			return new Attributes($array);
+		}
+		
+		return null;
+	}
+
+	/**
 	 * 
 	 * @param string $name
 	 */

@@ -22,12 +22,19 @@
 namespace n2n\util\type\attrs;
 
 use n2n\util\type\TypeUtils;
+use n2n\util\StringUtils;
 
 class AttributePath {
-	private $names;
+	const SEPARATOR = '/';
+	
+	private $names = [];
 	
 	public function __construct(array $names) {
-		$this->names = $names;
+		foreach ($names as $name) {
+			if (empty($name) && $name !== 0) continue;
+			
+			array_push($this->names, $name);
+		}
 	}
 	
 	public function toArray() {
@@ -48,7 +55,7 @@ class AttributePath {
 		}
 		
 		if (is_scalar($expression)) {
-			return new AttributePath(array($expression));
+			return new AttributePath(explode(self::SEPARATOR, $expression));
 		}
 		
 		throw new \InvalidArgumentException('Invalid AttributePath expression type: ' 
@@ -56,6 +63,6 @@ class AttributePath {
 	}
 	
 	public function __toString(): string {
-		return implode('/', $this->names);
+		return implode(self::SEPARATOR, $this->names);
 	}
 }
