@@ -268,7 +268,7 @@ class Attributes {
 			return $this->req($path, TypeConstraint::createSimple('bool', $nullAllowed));
 		}
 		
-		if (null !== ($value = $this->reqScalar($path))) {
+		if (null !== ($value = $this->reqScalar($path, $nullAllowed))) {
 			return (bool) $value;
 		}
 		
@@ -280,11 +280,11 @@ class Attributes {
 			return $this->opt($path, TypeConstraint::createSimple('bool', $nullAllowed), $defaultValue);
 		}
 		
-		if (null !== ($value = $this->optScalar($path, $defaultValue))) {
+		if (null !== ($value = $this->optScalar($path, $defaultValue, $nullAllowed))) {
 			return (bool) $value;
 		}
 		
-		return null;
+		return $defaultValue;
 	}
 	
 	public function reqNumeric($path, bool $nullAllowed = false) {
