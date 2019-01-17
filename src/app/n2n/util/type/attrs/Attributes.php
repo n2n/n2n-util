@@ -263,12 +263,28 @@ class Attributes {
 		return $this->optBool($path, $defaultValue, $nullAllowed);
 	}
 	
-	public function reqBool($path, bool $nullAllowed = false) {
-		return $this->req($path, TypeConstraint::createSimple('bool', $nullAllowed));
+	public function reqBool($path, bool $nullAllowed = false, $lenient = true) {
+		if (!$lenient) {
+			return $this->req($path, TypeConstraint::createSimple('bool', $nullAllowed));
+		}
+		
+		if (null !== ($value = $this->reqScalar($path))) {
+			return (bool) $value;
+		}
+		
+		return null;
 	}
 	
-	public function optBool($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('bool', $nullAllowed), $defaultValue);
+	public function optBool($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
+		if (!$lenient) {
+			return $this->opt($path, TypeConstraint::createSimple('bool', $nullAllowed), $defaultValue);
+		}
+		
+		if (null !== ($value = $this->optScalar($path, $defaultValue))) {
+			return (bool) $value;
+		}
+		
+		return null;
 	}
 	
 	public function reqNumeric($path, bool $nullAllowed = false) {
@@ -301,8 +317,6 @@ class Attributes {
 		}
 			
 		return null;
-		
-		
 	}
 	
 	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
