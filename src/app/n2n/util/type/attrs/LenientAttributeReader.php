@@ -69,7 +69,7 @@ class LenientAttributeReader {
 	
 	public function getScalar($name, $fallbackValue = null, bool $nullAllowed = false) {
 		try {
-			return $this->attributes->reqScalar($name, false, $fallbackValue, $nullAllowed);	
+			return $this->attributes->optScalar($name, $fallbackValue, $nullAllowed);	
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
@@ -77,7 +77,7 @@ class LenientAttributeReader {
 	
 	public function getString($name, $fallbackValue = null, $nullAllowed = false) {
 		try {
-			return $this->attributes->getString($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->optString($name, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}

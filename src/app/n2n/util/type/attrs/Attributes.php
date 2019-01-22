@@ -26,7 +26,6 @@ use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
-use n2n\web\http\controller\Interceptor;
 
 class Attributes {
 	private $attrs;
@@ -37,11 +36,6 @@ class Attributes {
 	 */
 	public function __construct(array $attrs = null) {
 		$this->attrs = (array) $attrs;
-	}
-	
-	public function setInterceptor(?Interceptor $interceptor) {
-		$this->interceptor = $interceptor;
-		return $this;
 	}
 	
 	/**
@@ -55,7 +49,7 @@ class Attributes {
 	 *
 	 * @return boolean
 	 */
-	public function contains($name) {
+	public function contains(string $name) {
 		return array_key_exists($name, $this->attrs);
 	}
 	
@@ -63,7 +57,7 @@ class Attributes {
 		return array_keys($this->attrs);
 	}
 	
-	public function hasKey($name, $key) {
+	public function hasKey(string $name, $key) {
 		return array_key_exists($name, $this->attrs) 
 				&& is_array($this->attrs[$name])
 				&& array_key_exists($key, $this->attrs[$name]);
@@ -82,7 +76,7 @@ class Attributes {
 	 * @param mixed $key scalar
 	 * @param mixed $value
 	 */
-	public function add(string $name, $key, $value) {
+	public function add(string $name, string $key, $value) {
 		if(!isset($this->attrs[$name]) || !is_array($this->attrs[$name])) {
 			$this->attrs[$name] = array();
 		}
@@ -101,39 +95,15 @@ class Attributes {
 	
 		$this->attrs[$name][] = $value;
 	}
-
-	private function findR(&$attrs, array $nextNames, array $prevNames, $mandatory, &$found) {
-		if (empty($nextNames)) {
-			$found = true;
-			return $attrs;
-		}
-		 
-		$nextName = array_shift($nextNames);
-		 
-		if (!is_array($attrs)) {
-			throw new InvalidAttributeException('Property \'' . new AttributePath($prevNames)
-				. '\' must be an array. ' . TypeUtils::getTypeInfo($attrs) . ' given.');
-		}
-		 
-		$prevNames[] = $nextName;
-		 
-		if (!array_key_exists($nextName, $attrs)) {
-			if (!$mandatory) {
-				$found = false;
-				return null;
-			}
-			throw new MissingAttributeFieldException('Missing property: '  . new AttributePath($prevNames));
-		}
-		 
-		return $this->findR($attrs[$nextName], $nextNames, $prevNames, $mandatory, $found);
-		 
-	}
 	
-	private function retrieve($path, $type, $mandatory, $defaultValue = null, &$found = null) {
-		$attributePath = AttributePath::create($path);
+	private function retrieve(string $name, $type, $mandatory, $defaultValue = null, &$found = null) {
 		$typeConstraint = TypeConstraint::build($type);
 		
-		$value = $this->findR($this->attrs, $attributePath->toArray(), array(), $mandatory, $found);
+		if (!$this->contains($name)) {
+			throw new MissingAttributeFieldException('Unknown attribute: ' . $name);
+		}
+		
+		$value = $this->attrs[$name];
 		
 		if (!$found) return $defaultValue;
 		
@@ -144,7 +114,7 @@ class Attributes {
 		try {
 			$typeConstraint->validate($value);
 		} catch (ValueIncompatibleWithConstraintsException $e) {
-			throw new InvalidAttributeException('Property contains invalid value: ' . $attributePath, 0, $e);
+			throw new InvalidAttributeException('Property contains invalid value: ' . $name, 0, $e);
 		}
 		
 		return $value;
@@ -152,19 +122,19 @@ class Attributes {
 
 	
 	/**
-	 * @param string|AttributePath|array $path
+	 * @param string|AttributePath|array $name
 	 * @param bool $mandatory
 	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @return mixed|null
 	 * @deprecated use {@see self::req()} or {@see self::opt()}
 	 */
-	public function get($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
+	public function get($name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
 		if ($mandatory) {
-			return $this->req($path, TypeConstraint::createSimple(null, $nullAllowed));
+			return $this->req($name, TypeConstraint::createSimple(null, $nullAllowed));
 		}
 		
-		return $this->opt($path, TypeConstraint::createSimple(null, $nullAllowed), $defaultValue);
+		return $this->opt($name, TypeConstraint::createSimple(null, $nullAllowed), $defaultValue);
 	}
 	
 	/**
@@ -175,55 +145,55 @@ class Attributes {
 	 * @throws InvalidAttributeException
 	 * @return mixed
 	 */
-	public function req($path, $type = null) {
-		return $this->retrieve($path, $type, true);
+	public function req(string $name, $type = null) {
+		return $this->retrieve($name, $type, true);
 	}
 	
-	public function opt($path, $type = null, $defaultValue = null) {
-		return $this->retrieve($path, $type, false, $defaultValue);
+	public function opt(string $name, $type = null, $defaultValue = null) {
+		return $this->retrieve($name, $type, false, $defaultValue);
 	}
 	
 	/**
-	 * @param string|AttributePath|array $path
+	 * @param string|AttributePath|array $name
 	 * @param bool $mandatory
 	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @return mixed|null
 	 * @deprecated use {@see self::reqScalar()} or {@see self::optScalar()}
 	 */
-	public function getScalar($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
+	public function getScalar(string $name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
 		if ($mandatory) {
-			return $this->reqScalar($path, $nullAllowed);
+			return $this->reqScalar($name, $nullAllowed);
 		}
 		
-		return $this->optScalar($path, $defaultValue, $nullAllowed);
+		return $this->optScalar($name, $defaultValue, $nullAllowed);
 	}
 	
-	public function reqScalar($path, bool $nullAllowed = false) {
-		return $this->req($path, TypeConstraint::createSimple('scalar', $nullAllowed));
+	public function reqScalar(string $name, bool $nullAllowed = false) {
+		return $this->req($name, TypeConstraint::createSimple('scalar', $nullAllowed));
 	}
 	
-	public function optScalar($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed));
+	public function optScalar(string $name, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->opt($name, TypeConstraint::createSimple('scalar', $nullAllowed));
 	}
 	
 	/**
-	 * @param string|AttributePath|array $path
+	 * @param string|AttributePath|array $name
 	 * @param bool $mandatory
 	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @return mixed|null
 	 * @deprecated use {@see self::reqString()} or {@see self::optString()}
 	 */
-	public function getString($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
+	public function getString(string $name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
 		if ($mandatory) {
-			return $this->reqString($path, $nullAllowed);
+			return $this->reqString($name, $nullAllowed);
 		}
 		
-		return $this->optString($path, $defaultValue, $nullAllowed); 
+		return $this->optString($name, $defaultValue, $nullAllowed); 
 	}
 	
-	public function reqString($name, bool $nullAllowed = false, bool $lenient = true) {
+	public function reqString(string $name, bool $nullAllowed = false, bool $lenient = true) {
 		if (!$lenient) {
 			return $this->req($name, TypeConstraint::createSimple('string', $nullAllowed));
 		}
@@ -235,12 +205,12 @@ class Attributes {
 		return null;
 	}
 	
-	public function optString($path, $defaultValue = null, $nullAllowed = true, bool $lenient = true) {
+	public function optString(string $name, $defaultValue = null, $nullAllowed = true, bool $lenient = true) {
 		if (!$lenient) {
-			return $this->opt($path, TypeConstraint::createSimple('string', $nullAllowed), $defaultValue);
+			return $this->opt($name, TypeConstraint::createSimple('string', $nullAllowed), $defaultValue);
 		}
 		
-		if (null !== ($value = $this->optScalar($path, $defaultValue, $nullAllowed))) {
+		if (null !== ($value = $this->optScalar($name, $defaultValue, $nullAllowed))) {
 			return (string) $value;
 		}
 		
@@ -248,88 +218,88 @@ class Attributes {
 	}
 	
 	/**
-	 * @param string|AttributePath|array $path
+	 * @param string|AttributePath|array $name
 	 * @param bool $mandatory
 	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @return mixed|null
 	 * @deprecated use {@see self::reqBool()} or {@see self::optBool()}
 	 */
-	public function getBool($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
+	public function getBool(string $name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
 		if ($mandatory) {
-			return $this->reqBool($path, $nullAllowed);
+			return $this->reqBool($name, $nullAllowed);
 		}
 		
-		return $this->optBool($path, $defaultValue, $nullAllowed);
+		return $this->optBool($name, $defaultValue, $nullAllowed);
 	}
 	
-	public function reqBool($path, bool $nullAllowed = false, $lenient = true) {
+	public function reqBool(string $name, bool $nullAllowed = false, $lenient = true) {
 		if (!$lenient) {
-			return $this->req($path, TypeConstraint::createSimple('bool', $nullAllowed));
+			return $this->req($name, TypeConstraint::createSimple('bool', $nullAllowed));
 		}
 		
-		if (null !== ($value = $this->reqScalar($path, $nullAllowed))) {
+		if (null !== ($value = $this->reqScalar($name, $nullAllowed))) {
 			return (bool) $value;
 		}
 		
 		return null;
 	}
 	
-	public function optBool($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
+	public function optBool(string $name, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
 		if (!$lenient) {
-			return $this->opt($path, TypeConstraint::createSimple('bool', $nullAllowed), $defaultValue);
+			return $this->opt($name, TypeConstraint::createSimple('bool', $nullAllowed), $defaultValue);
 		}
 		
-		if (null !== ($value = $this->optScalar($path, $defaultValue, $nullAllowed))) {
+		if (null !== ($value = $this->optScalar($name, $defaultValue, $nullAllowed))) {
 			return (bool) $value;
 		}
 		
 		return $defaultValue;
 	}
 	
-	public function reqNumeric($path, bool $nullAllowed = false) {
-		return $this->req($path, TypeConstraint::createSimple('numeric', $nullAllowed));
+	public function reqNumeric(string $name, bool $nullAllowed = false) {
+		return $this->req($name, TypeConstraint::createSimple('numeric', $nullAllowed));
 	}
 	
-	public function optNumeric($path, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($path, TypeConstraint::createSimple('numeric', $nullAllowed), $defaultValue);
+	public function optNumeric(string $name, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->opt($name, TypeConstraint::createSimple('numeric', $nullAllowed), $defaultValue);
 	}
 	
-	public function reqInt($path, bool $nullAllowed = false, $lenient = true) {
+	public function reqInt(string $name, bool $nullAllowed = false, $lenient = true) {
 		if (!$lenient) {
-			return $this->req($path, TypeConstraint::createSimple('int', $nullAllowed));
+			return $this->req($name, TypeConstraint::createSimple('int', $nullAllowed));
 		}
 		
-		if (null !== ($value = $this->reqNumeric($path))) {
+		if (null !== ($value = $this->reqNumeric($name))) {
 			return (int) $value;
 		}
 		
 		return null;
 	}
 	
-	public function optInt($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
+	public function optInt(string $name, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
 		if (!$lenient) {
-			return $this->opt($path, TypeConstraint::createSimple('int', $nullAllowed), $defaultValue);
+			return $this->opt($name, TypeConstraint::createSimple('int', $nullAllowed), $defaultValue);
 		}
 		
-		if (null !== ($value = $this->optNumeric($path, $defaultValue))) {
+		if (null !== ($value = $this->optNumeric($name, $defaultValue))) {
 			return (int) $value;
 		}
 			
 		return null;
 	}
 	
-	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
-		return $this->getEnum($path, $allowedValues);
+	public function reqEnum(string $name, array $allowedValues, bool $nullAllowed = false) {
+		return $this->getEnum($name, $allowedValues);
 	}
 	
-	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->getEnum($path, $allowedValues, false, $defaultValue, $nullAllowed);
+	public function optEnum(string $name, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
+		return $this->getEnum($name, $allowedValues, false, $defaultValue, $nullAllowed);
 	}
 	
-	private function getEnum($path, array $allowedValues, $mandatory = true, $defaultValue = null, $nullAllowed = false) {
+	private function getEnum(string $name, array $allowedValues, $mandatory = true, $defaultValue = null, $nullAllowed = false) {
 		$found = null;
-		$value = $this->retrieve($path, null, $mandatory, $defaultValue, $found);
+		$value = $this->retrieve($name, null, $mandatory, $defaultValue, $found);
 		if (!$found) return $defaultValue;
 	
 		if ($nullAllowed && $value === null) {
@@ -346,7 +316,7 @@ class Attributes {
 	}
 	
 	/**
-	 * @param string|AttributePath|array $path
+	 * @param string|AttributePath|array $name
 	 * @param bool $mandatory
 	 * @param mixed|null $defaultValue
 	 * @param TypeConstraint|string|null $fieldType
@@ -354,54 +324,54 @@ class Attributes {
 	 * @return mixed|null
 	 * @deprecated use {@see self::reqArray()} or {@see self::optArray()}
 	 */
-	public function getArray($path, bool $mandatory = true, $defaultValue = array(), $fieldType = null, bool $nullAllowed = false) {
+	public function getArray(string $name, bool $mandatory = true, $defaultValue = array(), $fieldType = null, bool $nullAllowed = false) {
 		if ($mandatory) {
-			return $this->reqArray($path, $fieldType, $nullAllowed);
+			return $this->reqArray($name, $fieldType, $nullAllowed);
 		}
 		
-		return $this->optArray($path, $fieldType, $defaultValue, $nullAllowed);
+		return $this->optArray($name, $fieldType, $defaultValue, $nullAllowed);
 	}
 	
-	public function reqArray($name, $fieldType = null, bool $nullAllowed = false) {
+	public function reqArray(string $name, $fieldType = null, bool $nullAllowed = false) {
 		return $this->req($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType));
 	}
 	
-	public function optArray($name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false) {
+	public function optArray(string $name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false) {
 		return $this->opt($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType), $defaultValue);
 	}
 	
 	/**
-	 * @param string|AttributePath|array $path
+	 * @param string|AttributePath|array $name
 	 * @param bool $mandatory
 	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @return mixed|null
 	 * @deprecated use {@see self::reqScalarArray()} or {@see self::optScalarArray()}
 	 */
-	public function getScalarArray($path, bool $mandatory = true, $defaultValue = array(), bool $nullAllowed = false, bool $fieldNullAllowed = true) {
+	public function getScalarArray(string $name, bool $mandatory = true, $defaultValue = array(), bool $nullAllowed = false, bool $fieldNullAllowed = true) {
 		if ($mandatory) {
-			return $this->reqScalarArray($path, $nullAllowed, $fieldNullAllowed);
+			return $this->reqScalarArray($name, $nullAllowed, $fieldNullAllowed);
 		}
 		
-		return $this->optScalarArray($path, $defaultValue, $nullAllowed, $fieldNullAllowed);
+		return $this->optScalarArray($name, $defaultValue, $nullAllowed, $fieldNullAllowed);
 	}
 	
-	public function reqScalarArray($name, bool $nullAllowed = false, bool $fieldNullAllowed = false) {
+	public function reqScalarArray(string $name, bool $nullAllowed = false, bool $fieldNullAllowed = false) {
 		return $this->reqArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $nullAllowed);
 	}
 	
-	public function optScalarArray($name, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
+	public function optScalarArray(string $name, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
 		return $this->optArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $defaultValue, $nullAllowed);
 	}
 	
 	/**
-	 * @param string|AttributePath|string[] $path
+	 * @param string|AttributePath|string[] $name
 	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
 	 * @return \n2n\util\type\attrs\Attributes|null
 	 */
-	public function reqAttributes($path, bool $nullAllowed = false) {
-		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
+	public function reqAttributes(string $name, bool $nullAllowed = false) {
+		if (null !== ($array = $this->reqArray($name, null, $nullAllowed))) {
 			return new Attributes($array);
 		}
 		
@@ -409,13 +379,13 @@ class Attributes {
 	}
 	
 	/**
-	 * @param string|AttributePath|string[] $path
+	 * @param string|AttributePath|string[] $name
 	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
 	 * @return \n2n\util\type\attrs\Attributes|null
 	 */
-	public function optAttributes($path, $defaultValue = null, bool $nullAllowed = true) {
-		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
+	public function optAttributes(string $name, $defaultValue = null, bool $nullAllowed = true) {
+		if (null !== ($array = $this->optArray($name, null, $defaultValue, $nullAllowed))) {
 			return new Attributes($array);
 		}
 		

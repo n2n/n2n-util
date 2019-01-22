@@ -24,7 +24,7 @@ namespace n2n\util\type\attrs;
 use n2n\util\type\TypeUtils;
 
 class AttributePath {
-	const SEPARATOR = '/';
+	const SEPARATOR = '.';
 	
 	private $names = [];
 	
@@ -40,11 +40,24 @@ class AttributePath {
 		return $this->names;
 	}
 	
-	public static function create($expression) {
+	/**
+	 * @param string|string[]|AttributePath $expression
+	 * @return NULL|\n2n\util\type\attrs\AttributePath
+	 */
+	public static function build($expression) { 
 		if ($expression === null) {
 			return null;
 		}
 		
+		return self::create($expression);
+	}
+	
+	/**
+	 * @param string|string[]|AttributePath $expression
+	 * @throws \InvalidArgumentException
+	 * @return \n2n\util\type\attrs\AttributePath
+	 */
+	public static function create($expression) {
 		if ($expression instanceof AttributePath) {
 			return $expression;
 		}
@@ -59,6 +72,18 @@ class AttributePath {
 		
 		throw new \InvalidArgumentException('Invalid AttributePath expression type: ' 
 				. TypeUtils::getTypeInfo($expression));
+	}
+	
+	/**
+	 * @param array $expressions
+	 * @return \n2n\util\type\attrs\AttributePath[]
+	 */
+	public static function createArray(array $expressions) {
+		$paths = [];
+		foreach ($expressions as $expression) {
+			$paths[] = self::create($expression);
+		}
+		return $paths;
 	}
 	
 	public function __toString(): string {
