@@ -38,7 +38,7 @@ class TypeConstraint {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function __construct(string $typeName = null, bool $allowsNull = true, 
-			TypeConstraint $arrayFieldTypeConstraints = null,array $whitelistTypes = array()) {
+			TypeConstraint $arrayFieldTypeConstraints = null, array $whitelistTypes = array()) {
 		$this->typeName = $typeName;
 		$this->allowsNull = (boolean) $allowsNull;
 		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraints;

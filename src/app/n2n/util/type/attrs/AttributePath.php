@@ -22,7 +22,6 @@
 namespace n2n\util\type\attrs;
 
 use n2n\util\type\TypeUtils;
-use n2n\util\StringUtils;
 
 class AttributePath {
 	const SEPARATOR = '/';
