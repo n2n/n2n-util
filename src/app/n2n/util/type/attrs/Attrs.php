@@ -105,10 +105,10 @@ class Attrs implements AttributeReader {
 	public function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
 			$defaultValue = null) {
 		if ($mandatory) {
-			return $this->req($path, TypeConstraint::createSimple(null, $nullAllowed));
+			return $this->req($path, $typeConstraint);
 		}
 		
-		return $this->opt($path, TypeConstraint::createSimple(null, $nullAllowed), $defaultValue);
+		return $this->opt($path, $typeConstraint, $defaultValue);
 	}
 	
 	/**
@@ -241,7 +241,7 @@ class Attrs implements AttributeReader {
 		}
 		
 		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
-			throw new InvalidAttributeException('Property \'' . $attributePath
+			throw new InvalidAttributeException('Property \'' . $path
 					. '\' must contain one of following values: ' . implode(', ', $allowedValues)
 					. '. Given: ' . TypeUtils::buildScalar($value));
 		}

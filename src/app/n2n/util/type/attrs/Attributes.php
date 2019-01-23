@@ -100,10 +100,12 @@ class Attributes {
 		$typeConstraint = TypeConstraint::build($type);
 		
 		if (!$this->contains($name)) {
+			$found = false;
 			if (!$mandatory) return $defaultValue;
 			throw new MissingAttributeFieldException('Unknown attribute: ' . $name);
 		}
 		
+		$found = true;
 		$value = $this->attrs[$name];
 		
 		if ($typeConstraint === null) {
@@ -289,7 +291,7 @@ class Attributes {
 	}
 	
 	public function reqEnum(string $name, array $allowedValues, bool $nullAllowed = false) {
-		return $this->getEnum($name, $allowedValues);
+		return $this->getEnum($name, $allowedValues, true, null, $nullAllowed);
 	}
 	
 	public function optEnum(string $name, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
@@ -299,6 +301,7 @@ class Attributes {
 	private function getEnum(string $name, array $allowedValues, $mandatory = true, $defaultValue = null, $nullAllowed = false) {
 		$found = null;
 		$value = $this->retrieve($name, null, $mandatory, $defaultValue, $found);
+		
 		if (!$found) return $defaultValue;
 	
 		if ($nullAllowed && $value === null) {
@@ -306,7 +309,7 @@ class Attributes {
 		}
 		
 		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
-			throw new InvalidAttributeException('Property \'' . $attributePath 
+			throw new InvalidAttributeException('Property \'' . $name
 				. '\' must contain one of following values: ' . implode(', ', $allowedValues) 
 				. '. Given: ' . TypeUtils::buildScalar($value));
 		}
