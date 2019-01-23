@@ -130,12 +130,12 @@ class Attributes {
 	 * @return mixed|null
 	 * @deprecated use {@see self::req()} or {@see self::opt()}
 	 */
-	public function get($name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
+	public function get($name, bool $mandatory = true, $defaultValue = null, TypeConstraint $typeConstraint = null) {
 		if ($mandatory) {
-			return $this->req($name, TypeConstraint::createSimple(null, $nullAllowed));
+			return $this->req($name, $typeConstraint);
 		}
 		
-		return $this->opt($name, TypeConstraint::createSimple(null, $nullAllowed), $defaultValue);
+		return $this->opt($name, $typeConstraint, $defaultValue);
 	}
 	
 	/**
