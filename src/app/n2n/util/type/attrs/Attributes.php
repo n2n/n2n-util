@@ -100,7 +100,7 @@ class Attributes {
 		$typeConstraint = TypeConstraint::build($type);
 		
 		if (!$this->contains($name)) {
-			if (!mandatory) return $defaultValue;
+			if (!$mandatory) return $defaultValue;
 			throw new MissingAttributeFieldException('Unknown attribute: ' . $name);
 		}
 		
