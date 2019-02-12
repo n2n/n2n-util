@@ -19,4 +19,24 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\config;
+namespace n2n\util\type\attrs;
+
+use n2n\util\type\TypeConstraint;
+
+interface AttributeReader {
+
+	/**
+	 * @param AttributePath $path
+	 * @param TypeConstraint|null $typeConstraint
+	 * @param bool $mandatory
+	 * @param mixed|null $defaultValue
+	 * @return mixed|null
+	 * @throws AttributesException
+	 */
+	public function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true,
+			$defaultValue = null);
+}
+
+
+
+

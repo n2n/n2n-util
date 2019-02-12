@@ -19,30 +19,8 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\config\source;
+namespace n2n\util\type;
 
-class SimpleConfigSource implements ConfigSource {
-	private $array;
-	
-	public function __construct(array $array = array()) {
-		$this->array = $array;	
-	}
-	/* (non-PHPdoc)
-	 * @see \n2n\util\config\source\ConfigSource::readArray()
-	 */
-	public function readArray(): array {
-		return $this->array;
-	}
-	/* (non-PHPdoc)
-	 * @see \n2n\util\config\source\ConfigSource::hashCode()
-	 */
-	public function hashCode() {
-		return null;
-	}
-	/* (non-PHPdoc)
-	 * @see \n2n\util\config\source\ConfigSource::__toString()
-	 */
-	public function __toString(): string {
-		return 'Array Config Source';
-	}
+class ValueIncompatibleWithConstraintsException extends \RuntimeException {
+
 }

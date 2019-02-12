@@ -19,20 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\config;
+namespace n2n\util\type\attrs;
 
-use n2n\util\ex\Documentable;
-
-class InvalidConfigurationException extends \RuntimeException implements Documentable {
-	private $documentId;
-
-	public function __construct ($message = null, $code = null, \Exception $previous = null, 
-			$documentId = null) {
-		parent::__construct($message, $code, $previous);
-		$this->documentId = $documentId;
-	} 
-	
-	public function getDocumentId() {
-		return $this->documentId;
-	}
+class InvalidAttributeException extends AttributesException {
 }

@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\config;
+namespace n2n\util\type\attrs;
 
 class AttributesException extends \RuntimeException {
 }

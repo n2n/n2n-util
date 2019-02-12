@@ -19,9 +19,9 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\config;
+namespace n2n\util\type\attrs;
 
-use n2n\reflection\property\TypeConstraint;
+use n2n\util\type\TypeConstraint;
 
 class LenientAttributeReader {
 	private $attributes;
@@ -69,7 +69,7 @@ class LenientAttributeReader {
 	
 	public function getScalar($name, $fallbackValue = null, bool $nullAllowed = false) {
 		try {
-			return $this->attributes->getScalar($name, false, $fallbackValue, $nullAllowed);	
+			return $this->attributes->optScalar($name, $fallbackValue, $nullAllowed);	
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
@@ -77,7 +77,7 @@ class LenientAttributeReader {
 	
 	public function getString($name, $fallbackValue = null, $nullAllowed = false) {
 		try {
-			return $this->attributes->getString($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->optString($name, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
@@ -85,7 +85,7 @@ class LenientAttributeReader {
 	
 	public function getBool($name, $fallbackValue = null, $nullAllowed = false, $lenient = true) {
 		try {
-			return $this->attributes->getBool($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->optBool($name, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
@@ -93,40 +93,40 @@ class LenientAttributeReader {
 	
 	public function getNumeric($name, $fallbackValue = null, bool $nullAllowed = false) {
 		try {
-			return $this->attributes->getBool($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->optNumeric($name, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
 	}
 	
-	public function getInt(string $name, $fallbackValue = null, bool $nullAllowed = false, bool $lenient = true) {
+	public function getInt($name, $fallbackValue = null, bool $nullAllowed = false, bool $lenient = true) {
 		try {
-			return $this->attributes->getInt($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->optInt($name, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
 	}
 	
-	public function getFloat($name, $fallbackValue = null, $nullAllowed = false, $lenient = true): float {
-		try {
-			return $this->attributes->getFloat($name, false, $fallbackValue, $nullAllowed);
-		} catch (AttributesException $e) {
-			return $fallbackValue;
-		}
-	}
+// 	public function getFloat($name, $fallbackValue = null, $nullAllowed = false, $lenient = true): float {
+// 		try {
+// 			return $this->attributes->getFloat($name, false, $fallbackValue, $nullAllowed);
+// 		} catch (AttributesException $e) {
+// 			return $fallbackValue;
+// 		}
+// 	}
 	
 	public function getEnum($name, array $allowedValues, $fallbackValue = null) {
 		try {
-			return $this->attributes->getEnum($name, $allowedValues, false, $fallbackValue);
+			return $this->attributes->optEnum($name, $allowedValues, $fallbackValue);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
 	}
 	
-	public function getArray(string $name, $fallbackValue = array(),
-			TypeConstraint $arrayFieldTypeConstraints = null, bool $nullAllowed = false) {
+	public function getArray(string $name, $arrayFieldTypeConstraints = null, $fallbackValue = array(),
+			bool $nullAllowed = false) {
 		try {
-			return $this->attributes->getArray($name, false, $fallbackValue, $arrayFieldTypeConstraints, $nullAllowed);
+			return $this->attributes->optArray($name, $arrayFieldTypeConstraints, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
@@ -134,7 +134,7 @@ class LenientAttributeReader {
 	
 	public function getScalarArray($name, $fallbackValue = array(), $nullAllowed = false) {
 		try {
-			return $this->attributes->getScalarArray($name, false, $fallbackValue, $nullAllowed);
+			return $this->attributes->optScalarArray($name, $fallbackValue, $nullAllowed);
 		} catch (AttributesException $e) {
 			return $fallbackValue;
 		}
