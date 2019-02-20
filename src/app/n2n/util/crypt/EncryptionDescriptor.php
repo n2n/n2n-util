@@ -23,124 +23,124 @@ namespace n2n\util\crypt;
 
 class EncryptionDescriptor {
 	
-	const ALGORITHM_AES_128_CBC = 'AES-128-CBC';
+	const ALGORITHM_AES_128_CBC = 'aes-128-cbc';
 	const ALGORITHM_AES_128_CCM = 'aes-128-ccm';
-	const ALGORITHM_AES_128_CFB = 'AES-128-CFB';
-	const ALGORITHM_AES_128_CFB1 = 'AES-128-CFB1';
-	const ALGORITHM_AES_128_CFB8 = 'AES-128-CFB8';
-	const ALGORITHM_AES_128_CTR = 'AES-128-CTR';
-	const ALGORITHM_AES_128_ECB = 'AES-128-ECB';
+	const ALGORITHM_AES_128_CFB = 'aes-128-cfb';
+	const ALGORITHM_AES_128_CFB1 = 'aes-128-cfb1';
+	const ALGORITHM_AES_128_CFB8 = 'aes-128-cfb8';
+	const ALGORITHM_AES_128_CTR = 'aes-128-ctr';
+	const ALGORITHM_AES_128_ECB = 'aes-128-ecb';
 	const ALGORITHM_AES_128_GCM = 'aes-128-gcm';
-	const ALGORITHM_AES_128_OFB = 'AES-128-OFB';
-	const ALGORITHM_AES_128_XTS = 'AES-128-XTS';
+	const ALGORITHM_AES_128_OFB = 'aes-128-ofb';
+	const ALGORITHM_AES_128_XTS = 'aes-128-xts';
 	
-	const ALGORITHM_AES_192_CBC = 'AES-192-CBC';
+	const ALGORITHM_AES_192_CBC = 'aes-192-cbc';
 	const ALGORITHM_AES_192_CCM = 'aes-192-ccm';
-	const ALGORITHM_AES_192_CFB = 'AES-192-CFB';
-	const ALGORITHM_AES_192_CFB1 = 'AES-192-CFB1';
-	const ALGORITHM_AES_192_CFB8 = 'AES-192-CFB8';
-	const ALGORITHM_AES_192_CTR = 'AES-192-CTR';
-	const ALGORITHM_AES_192_ECB = 'AES-192-ECB';
+	const ALGORITHM_AES_192_CFB = 'aes-192-cfb';
+	const ALGORITHM_AES_192_CFB1 = 'aes-192-cfb1';
+	const ALGORITHM_AES_192_CFB8 = 'aes-192-cfb8';
+	const ALGORITHM_AES_192_CTR = 'aes-192-ctr';
+	const ALGORITHM_AES_192_ECB = 'aes-192-ecb';
 	const ALGORITHM_AES_192_GCM = 'aes-192-gcm';
-	const ALGORITHM_AES_192_OFB = 'AES-192-OFB';
+	const ALGORITHM_AES_192_OFB = 'aes-192-ofb';
 	
-	const ALGORITHM_AES_256_CBC = 'AES-256-CBC';
-	const ALGORITHM_AES_256_CFB = 'AES-256-CFB';
+	const ALGORITHM_AES_256_CBC = 'aes-256-cbc';
+	const ALGORITHM_AES_256_CFB = 'aes-256-cfb';
 	const ALGORITHM_AES_256_CCM = 'aes-256-ccm';
-	const ALGORITHM_AES_256_CFB1 = 'AES-256-CFB1';
-	const ALGORITHM_AES_256_CFB8 = 'AES-256-CFB8';
-	const ALGORITHM_AES_256_CTR = 'AES-256-CTR';
-	const ALGORITHM_AES_256_ECB = 'AES-256-ECB';
+	const ALGORITHM_AES_256_CFB1 = 'aes-256-cfb1';
+	const ALGORITHM_AES_256_CFB8 = 'aes-256-cfb8';
+	const ALGORITHM_AES_256_CTR = 'aes-256-ctr';
+	const ALGORITHM_AES_256_ECB = 'aes-256-ecb';
 	const ALGORITHM_AES_256_GCM = 'aes-256-gcm';
-	const ALGORITHM_AES_256_OFB = 'AES-256-OFB';
-	const ALGORITHM_AES_256_XTS = 'AES-256-XTS';
+	const ALGORITHM_AES_256_OFB = 'aes-256-ofb';
+	const ALGORITHM_AES_256_XTS = 'aes-256-xts';
 	
-	const ALGORITHM_BF_CBC = 'BF-CBC';
-	const ALGORITHM_BF_CFB = 'BF-CFB';
-	const ALGORITHM_BF_ECB = 'BF-ECB';
-	const ALGORITHM_BF_OFB = 'BF-OFB';
+	const ALGORITHM_BF_CBC = 'bf-cbc';
+	const ALGORITHM_BF_CFB = 'bf-cfb';
+	const ALGORITHM_BF_ECB = 'bf-ecb';
+	const ALGORITHM_BF_OFB = 'bf-ofb';
 
-	const ALGORITHM_CAMELLIA_128_CBC = 'CAMELLIA-128-CBC';
-	const ALGORITHM_CAMELLIA_128_CFB = 'CAMELLIA-128-CFB';
-	const ALGORITHM_CAMELLIA_128_CFB1 = 'CAMELLIA-128-CFB1';
-	const ALGORITHM_CAMELLIA_128_CFB8 = 'CAMELLIA-128-CFB8';
-	const ALGORITHM_CAMELLIA_128_ECB = 'CAMELLIA-128-ECB';
-	const ALGORITHM_CAMELLIA_128_OFB = 'CAMELLIA-128-OFB';
+	const ALGORITHM_CAMELLIA_128_CBC = 'camellia-128-cbc';
+	const ALGORITHM_CAMELLIA_128_CFB = 'camellia-128-cfb';
+	const ALGORITHM_CAMELLIA_128_CFB1 = 'camellia-128-cfb1';
+	const ALGORITHM_CAMELLIA_128_CFB8 = 'camellia-128-cfb8';
+	const ALGORITHM_CAMELLIA_128_ECB = 'camellia-128-ecb';
+	const ALGORITHM_CAMELLIA_128_OFB = 'camellia-128-ofb';
 
-	const ALGORITHM_CAMELLIA_192_CBC = 'CAMELLIA-192-CBC';
-	const ALGORITHM_CAMELLIA_192_CFB = 'CAMELLIA-192-CFB';
-	const ALGORITHM_CAMELLIA_192_CFB1 = 'CAMELLIA-192-CFB1';
-	const ALGORITHM_CAMELLIA_192_CFB8 = 'CAMELLIA-192-CFB8';
-	const ALGORITHM_CAMELLIA_192_ECB = 'CAMELLIA-192-ECB';
-	const ALGORITHM_CAMELLIA_192_OFB = 'CAMELLIA-192-OFB';
+	const ALGORITHM_CAMELLIA_192_CBC = 'camellia-192-cbc';
+	const ALGORITHM_CAMELLIA_192_CFB = 'camellia-192-cfb';
+	const ALGORITHM_CAMELLIA_192_CFB1 = 'camellia-192-cfb1';
+	const ALGORITHM_CAMELLIA_192_CFB8 = 'camellia-192-cfb8';
+	const ALGORITHM_CAMELLIA_192_ECB = 'camellia-192-ecb';
+	const ALGORITHM_CAMELLIA_192_OFB = 'camellia-192-ofb';
 
-	const ALGORITHM_CAMELLIA_256_CBC = 'CAMELLIA-256-CBC';
-	const ALGORITHM_CAMELLIA_256_CFB = 'CAMELLIA-256-CFB';
-	const ALGORITHM_CAMELLIA_256_CFB1 = 'CAMELLIA-256-CFB1';
-	const ALGORITHM_CAMELLIA_256_CFB8 = 'CAMELLIA-256-CFB8';
-	const ALGORITHM_CAMELLIA_256_ECB = 'CAMELLIA-256-ECB';
-	const ALGORITHM_CAMELLIA_256_OFB = 'CAMELLIA-256-OFB';
+	const ALGORITHM_CAMELLIA_256_CBC = 'camellia-256-cbc';
+	const ALGORITHM_CAMELLIA_256_CFB = 'camellia-256-cfb';
+	const ALGORITHM_CAMELLIA_256_CFB1 = 'camellia-256-cfb1';
+	const ALGORITHM_CAMELLIA_256_CFB8 = 'camellia-256-cfb8';
+	const ALGORITHM_CAMELLIA_256_ECB = 'camellia-256-ecb';
+	const ALGORITHM_CAMELLIA_256_OFB = 'camellia-256-ofb';
 	
-	const ALGORITHM_CAST5_CBC = 'CAST5-CBC';
-	const ALGORITHM_CAST5_CFB = 'CAST5-CFB';
-	const ALGORITHM_CAST5_ECB = 'CAST5-ECB';
-	const ALGORITHM_CAST5_OFB = 'CAST5-OFB';
+	const ALGORITHM_CAST5_CBC = 'cast5-cbc';
+	const ALGORITHM_CAST5_CFB = 'cast5-cfb';
+	const ALGORITHM_CAST5_ECB = 'cast5-ecb';
+	const ALGORITHM_CAST5_OFB = 'cast5-ofb';
 
-	const ALGORITHM_DES_CBC = 'DES-CBC';
-	const ALGORITHM_DES_CFB = 'DES-CFB';
-	const ALGORITHM_DES_CFB1 = 'DES-CFB1';
-	const ALGORITHM_DES_CFB8 = 'DES-CFB8';
-	const ALGORITHM_DES_ECB = 'DES-ECB';
-	const ALGORITHM_DES_OFB = 'DES-OFB';
+	const ALGORITHM_DES_CBC = 'des-cbc';
+	const ALGORITHM_DES_CFB = 'des-cfb';
+	const ALGORITHM_DES_CFB1 = 'des-cfb1';
+	const ALGORITHM_DES_CFB8 = 'des-cfb8';
+	const ALGORITHM_DES_ECB = 'des-ecb';
+	const ALGORITHM_DES_OFB = 'des-ofb';
 	
-	const ALGORITHM_DES_EDE = 'DES-EDE';
-	const ALGORITHM_DES_EDE_CBC = 'DES-EDE-CBC';
-	const ALGORITHM_DES_EDE_CFB = 'DES-EDE-CFB';
-	const ALGORITHM_DES_EDE_OFB = 'DES-EDE-OFB';
+	const ALGORITHM_DES_EDE = 'des-ede';
+	const ALGORITHM_DES_EDE_CBC = 'des-ede-cbc';
+	const ALGORITHM_DES_EDE_CFB = 'des-ede-cfb';
+	const ALGORITHM_DES_EDE_OFB = 'des-ede-ofb';
 
-	const ALGORITHM_DES_EDE3 = 'DES-EDE3';
-	const ALGORITHM_DES_EDE3_CBC = 'DES-EDE3-CBC';
-	const ALGORITHM_DES_EDE3_CFB = 'DES-EDE3-CFB';
-	const ALGORITHM_DES_EDE3_CFB1 = 'DES-EDE3-CFB1';
-	const ALGORITHM_DES_EDE3_CFB8 = 'DES-EDE3-CFB8';
-	const ALGORITHM_DES_EDE3_OFB = 'DES-EDE3-OFB';
+	const ALGORITHM_DES_EDE3 = 'des-ede3';
+	const ALGORITHM_DES_EDE3_CBC = 'des-ede3-cbc';
+	const ALGORITHM_DES_EDE3_CFB = 'des-ede3-cfb';
+	const ALGORITHM_DES_EDE3_CFB1 = 'des-ede3-cfb1';
+	const ALGORITHM_DES_EDE3_CFB8 = 'des-ede3-cfb8';
+	const ALGORITHM_DES_EDE3_OFB = 'des-ede3-ofb';
 	
-	const ALGORITHM_DESX_CBC = 'DESX-CBC';
+	const ALGORITHM_DESX_CBC = 'DESX-cbc';
 	
-	const ALGORITHM_ID_AES128_CCM = 'id-aes128-CCM';
-	const ALGORITHM_ID_AES128_GCM = 'id-aes128-GCM';
+	const ALGORITHM_ID_AES128_CCM = 'id-aes128-ccm';
+	const ALGORITHM_ID_AES128_GCM = 'id-aes128-gcm';
 	const ALGORITHM_ID_AES128_WRAP = 'id-aes128-wrap';
 	
-	const ALGORITHM_ID_AES192_CCM = 'id-aes192-CCM';
-	const ALGORITHM_ID_AES192_GCM = 'id-aes192-GCM';
+	const ALGORITHM_ID_AES192_CCM = 'id-aes192-ccm';
+	const ALGORITHM_ID_AES192_GCM = 'id-aes192-gcm';
 	const ALGORITHM_ID_AES192_WRAP = 'id-aes192-wrap';
 	
-	const ALGORITHM_ID_AES256_CCM = 'id-aes256-CCM';
-	const ALGORITHM_ID_AES256_GCM = 'id-aes256-GCM';
+	const ALGORITHM_ID_AES256_CCM = 'id-aes256-ccm';
+	const ALGORITHM_ID_AES256_GCM = 'id-aes256-gcm';
 	const ALGORITHM_ID_AES256_WRAP = 'id-aes256-wrap';
 	
-	const ALGORITHM_ID_SMIME_ALG_CMS3DESWRAP = 'id-smime-alg-CMS3DESwrap';
+	const ALGORITHM_ID_SMIME_ALG_CMS3DESWRAP = 'id-smime-alg-cms3deswrap';
 	
-	const ALGORITHM_IDEA_CBC = 'IDEA-CBC';
-	const ALGORITHM_IDEA_CFB = 'IDEA-CFB';
-	const ALGORITHM_IDEA_ECB = 'IDEA-ECB';
-	const ALGORITHM_IDEA_OFB = 'IDEA-OFB';
+	const ALGORITHM_IDEA_CBC = 'idea-cbc';
+	const ALGORITHM_IDEA_CFB = 'idea-cfb';
+	const ALGORITHM_IDEA_ECB = 'idea-ecb';
+	const ALGORITHM_IDEA_OFB = 'idea-ofb';
 	
-	const ALGORITHM_RC2_40_CBC = 'RC2-40-CBC';
-	const ALGORITHM_RC2_64_CBC = 'RC2-64-CBC';
-	const ALGORITHM_RC2_CBC = 'RC2-CBC';
-	const ALGORITHM_RC2_CFB = 'RC2-CFB';
-	const ALGORITHM_RC2_ECB = 'RC2-ECB';
-	const ALGORITHM_RC2_OFB = 'RC2-OFB';
+	const ALGORITHM_RC2_40_CBC = 'rc2-40-cbc';
+	const ALGORITHM_RC2_64_CBC = 'rc2-64-cbc';
+	const ALGORITHM_RC2_CBC = 'rc2-cbc';
+	const ALGORITHM_RC2_CFB = 'rc2-cfb';
+	const ALGORITHM_RC2_ECB = 'rc2-ecb';
+	const ALGORITHM_RC2_OFB = 'rc2-ofb';
 
-	const ALGORITHM_RC4 = 'RC4';
-	const ALGORITHM_RC4_40 = 'RC4-40';
-	const ALGORITHM_RC4_HMAC_MD5= 'RC4-HMAC-MD5';
+	const ALGORITHM_RC4 = 'rc4';
+	const ALGORITHM_RC4_40 = 'rc4-40';
+	const ALGORITHM_RC4_HMAC_MD5= 'rc4-hmac-md5';
 	
-	const ALGORITHM_SEED_CBC = 'SEED-CBC';
-	const ALGORITHM_SEED_CFB = 'SEED-CFB';
-	const ALGORITHM_SEED_ECB = 'SEED-ECB';
-	const ALGORITHM_SEED_OFB = 'SEED-OFB';
+	const ALGORITHM_SEED_CBC = 'seed-cbc';
+	const ALGORITHM_SEED_CFB = 'seed-cfb';
+	const ALGORITHM_SEED_ECB = 'seed-ecb';
+	const ALGORITHM_SEED_OFB = 'seed-ofb';
 
 	const DEFAULT_CRYPT_ALGORITHM = self::ALGORITHM_AES_256_CTR;
 	/**
@@ -160,6 +160,7 @@ class EncryptionDescriptor {
 	}
 	
 	public function setAlgorithm($algorithm) {
+		$algorithm = strtolower($algorithm);
 		if (!self::isAlgorithmAvailable($algorithm)) {
 			throw new \InvalidArgumentException('n2n_error_crypt_algorithm_is_not_available: ' . $algorithm);
 		}
@@ -282,7 +283,7 @@ class EncryptionDescriptor {
 			case self::ALGORITHM_AES_256_GCM:
 			case self::ALGORITHM_AES_256_OFB:
 			case self::ALGORITHM_AES_256_XTS:
-			case self::ALGORITHM_CAMELLIA_256_CB:
+			case self::ALGORITHM_CAMELLIA_256_CBC:
 			case self::ALGORITHM_CAMELLIA_256_CFB:
 			case self::ALGORITHM_CAMELLIA_256_CFB1:
 			case self::ALGORITHM_CAMELLIA_256_CFB8:
@@ -301,7 +302,7 @@ class EncryptionDescriptor {
 			case self::ALGORITHM_DES_CFB8:
 			case self::ALGORITHM_DES_ECB:
 			case self::ALGORITHM_DES_OFB:
-			//@see https://en.wikipedia.org/wiki/DES-X
+			//@see https://en.wikipedia.org/wiki/des-X
 			case self::ALGORITHM_DESX_CBC:
 				return 7;
 			
