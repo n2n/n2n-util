@@ -28,7 +28,8 @@ use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\web\http\controller\Interceptor;
 
-class Attrs implements AttributeReader {
+class DataMap implements AttributeReader {
+
 	private $data;
 	private $interceptor;
 	/**

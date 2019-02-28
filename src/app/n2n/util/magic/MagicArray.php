@@ -19,9 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\api;
-
-use n2n\util\magic\MagicContext;
+namespace n2n\util\magic;
 
 interface MagicArray {
 	function toArray(MagicContext $magicContext): array;

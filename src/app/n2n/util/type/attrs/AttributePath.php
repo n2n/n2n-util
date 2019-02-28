@@ -24,16 +24,27 @@ namespace n2n\util\type\attrs;
 use n2n\util\type\TypeUtils;
 
 class AttributePath {
-	const SEPARATOR = '.';
+	const SEPARATOR = '/';
+	const WILDCHARD = '*';
 	
 	private $names = [];
 	
 	public function __construct(array $names) {
 		foreach ($names as $name) {
-			if (empty($name) && $name !== 0) continue;
+			if (empty($name) && $name !== 0) {
+				continue;
+			}
 			
 			array_push($this->names, $name);
 		}
+	}
+	
+	public function size() {
+		return count($this->names);
+	}
+	
+	public function slices(int $offset, int $length = null) {
+		return new AttributePath(array_slice($this->names, $offset, $length));
 	}
 	
 	public function toArray() {
@@ -88,5 +99,23 @@ class AttributePath {
 	
 	public function __toString(): string {
 		return implode(self::SEPARATOR, $this->names);
+	}
+	
+	/**
+	 * @param string $pathPart
+	 * @param string $name
+	 * @return boolean
+	 */
+	public static function match(string $pathPart, string $name) {
+		return self::matchesWildchard($pathPart)
+				|| $pathPart == $name; 
+	}
+	
+	/**
+	 * @param string $pathPart
+	 * @return boolean
+	 */
+	public static function matchesWildchard(string $pathPart) {
+		return self::WILDCHARD == $pathPart; 
 	}
 }
