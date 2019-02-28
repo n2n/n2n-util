@@ -44,7 +44,7 @@ class TypeConstraints {
 	 * @param bool $nullable
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	static function class($name, bool $nullable = false) {
+	static function type($name, bool $nullable = false) {
 		return TypeConstraint::createSimple($name, $nullable);
 	}
 	

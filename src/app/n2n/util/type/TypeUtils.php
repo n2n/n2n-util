@@ -14,7 +14,7 @@ class TypeUtils {
 	 */
 	public static function buildUsefullValueIdentifier($value, int $maxChars = self::COMMON_MAX_CHARS) {
 		if (is_scalar($value)) {
-			return mb_substr($value, 0, (int) $maxChars);
+			return mb_substr($value, 0, $maxChars);
 		}
 		return self::getTypeInfo($value);
 	}

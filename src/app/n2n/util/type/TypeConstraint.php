@@ -221,6 +221,21 @@ class TypeConstraint {
 		return $str . '<' . $this->arrayFieldTypeConstraint . '>';
 	}
 	
+	public function isTypeSafe() {
+		if ($this->typeName === null) {
+			return false;
+		}
+		
+		if (!$this->isArrayLike()) {
+			return true;
+		}
+		
+		return $this->arrayFieldTypeConstraint !== null && $this->arrayFieldTypeConstraint->isTypeSafe();
+	}
+	
+	public function isScalar() {
+		return $this->typeName == 'string' || $this->typeName == 'int' || $this->typeName == 'bool';
+	}
 	
 
 	/**
