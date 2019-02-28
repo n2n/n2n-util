@@ -2,6 +2,7 @@
 namespace n2n\util\type;
 
 use n2n\util\StringUtils;
+use n2n\util\col\ArrayUtils;
 
 class TypeUtils {
 	const COMMON_MAX_CHARS = 100;
@@ -197,5 +198,60 @@ class TypeUtils {
 	 */
 	public static function purifyNamespace(string $namespace) {
 		return trim(str_replace('/', '\\', $namespace), '\\');
+	}
+	
+	public static function isValueA($value, $expectedType, bool $nullAllowed): bool {
+		if ($expectedType === null || ($nullAllowed && $value === null)) return true;
+		
+		if (is_array($expectedType)) {
+			foreach ($expectedType as $type) {
+				if (self::isValueA($value, $type, false)) return true;
+			}
+			return false;
+		}
+		
+		if ($expectedType instanceof TypeConstraint) {
+			return $expectedType->isValueValid($value);
+		}
+		
+		if ($expectedType instanceof \ReflectionClass) {
+			$expectedType = $expectedType->getName();
+		}
+		
+		return TypeName::isValueA($value, $expectedType);
+	}
+		
+	/**
+	 * @param mixed $value
+	 * @return boolean
+	 */
+	public static function isValueArrayLike($value) {
+		return ArrayUtils::isArrayLike($value);
+	}
+	
+	public static function isTypeA($type, $expectedType): bool {
+		if ($expectedType === null) return true;
+		if ($type === null) return false;
+		
+		switch ($type) {
+			case 'scalar':
+				return $expectedType == 'scalar';
+			case 'array':
+				return $expectedType == 'array';
+			case 'string':
+				return $expectedType == 'string' || $expectedType == 'scalar';
+			case 'numeric':
+				return $expectedType == 'numeric' || $expectedType == 'scalar';
+		}
+		
+		if ($type instanceof \ReflectionClass) {
+			$type = $type->getName();
+		}
+		
+		if ($expectedType instanceof \ReflectionClass) {
+			$expectedType = $expectedType->getName();
+		}
+		
+		return $type == $expectedType || is_subclass_of($type, $expectedType);
 	}
 }

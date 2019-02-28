@@ -87,7 +87,7 @@ class ArgUtils {
 	}
 	
 	public static function valType($param, $expectedType, bool $nullAllowed = false, string $parameterName = null) {
-		if (TypeConstraint::isValueA($param, $expectedType, $nullAllowed)) return;
+		if (TypeUtils::isValueA($param, $expectedType, $nullAllowed)) return;
 	
 		throw new \InvalidArgumentException(self::buildExMsgStart($parameterName)
 				. ' must be of type ' . self::prettyExpectedType($expectedType) . ', ' 
@@ -95,7 +95,7 @@ class ArgUtils {
 	}
 	
 	public static function valTypeReturn($returnedValue, $expectedType, $object, $method, bool $nullAllowed = false) {
-		if (TypeConstraint::isValueA($returnedValue, $expectedType, $nullAllowed)) return;
+		if (TypeUtils::isValueA($returnedValue, $expectedType, $nullAllowed)) return;
 	
 		throw new \InvalidArgumentException(self::buildFunctionName($object, $method)
 				. ' return value must be of type ' . self::prettyExpectedType($expectedType) . ', '
@@ -210,7 +210,7 @@ class ArgUtils {
 
 	private static function validateFields($value, $expectedFieldType, $nullFieldAllowed = false) {
 		foreach ($value as $fieldKey => $fieldValue) {
-			if (TypeConstraint::isValueA($fieldValue, $expectedFieldType, $nullFieldAllowed)) continue;
+			if (TypeUtils::isValueA($fieldValue, $expectedFieldType, $nullFieldAllowed)) continue;
 			
 			throw new \InvalidArgumentException('Field with key \'' . $fieldKey . '\' contains invalid type '
 					.  TypeUtils::getTypeInfo($fieldValue) . '. ' . self::prettyExpectedType($expectedFieldType) 
