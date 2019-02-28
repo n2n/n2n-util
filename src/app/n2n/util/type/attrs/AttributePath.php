@@ -25,7 +25,7 @@ use n2n\util\type\TypeUtils;
 
 class AttributePath {
 	const SEPARATOR = '/';
-	const WILDCHARD = '*';
+	const WILDHARD = '*';
 	
 	private $names = [];
 	
@@ -107,15 +107,14 @@ class AttributePath {
 	 * @return boolean
 	 */
 	public static function match(string $pathPart, string $name) {
-		return self::matchesWildchard($pathPart)
-				|| $pathPart == $name; 
+		return self::matchesWildcard($pathPart) || $pathPart == $name; 
 	}
 	
 	/**
 	 * @param string $pathPart
 	 * @return boolean
 	 */
-	public static function matchesWildchard(string $pathPart) {
-		return self::WILDCHARD == $pathPart; 
+	public static function matchesWildcard(string $pathPart) {
+		return self::WILDHARD == $pathPart; 
 	}
 }
