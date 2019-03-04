@@ -30,19 +30,21 @@ class TypeConstraint {
 	private $allowsNull;
 	private $arrayFieldTypeConstraint;
 	private $whitelistTypes;
+	private $convertable = false;
 	/**
 	 * @param string $typeName
 	 * @param string $allowsNull
-	 * @param TypeConstraint $arrayFieldTypeConstraints
+	 * @param TypeConstraint $arrayFieldTypeConstraint
 	 * @param array $whitelistTypes
 	 * @throws \InvalidArgumentException
 	 */
-	protected function __construct(string $typeName = null, bool $allowsNull = true, 
-			TypeConstraint $arrayFieldTypeConstraints = null, array $whitelistTypes = array()) {
+	protected function __construct(string $typeName, bool $allowsNull, 
+			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false) {
 		$this->typeName = $typeName;
-		$this->allowsNull = (boolean) $allowsNull;
-		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraints;
+		$this->allowsNull = $allowsNull;
+		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraint;
 		$this->whitelistTypes = $whitelistTypes;
+		$this->setConvertable($convertable);
 	}
 	
 	public function setWhitelistTypes(array $whitelistTypes) {
@@ -52,6 +54,25 @@ class TypeConstraint {
 	
 	public function getWhitelistTypes() {
 		return $this->whitelistTypes;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isConvertable() {
+		return $this->convertable;
+	}
+	
+	/**
+	 * @param bool $convertable
+	 * @throws IllegalStateException
+	 */
+	public function setConvertable(bool $convertable) {
+		if ($convertable && !TypeName::isConvertable($this->typeName)) {
+			throw new IllegalStateException('Values are not convertable to ' . $this->typeName);
+		}
+		
+		$this->convertable = $convertable;
 	}
 	
 	/**
@@ -68,17 +89,35 @@ class TypeConstraint {
 // 	}
 	
 	public function isArrayLike() {
-		return $this->arrayFieldTypeConstraint !== null 
-				|| ArrayUtils::isTypeNameArrayLike($this->typeName);
+		return $this->arrayFieldTypeConstraint !== null;
 	}
 	/**
 	 * @return boolean
 	 */
-	public function allowsNull(): bool {
+	public function allowsNull() {
 		return $this->allowsNull;
 	}
+	
 	/**
-	 * @return TypeConstraint
+	 * @return boolean
+	 */
+	public function isTypeSafe() {
+		if (!TypeName::isSafe($this->typeName)) {
+			return false;
+		}
+		
+		if (!$this->isArrayLike()) {
+			return true;
+		}
+		
+		return $this->arrayFieldTypeConstraint->isTypeSafe();
+	}
+	
+	public function isScalar() {
+		return !$this->isArrayLike() && TypeName::isScalar($this->typeName);
+	}
+	/**
+	 * @return TypeConstraint|null
 	 */
 	public function getArrayFieldTypeConstraint() {
 		return $this->arrayFieldTypeConstraint;
@@ -90,30 +129,28 @@ class TypeConstraint {
 	
 	public function isValueValid($value) {
 		foreach ($this->whitelistTypes as $whitelistType) {
-			if (self::isValueA($value, $whitelistType, false)) return true;
+			if (TypeUtils::isValueA($value, $whitelistType, false)) return true;
 		}
 		
 		if ($value === null) {
 			return $this->allowsNull();
 		}
 		
-		if (!self::isValueA($value, $this->typeName, false)) {
+		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
 			return false;
 		}
 		
-		if ($this->arrayFieldTypeConstraint === null) return true;
+		if (!$this->isArrayLike()) return true;
 		
 		if (!ArrayUtils::isArrayLike($value)) {
-			if ($this->typeName === null) {
-				return false;
-			}
-				
 			throw new IllegalStateException('Illegal constraint ' . $this->__toString() . ' defined:'
 					. $this->typeName . ' is not array like.');
 		}
 		
-		foreach ($value as $key => $fieldValue) {
-			if (!$this->arrayFieldTypeConstraint->isValueValid($fieldValue)) return false;
+		foreach ($value as $fieldValue) {
+			if (!$this->arrayFieldTypeConstraint->isValueValid($fieldValue)) {
+				return false;
+			}
 		}
 		
 		return true;
@@ -124,21 +161,33 @@ class TypeConstraint {
 	 */
 	public function validate($value) {
 		foreach ($this->whitelistTypes as $whitelistType) {
-			if (TypeConstraint::isValueA($value, $whitelistType, false)) return;
+			if (TypeUtils::isValueA($value, $whitelistType, false)) {
+				return $value;
+			}
 		}
 		
 		if ($value === null) {
-			if ($this->allowsNull()) return;
+			if ($this->allowsNull()) return $value;
 			
 			throw new ValueIncompatibleWithConstraintsException(
 					'Null not allowed with constraints.');
 		}
 		
-		if (!TypeConstraint::isValueA($value, $this->typeName, false)) {
-			throw $this->createIncompatbleValueException($value);
+		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
+			if (!$this->convertable) {
+				throw $this->createIncompatbleValueException($value);
+			}
+			
+			try {
+				$value = TypeName::convertValue($value, $this->typeName);
+			} catch (\InvalidArgumentException $e) {
+				throw $this->createIncompatbleValueException($value, $e);
+			}
 		}
 		
-		if ($this->arrayFieldTypeConstraint === null) return;
+		if ($this->arrayFieldTypeConstraint === null) {
+			return $value;
+		}
 		
 		if (!ArrayUtils::isArrayLike($value)) {
 			if ($this->typeName === null) {
@@ -146,29 +195,32 @@ class TypeConstraint {
 			}
 			
 			throw new IllegalStateException('Illegal constraint ' . $this->__toString() . ' defined:'
-				. $this->typeName . ' is no ArrayType.');
+					. $this->typeName . ' is no ArrayType.');
 		}
 		
 		foreach ($value as $key => $fieldValue) {
 			try {
-				$this->arrayFieldTypeConstraint->validate($fieldValue);
+				$value[$key] = $this->arrayFieldTypeConstraint->validate($fieldValue);
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new ValueIncompatibleWithConstraintsException(
 						'Value type no allowed with constraints ' 
 						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
 			}
 		}
+		
+		return $value;
 	}
 	
-	private function createIncompatbleValueException($value) {
+	private function createIncompatbleValueException($value, $previousE = null) {
 		throw new ValueIncompatibleWithConstraintsException(
 				'Value type not allowed with constraints. Required type: '
 				. $this->__toString() . '; Given type: '
-				. TypeUtils::getTypeInfo($value));
+				. TypeUtils::getTypeInfo($value), $previousE);
 	}
 	
 	public function isEmpty() {
-		return $this->typeName === null && $this->arrayFieldTypeConstraint === null;
+		return $this->typeName === TypeName::PSEUDO_MIXED && $this->allowsNull 
+				&& ($this->arrayFieldTypeConstraint === null || $this->arrayFieldTypeConstraint->isEmpty());
 	}
 	/**
 	 * Returns true if all values which are compatible with the constraints of this instance are also 
@@ -178,7 +230,7 @@ class TypeConstraint {
 	public function isPassableTo(TypeConstraint $constraints, $ignoreNullAllowed = false) {
 		if ($constraints->isEmpty()) return true;
 		 
-		if (!(self::isTypeA($this->getTypeName(), $constraints->getTypeName()) 
+		if (!(TypeUtils::isTypeA($this->getTypeName(), $constraints->getTypeName()) 
 				&& ($ignoreNullAllowed || $constraints->allowsNull() || !$this->allowsNull()))) return false;
 				
 		$arrayFieldConstraints = $constraints->getArrayFieldTypeConstraint();
@@ -191,7 +243,7 @@ class TypeConstraint {
 	public function isPassableBy(TypeConstraint $constraints, $ignoreNullAllowed = false) {
 		if ($this->isEmpty()) return true;
 
-		if (!(self::isTypeA($constraints->getTypeName(), $this->getTypeName())
+		if (!(TypeUtils::isTypeA($constraints->getTypeName(), $this->getTypeName())
 				&& ($ignoreNullAllowed || $this->allowsNull() || !$constraints->allowsNull()))) return false;
 		
 		if ($this->arrayFieldTypeConstraint === null) return true;
@@ -209,42 +261,43 @@ class TypeConstraint {
 	}
 	
 	public function __toString(): string {
-		if ($this->arrayFieldTypeConstraint === null) {
-			return $this->typeName === null ? 'mixed' : $this->typeName;
+		$str = '';
+		
+		if ($this->allowsNull) {
+			$str .= '?';
 		}
 		
-		$str = $this->typeName;
-		if ($this->typeName === null) {
-			$str = 'ArrayType';
+		$str .= $this->typeName;
+		
+		if ($this->arrayFieldTypeConstraint !== null) {
+			$str .= '<' . $this->arrayFieldTypeConstraint . '>';
 		}
 		
-		return $str . '<' . $this->arrayFieldTypeConstraint . '>';
+		return $str;
 	}
 	
-	public function isTypeSafe() {
-		if ($this->typeName === null) {
-			return false;
-		}
-		
-		if (!$this->isArrayLike()) {
-			return true;
-		}
-		
-		return $this->arrayFieldTypeConstraint !== null && $this->arrayFieldTypeConstraint->isTypeSafe();
-	}
 	
-	public function isScalar() {
-		return $this->typeName == 'string' || $this->typeName == 'int' || $this->typeName == 'bool';
-	}
-	
-
 	/**
 	 * @param \ReflectionParameter $parameter
 	 * @return TypeConstraint
 	 */
 	public static function createFromParameter(\ReflectionParameter $parameter) {
-		return self::createSimple($parameter->isArray() ? 'array' :
-				ReflectionUtils::extractParameterClass($parameter), $parameter->allowsNull());
+		if ($parameter->isArray()) {
+			return new TypeConstraint(TypeName::ARRAY, $parameter->allowsNull(),
+					new TypeConstraint(TypeName::PSEUDO_MIXED, true));
+		}
+		
+		$class = ReflectionUtils::extractParameterClass($parameter);
+		if ($class !== null && TypeName::isClassArrayLike($class)) {
+			return new TypeConstraint($class->getName(), $parameter->allowsNull(),
+					new TypeConstraint(TypeName::PSEUDO_MIXED, true));
+		}
+		
+		$typeName = null;
+		if (null !== ($type = $parameter->getType())) {
+			$typeName = $type->getName();	
+		}
+		return new TypeConstraint($typeName ?? TypeName::PSEUDO_MIXED, $parameter->allowsNull());
 	}
 	
 	private static function buildTypeName($type) {
@@ -252,13 +305,58 @@ class TypeConstraint {
 			return $type->getName();
 		}
 		
-		if ($type === null || is_scalar($type)) {
+		if ($type === null) {
+			return TypeName::PSEUDO_MIXED;
+		}
+		
+		if (!is_scalar($type)) {
+			ArgUtils::valType($type, [TypeName::PSEUDO_SCALAR, \ReflectionClass::class], false, 'type');
+			throw new IllegalStateException();
+		}
+		
+		if (TypeName::isValid($type)) {
 			return $type;
 		}
 		
-		throw new \InvalidArgumentException(
-				'Invalid type parameter passed for TypeConstraint (Allowed: string, ReflectionClass): ' 
-						. TypeUtils::getTypeInfo($type));
+		throw new \InvalidArgumentException('Type name contains invalid characters: ' . $type);
+		
+// 		throw new \InvalidArgumentException(
+// 				'Invalid type parameter passed for TypeConstraint (Allowed: string, ReflectionClass): ' 
+// 						. TypeUtils::getTypeInfo($type));
+	}
+	
+	private static function createFromExpresion(string $type) {
+		$matches = null;
+		if (!preg_match('/^(\\?)?([^<>]+)(<(.+)>)?$/', $type, $matches)) {
+			throw new \InvalidArgumentException('Invalid TypeConstraint expression: ' . $type);
+		}
+		
+		$typeName = $matches[2];
+		
+		if (!TypeName::isValid($typeName)) {
+			throw new \InvalidArgumentException($type . ' is an invalid TypeConstraint expression. Reason: '
+					. $typeName . ' contains invalid characters.');
+		}
+		
+		$allowsNull = $matches[1] == '?';
+				
+		$arrayFieldTypeConstraint = null;
+		if (isset($matches[4])) {
+			if (!TypeName::isArrayLike($typeName)) {
+				throw new \InvalidArgumentException('Array field generics disabled for ' . $type . '. Reason '
+						. $typeName . ' is not arraylike.');
+			}
+			
+			try {
+				$arrayFieldTypeConstraint = self::create($matches[4]);
+			} catch (\InvalidArgumentException $e) {
+				throw new \InvalidArgumentException($type . ' is an invalid TypeConstraint expression. Reason: '
+						. $e->getMessage(), 0, $e);
+			}
+		}
+		
+		
+		return new TypeConstraint($typeName, $allowsNull, $arrayFieldTypeConstraint);
 	}
 	
 	/**
@@ -270,7 +368,16 @@ class TypeConstraint {
 			return $type;
 		}
 		
-		return new TypeConstraint(self::buildTypeName($type), false);
+		if ($type instanceof \ReflectionClass) {
+			return self::createSimple($type);
+		}
+		
+		if (!is_scalar($type)) {
+			ArgUtils::valType($type, ['scalar', \ReflectionClass::class, TypeConstraint::class]);
+			throw new IllegalStateException();
+		}
+		
+		return self::createFromExpresion($type);
 	}
 	
 	/**
@@ -291,8 +398,16 @@ class TypeConstraint {
 	 * @param array $whitelistTypes
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	public static function createSimple($type, bool $allowsNull = true, array $whitelistTypes = array()) {
-		return new TypeConstraint(self::buildTypeName($type), $allowsNull, null, $whitelistTypes);
+	public static function createSimple($type, bool $allowsNull = true, bool $convertable = false, 
+			array $whitelistTypes = array()) {
+		$typeName = self::buildTypeName($type);
+		
+		if (TypeName::isArrayLike($typeName)) {
+			return new TypeConstraint($typeName, $allowsNull, TypeConstraints::mixed(true),
+					$whitelistTypes, $convertable);
+		}
+		
+		return new TypeConstraint($typeName, $allowsNull, null, $whitelistTypes, $convertable);
 	}
 	
 	/**
@@ -304,82 +419,21 @@ class TypeConstraint {
 	 */
 	public static function createArrayLike($type, bool $allowsNull = true, $arrayFieldType = null, 
 			array $whitelistTypes = array()) {
-		return new TypeConstraint(self::buildTypeName($type), $allowsNull, 
-				($arrayFieldType === null ? null : self::create($arrayFieldType)), 
+		$typeName = null;
+		if ($type === null) {
+			$typeName = TypeName::PSEUDO_ARRAYLIKE;
+		} else {
+			$typeName = self::buildTypeName($type);
+		}
+		
+		if (!TypeName::isArrayLike($typeName)) {
+			throw new \InvalidArgumentException('Type ' . $typeName . ' is not arraylike.');
+		}
+				
+		return new TypeConstraint($typeName, $allowsNull, 
+				($arrayFieldType === null ? TypeConstraints::mixed(true) : self::create($arrayFieldType)), 
 				$whitelistTypes);
 	}
 	
-	public static function isValueA($value, $expectedType, bool $nullAllowed): bool {
-		if ($expectedType === null || ($nullAllowed && $value === null)) return true;
 	
-		if (is_array($expectedType)) {
-			foreach ($expectedType as $type) {
-				if (self::isValueA($value, $type, false)) return true;
-			}
-			return false;
-		}
-		
-		if ($expectedType instanceof \ReflectionClass) {
-			return is_a($value, $expectedType->getName());
-		} 
-		
-		if ($expectedType instanceof TypeConstraint) {
-			return $expectedType->isValueValid($value);
-		}
-		
-		switch ($expectedType) {
-			case 'scalar':
-				return is_scalar($value);
-			case 'array':
-				return is_array($value);
-			case 'string':
-				return is_string($value);
-			case 'numeric':
-				return is_numeric($value);
-			case 'int':
-				return is_int($value);
-			case 'float':
-				return is_float($value);
-			case 'boolean':
-			case 'bool':
-				return is_bool($value);
-			case 'object':
-				return is_object($value);
-			case 'resource':
-				return is_resource($value);
-			case 'null':
-			case 'NULL':
-				return $value === null;
-			default:
-				return is_a($value, $expectedType);
-		}
-		
-		return false;
-	}
-	
-	public static function isTypeA($type, $expectedType): bool {
-		if ($expectedType === null) return true;
-		if ($type === null) return false;
-	
-		switch ($type) {
-			case 'scalar':
-				return $expectedType == 'scalar';
-			case 'array':
-				return $expectedType == 'array';
-			case 'string':
-				return $expectedType == 'string' || $expectedType == 'scalar';
-			case 'numeric':
-				return $expectedType == 'numeric' || $expectedType == 'scalar';
-		}
-	
-		if ($type instanceof \ReflectionClass) {
-			$type = $type->getName();
-		}
-	
-		if ($expectedType instanceof \ReflectionClass) {
-			$expectedType = $expectedType->getName();
-		}
-	
-		return $type == $expectedType || is_subclass_of($type, $expectedType);
-	}
 }

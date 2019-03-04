@@ -23,6 +23,7 @@ namespace n2n\util\col;
 
 use n2n\util\type\ArgUtils;
 use n2n\util\StringUtils;
+use n2n\util\type\TypeName;
 
 class ArrayUtils {
 
@@ -67,23 +68,16 @@ class ArrayUtils {
 	}
 	
 	public static function isArrayLike($value) {
-		return is_array($value) || ($value instanceof \ArrayAccess 
-				&& $value instanceof \IteratorAggregate && $value instanceof \Countable);
+		return TypeName::isValueArrayLike($value);
 	}
 	
 	public static function isClassArrayLike(\ReflectionClass $class) {
-		return $class->implementsInterface('ArrayAccess') 
-				|| $class->implementsInterface('IteratorAggregate') 
-				|| $class->implementsInterface('Countable');
+		return TypeName::isClassArrayLike($class);
 	}
 	
-	public static function isTypeNameArrayLike($typeName) {
-		return $typeName == 'array' || (
-				is_subclass_of($typeName, 'ArrayAccess')
-				&& is_subclass_of($typeName, 'IteratorAggregate')
-				&& is_subclass_of($typeName, 'Countable')); 
+	public static function isTypeNameArrayLike(string $typeName) {
+		return TypeName::isArrayLike($typeName);
 	}
-	
 	
 	public static function inArrayLike($needle, $arrayLike) {
 		ArgUtils::valArrayLike($arrayLike);
