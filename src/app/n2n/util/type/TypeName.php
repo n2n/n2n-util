@@ -34,6 +34,63 @@ class TypeName {
 	}
 	
 	/**
+	 * @param mixed $value
+	 * @param string $typeName
+	 */
+	static function convertValue($value, string $typeName) {
+		switch ($typeName) {
+			case self::STRING;
+				if (is_scalar($value)) {
+					return (string) $value;
+				}
+				
+				throw self::createValueNotConvertableException($value, $typeName);
+			case self::BOOL:
+				return (bool) $value;
+			case self::FLOAT:
+				if (is_numeric($value)) {
+					return (float) $value;
+				}
+				
+				throw self::createValueNotConvertableException($value, $typeName);
+			case self::INT:
+				if (is_numeric($value) && (int) $value == $value) {
+					return (int) $value;
+				}
+				
+				throw self::createValueNotConvertableException($value, $typeName);
+				
+			default:
+				throw new \InvalidArgumentException('It is not possible to convert a value to ' . $typeName);
+		}
+	}
+	
+	/**
+	 * @param string $typeName
+	 * @return bool
+	 */
+	static function isConvertable(string $typeName) {
+		switch ($typeName) {
+			case self::STRING:
+			case self::BOOL:
+			case self::INT:
+			case self::FLOAT:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
+	 * @param unknown $value
+	 * @param string $typeName
+	 * @throws \InvalidArgumentException
+	 */
+	private static function createValueNotConvertableException($value, string $typeName) {
+		throw new \InvalidArgumentException('Value ' . TypeUtils::getTypeInfo($value) . ' is not convertable to ' . $typeName);
+	}
+	
+	/**
 	 * @param string $testingTypeName
 	 * @param string $typeName
 	 * @return boolean

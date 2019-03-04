@@ -30,6 +30,7 @@ class TypeConstraint {
 	private $allowsNull;
 	private $arrayFieldTypeConstraint;
 	private $whitelistTypes;
+	private $convertable = false;
 	/**
 	 * @param string $typeName
 	 * @param string $allowsNull
@@ -38,11 +39,12 @@ class TypeConstraint {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function __construct(string $typeName, bool $allowsNull, 
-			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array()) {
+			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false) {
 		$this->typeName = $typeName;
 		$this->allowsNull = $allowsNull;
 		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraint;
 		$this->whitelistTypes = $whitelistTypes;
+		$this->setConvertable($convertable);
 	}
 	
 	public function setWhitelistTypes(array $whitelistTypes) {
@@ -52,6 +54,25 @@ class TypeConstraint {
 	
 	public function getWhitelistTypes() {
 		return $this->whitelistTypes;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isConvertable() {
+		return $this->convertable;
+	}
+	
+	/**
+	 * @param bool $convertable
+	 * @throws IllegalStateException
+	 */
+	public function setConvertable(bool $convertable) {
+		if ($convertable && !TypeName::isConvertable($this->typeName)) {
+			throw new IllegalStateException('Values are not convertable to ' . $this->typeName);
+		}
+		
+		$this->convertable = $convertable;
 	}
 	
 	/**
@@ -140,21 +161,33 @@ class TypeConstraint {
 	 */
 	public function validate($value) {
 		foreach ($this->whitelistTypes as $whitelistType) {
-			if (TypeUtils::isValueA($value, $whitelistType, false)) return;
+			if (TypeUtils::isValueA($value, $whitelistType, false)) {
+				return $value;
+			}
 		}
 		
 		if ($value === null) {
-			if ($this->allowsNull()) return;
+			if ($this->allowsNull()) return $value;
 			
 			throw new ValueIncompatibleWithConstraintsException(
 					'Null not allowed with constraints.');
 		}
 		
 		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
-			throw $this->createIncompatbleValueException($value);
+			if (!$this->convertable) {
+				throw $this->createIncompatbleValueException($value);
+			}
+			
+			try {
+				$value = TypeName::convertValue($value, $this->typeName);
+			} catch (\InvalidArgumentException $e) {
+				throw $this->createIncompatbleValueException($value, $e);
+			}
 		}
 		
-		if ($this->arrayFieldTypeConstraint === null) return;
+		if ($this->arrayFieldTypeConstraint === null) {
+			return $value;
+		}
 		
 		if (!ArrayUtils::isArrayLike($value)) {
 			if ($this->typeName === null) {
@@ -167,20 +200,22 @@ class TypeConstraint {
 		
 		foreach ($value as $key => $fieldValue) {
 			try {
-				$this->arrayFieldTypeConstraint->validate($fieldValue);
+				$value[$key] = $this->arrayFieldTypeConstraint->validate($fieldValue);
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new ValueIncompatibleWithConstraintsException(
 						'Value type no allowed with constraints ' 
 						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
 			}
 		}
+		
+		return $value;
 	}
 	
-	private function createIncompatbleValueException($value) {
+	private function createIncompatbleValueException($value, $previousE = null) {
 		throw new ValueIncompatibleWithConstraintsException(
 				'Value type not allowed with constraints. Required type: '
 				. $this->__toString() . '; Given type: '
-				. TypeUtils::getTypeInfo($value));
+				. TypeUtils::getTypeInfo($value), $previousE);
 	}
 	
 	public function isEmpty() {
@@ -363,15 +398,16 @@ class TypeConstraint {
 	 * @param array $whitelistTypes
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	public static function createSimple($type, bool $allowsNull = true, array $whitelistTypes = array()) {
+	public static function createSimple($type, bool $allowsNull = true, bool $convertable = false, 
+			array $whitelistTypes = array()) {
 		$typeName = self::buildTypeName($type);
 		
 		if (TypeName::isArrayLike($typeName)) {
 			return new TypeConstraint($typeName, $allowsNull, TypeConstraints::mixed(true),
-					$whitelistTypes);
+					$whitelistTypes, $convertable);
 		}
 		
-		return new TypeConstraint($typeName, $allowsNull, null, $whitelistTypes);
+		return new TypeConstraint($typeName, $allowsNull, null, $whitelistTypes, $convertable);
 	}
 	
 	/**
