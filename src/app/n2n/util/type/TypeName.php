@@ -82,7 +82,7 @@ class TypeName {
 	}
 	
 	/**
-	 * @param unknown $value
+	 * @param mixed $value
 	 * @param string $typeName
 	 * @throws \InvalidArgumentException
 	 */
