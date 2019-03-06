@@ -209,6 +209,10 @@ class TypeName {
 				&& is_subclass_of($typeName, 'Countable');
 	}
 	
+	/**
+	 * @param string $typeName
+	 * @return boolean
+	 */
 	static function isSafe(string $typeName) {
 		switch ($typeName) {
 			case self::PSEUDO_MIXED:
@@ -221,7 +225,11 @@ class TypeName {
 		}
 	}
 	
+	/**
+	 * @param string $typeName
+	 * @return bool
+	 */
 	static function isValid(string $typeName) {
-		return preg_match('/[0-9a-zA-Z_\\\\]/', $typeName);
+		return (bool) preg_match('/[0-9a-zA-Z_\\\\]/', $typeName);
 	}
 }
