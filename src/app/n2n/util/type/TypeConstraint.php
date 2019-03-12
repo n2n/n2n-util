@@ -254,10 +254,12 @@ class TypeConstraint {
 	}
 	
 	public function getLenientCopy() {
-		if ($this->allowsNull || $this->isArrayLike()) return $this;
+		if (($this->allowsNull && $this->convertable) || $this->isArrayLike()) return $this;
 				
+		$convertable =  $this->convertable || TypeName::isConvertable($this->typeName);
+		
 		return new TypeConstraint($this->typeName, true, $this->arrayFieldTypeConstraint, 
-				$this->whitelistTypes);
+				$this->whitelistTypes, $convertable);
 	}
 	
 	public function __toString(): string {
