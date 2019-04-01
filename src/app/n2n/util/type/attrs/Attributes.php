@@ -175,7 +175,7 @@ class Attributes {
 	}
 	
 	public function optScalar(string $name, $defaultValue = null, bool $nullAllowed = true) {
-		return $this->opt($name, TypeConstraint::createSimple('scalar', $nullAllowed));
+		return $this->opt($name, TypeConstraint::createSimple('scalar', $nullAllowed), $defaultValue);
 	}
 	
 	/**
