@@ -272,7 +272,7 @@ class DataMap implements AttributeReader {
 	 * @param bool $nullAllowed
 	 * @return \n2n\util\type\attrs\Attributes|null
 	 */
-	public function reqAttributes($path, bool $nullAllowed = false) {
+	public function reqDataSet($path, bool $nullAllowed = false) {
 		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
 			return new Attributes($array);
 		}
@@ -286,7 +286,7 @@ class DataMap implements AttributeReader {
 	 * @param bool $nullAllowed
 	 * @return \n2n\util\type\attrs\Attributes|null
 	 */
-	public function optAttributes($path, $defaultValue = null, bool $nullAllowed = true) {
+	public function optDataSet($path, $defaultValue = null, bool $nullAllowed = true) {
 		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
 			return new Attributes($array);
 		}
