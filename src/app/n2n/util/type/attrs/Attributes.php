@@ -26,4 +26,28 @@ namespace n2n\util\type\attrs;
  */
 class Attributes extends DataSet {
 	
+	/**
+	 * @param string $name
+	 * @param bool $nullAllowed
+	 * @deprecated use {@see DataSet::reqDataSet()}
+	 * @return \n2n\util\type\attrs\Attributes|null
+	 */
+	public function reqAttributes(string $name, bool $nullAllowed = false) {
+		return new Attributes($this->reqArray($name, null, $nullAllowed));
+	}
+	
+	/**
+	 * @param string $name
+	 * @param mixed $defaultValue
+	 * @param bool $nullAllowed
+	 * @deprecated use {@see DataSet::optDataSet()}
+	 * @return \n2n\util\type\attrs\Attributes|null
+	 */
+	public function optAttributes(string $name, $defaultValue = null, bool $nullAllowed = true) {
+		if (null !== ($array = $this->optArray($name, null, $defaultValue, $nullAllowed))) {
+			return new Attributes($array);
+		}
+		
+		return null;
+	}
 }
