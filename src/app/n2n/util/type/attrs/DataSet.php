@@ -424,8 +424,10 @@ class DataSet {
 	/**
 	 * @param string $name
 	 */
-	public function remove(string $name) {
-		unset($this->attrs[$name]);
+	public function remove(string ...$names) {
+		foreach ($names as $name) {
+			unset($this->attrs[$name]);
+		}
 	}
 	
 	/**
