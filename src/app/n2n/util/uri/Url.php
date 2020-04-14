@@ -84,7 +84,7 @@ class Url {
 		return $this->query;
 	}
 	/**
-	 * @return string
+	 * @return string|null
 	 */
 	public function getFragment() {
 		return $this->fragment;

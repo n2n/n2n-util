@@ -377,9 +377,3 @@ class DataMap implements AttributeReader {
 		return new Attributes($attrs);
 	}
 }
-
-interface AttributesInterceptor {
-	function decorateException(AttributesException $e): \Throwable;
-}
-
-
