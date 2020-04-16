@@ -43,6 +43,14 @@ class TypeConstraints {
 	 * @param bool $nullable
 	 * @return \n2n\util\type\TypeConstraint
 	 */
+	static function int(bool $nullable = false) {
+		return TypeConstraint::createSimple('int', $nullable);
+	}
+	
+	/**
+	 * @param bool $nullable
+	 * @return \n2n\util\type\TypeConstraint
+	 */
 	static function mixed(bool $nullable = false) {
 		return TypeConstraint::createSimple(TypeName::PSEUDO_MIXED, $nullable);
 	}
