@@ -535,7 +535,3 @@ class DataSet {
 		return new Attributes($attrs);
 	}
 }
-
-interface AttributesInterceptor {
-	function decorateException(AttributesException $e): \Throwable;
-}

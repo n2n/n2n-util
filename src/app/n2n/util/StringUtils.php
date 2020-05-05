@@ -239,7 +239,7 @@ class StringUtils {
 	 * @param $assoc
 	 * @param $depth
 	 * @throws JsonEncodeFailedException
-	 * @return 
+	 * @return string
 	 */
 	public static function jsonEncode($value, $options = 0) {
 		$json = @json_encode($value, $options);
@@ -254,6 +254,7 @@ class StringUtils {
 	 * @param string $json
 	 * @param bool $assoc
 	 * @param int $depth
+	 * @return array|object
 	 * @throws JsonDecodeFailedException
 	 */
 	public static function jsonDecode(string $json, bool $assoc = false, int $depth = 512) {
