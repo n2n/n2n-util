@@ -242,12 +242,11 @@ class StringUtils {
 	 * @return string
 	 */
 	public static function jsonEncode($value, $options = 0) {
-		$json = @json_encode($value, $options);
-		if ($json === null && $err = error_get_last()) {
-			throw new JsonEncodeFailedException($err['message']);
+		try {
+			return json_encode($value, JSON_THROW_ON_ERROR | $options);
+		} catch (\JsonException $e) {
+			throw new JsonEncodeFailedException($e->getMessage(), 0, $e);
 		}
-		
-		return $json;
 	}
 	/**
 	 * 
@@ -258,12 +257,11 @@ class StringUtils {
 	 * @throws JsonDecodeFailedException
 	 */
 	public static function jsonDecode(string $json, bool $assoc = false, int $depth = 512) {
-		$str = json_decode($json, $assoc, $depth);
-		if ($str === null) {
-			throw new JsonDecodeFailedException('JSON string could not be decoded.');
+		try {
+			return json_decode($json, $assoc, $depth, JSON_THROW_ON_ERROR);
+		} catch (\JsonException $e) {
+			throw new JsonDecodeFailedException('JSON string could not be decoded.', 0, $e);
 		}
-	
-		return $str;
 	}
 	
 	public static function insert($originalStr, $pos, $insertStr) {
@@ -462,18 +460,4 @@ class StringUtils {
 	public static function stripNl(string $str, string $replacement = ' ', bool $strpWhitespacePrefixes = true) {
 		return preg_replace('/' . ($strpWhitespacePrefixes ? '\\s*' : '') . '[\\r\\n]+/', $replacement, $str);
 	}
-}
-
-
-
-class GzuncompressFailedException extends \RuntimeException {
-	
-}
-
-class JsonEncodeFailedException extends \RuntimeException {
-	
-}
-
-class JsonDecodeFailedException extends \RuntimeException {
-	
 }

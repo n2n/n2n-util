@@ -220,10 +220,10 @@ class Url {
 	 * @param $expression
 	 * @return Url|null
 	 */
-	public static function build($expression) {
+	public static function build($expression, bool $lenient = false) {
 		if ($expression === null || $expression instanceof Url) return $expression;
 
-		return self::create($expression);
+		return self::create($expression, $lenient);
 	}
 
 	/**
