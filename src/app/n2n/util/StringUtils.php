@@ -461,17 +461,3 @@ class StringUtils {
 		return preg_replace('/' . ($strpWhitespacePrefixes ? '\\s*' : '') . '[\\r\\n]+/', $replacement, $str);
 	}
 }
-
-
-
-class GzuncompressFailedException extends \RuntimeException {
-	
-}
-
-class JsonEncodeFailedException extends \JsonException {
-	
-}
-
-class JsonDecodeFailedException extends \JsonException {
-	
-}
