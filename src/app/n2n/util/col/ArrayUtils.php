@@ -35,8 +35,14 @@ class ArrayUtils {
 		return array_shift($array);
 	}
 	
-	public static function first(array $array) {
-		return self::reset($array);
+	public static function first($arrayLike) {
+		if (is_array($arrayLike)) {
+			return self::reset($arrayLike);
+		}
+		
+		ArgUtils::valArrayLike($arrayLike);
+		$arr = $arrayLike->getArrayCopy();
+		return self::reset($arr);
 	}
 	
 	public static function last(array $array) {
