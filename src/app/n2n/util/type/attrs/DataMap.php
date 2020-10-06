@@ -31,7 +31,7 @@ use n2n\web\http\controller\Interceptor;
 class DataMap implements AttributeReader {
 
 	private $data;
-	private $interceptor;
+// 	private $interceptor;
 	/**
 	 *
 	 * @param array $attrs
@@ -40,10 +40,10 @@ class DataMap implements AttributeReader {
 		$this->data = (array) $data;
 	}
 	
-	public function setInterceptor(?Interceptor $interceptor) {
-		$this->interceptor = $interceptor;
-		return $this;
-	}
+// 	public function setInterceptor(?Interceptor $interceptor) {
+// 		$this->interceptor = $interceptor;
+// 		return $this;
+// 	}
 	
 	/**
 	 *
