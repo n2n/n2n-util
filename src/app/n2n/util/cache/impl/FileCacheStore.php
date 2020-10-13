@@ -184,6 +184,11 @@ class FileCacheStore implements CacheStore {
 		}
 		$lock->release();
 		
+		// file could be empty due to writing anomalies
+		if (empty($contents)) {
+			return null;
+		}
+		
 		$attrs = null;
 		try {
 // 			$time_start = microtime(true);
