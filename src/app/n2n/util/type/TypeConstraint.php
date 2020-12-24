@@ -284,7 +284,7 @@ class TypeConstraint {
 	 * @return TypeConstraint
 	 */
 	public static function createFromParameter(\ReflectionParameter $parameter) {
-		if ($parameter->isArray()) {
+		if (ReflectionUtils::isArrayParameter($parameter)) {
 			return new TypeConstraint(TypeName::ARRAY, $parameter->allowsNull(),
 					new TypeConstraint(TypeName::PSEUDO_MIXED, true));
 		}
