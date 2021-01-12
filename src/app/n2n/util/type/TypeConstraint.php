@@ -226,6 +226,7 @@ class TypeConstraint {
 	 * Returns true if all values which are compatible with the constraints of this instance are also 
 	 * compatible with the passed constraints (but not necessary the other way around)
 	 * @param TypeConstraint $constraints
+	 * @return bool
 	 */
 	public function isPassableTo(TypeConstraint $constraints, $ignoreNullAllowed = false) {
 		if ($constraints->isEmpty()) return true;
