@@ -272,7 +272,7 @@ class DataSet {
 			return $this->req($name, TypeConstraint::createSimple('int', $nullAllowed));
 		}
 		
-		if (null !== ($value = $this->reqNumeric($name))) {
+		if (null !== ($value = $this->reqNumeric($name, $nullAllowed))) {
 			return (int) $value;
 		}
 		
@@ -288,7 +288,7 @@ class DataSet {
 			return (int) $value;
 		}
 			
-		return null;
+		return $defaultValue;
 	}
 	
 	public function reqEnum(string $name, array $allowedValues, bool $nullAllowed = false) {
