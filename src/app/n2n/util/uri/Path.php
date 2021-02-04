@@ -174,7 +174,7 @@ final class Path {
 		return $this->toRealString($this->leadingDelimiter, $this->endingDelimiter);
 	}
 	
-	public function toRealString($leadingDelimiter = null, $endingDelimiter = null) {
+	public function toRealString(bool $leadingDelimiter = null, bool $endingDelimiter = null) {
 		if ($leadingDelimiter === null) $leadingDelimiter = $this->leadingDelimiter;
 		if ($endingDelimiter === null) $endingDelimiter = $this->endingDelimiter;
 		
