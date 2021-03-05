@@ -203,7 +203,7 @@ class TypeConstraint {
 				$value[$key] = $this->arrayFieldTypeConstraint->validate($fieldValue);
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new ValueIncompatibleWithConstraintsException(
-						'Value type no allowed with constraints ' 
+						'Value type not allowed with constraints '
 						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
 			}
 		}
