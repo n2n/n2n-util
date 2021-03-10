@@ -128,4 +128,16 @@ class DateUtils {
 		
 		return new \DateTime($iso);
 	}
+	
+	/**
+	 * @param string $timestamp
+	 * @return NULL|\DateTime
+	 */
+	static function timestampToDateTime(?string $timestamp) {
+		if ($timestamp === null) {
+			return null;
+		}
+		
+		return self::createDateTimeFromTimestamp($timestamp);
+	}
 }
