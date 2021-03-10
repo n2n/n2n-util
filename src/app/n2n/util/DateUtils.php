@@ -104,4 +104,28 @@ class DateUtils {
 		}
 		return $lastErrorsString;
 	}
+	
+	/**
+	 * @param \DateTime $dateTime
+	 * @return NULL|string
+	 */
+	static function dateTimeToIso(?\DateTime $dateTime) {
+		if ($dateTime === null) {
+			return null;
+		}
+		
+		return $dateTime->format(\DateTime::ATOM);
+	}
+	
+	/**
+	 * @param string $iso
+	 * @return NULL|\DateTime
+	 */
+	static function isoToDateTime(?string $iso) {
+		if ($iso === null) {
+			return null;
+		}
+		
+		return new \DateTime($iso);
+	}
 }
