@@ -22,6 +22,7 @@
 namespace n2n\util;
 
 class DateUtils {
+	
 	public static function dateIntervalToSeconds(\DateTime $from, \DateInterval $dateInterval) {
 		$to = new \DateTime();
 		$to->setTimestamp($from->getTimestamp());
@@ -139,5 +140,28 @@ class DateUtils {
 		}
 		
 		return self::createDateTimeFromTimestamp($timestamp);
+	}
+	
+	const SQL_DATE_TIME_FORMAT = 'Y-m-d H:i:s';
+	
+	/**
+	 * @param \DateTime $dateTime
+	 * @return null|string
+	 */
+	static function dateTimeToSql(\DateTime $dateTime = null) {
+		if (null === $dateTime) return null;
+		
+		return $dateTime->format(self::SQL_DATE_TIME_FORMAT);
+	}
+	
+	/**
+	 * @param string $sqlDateTimeString
+	 * @return null|\DateTime
+	 */
+	static function sqlToDateTime(string $sqlDateTimeString) {
+		if (null === $sqlDateTimeString) return null;
+		
+		return self::createDateTimeFromFormat(self::SQL_DATE_TIME_FORMAT,
+				$sqlDateTimeString);
 	}
 }
