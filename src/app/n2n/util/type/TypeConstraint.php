@@ -203,7 +203,7 @@ class TypeConstraint {
 				$value[$key] = $this->arrayFieldTypeConstraint->validate($fieldValue);
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new ValueIncompatibleWithConstraintsException(
-						'Value type no allowed with constraints ' 
+						'Value type not allowed with constraints '
 						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
 			}
 		}
@@ -215,7 +215,7 @@ class TypeConstraint {
 		throw new ValueIncompatibleWithConstraintsException(
 				'Value type not allowed with constraints. Required type: '
 				. $this->__toString() . '; Given type: '
-				. TypeUtils::getTypeInfo($value), $previousE);
+				. TypeUtils::getTypeInfo($value), null, $previousE);
 	}
 	
 	public function isEmpty() {
@@ -226,6 +226,7 @@ class TypeConstraint {
 	 * Returns true if all values which are compatible with the constraints of this instance are also 
 	 * compatible with the passed constraints (but not necessary the other way around)
 	 * @param TypeConstraint $constraints
+	 * @return bool
 	 */
 	public function isPassableTo(TypeConstraint $constraints, $ignoreNullAllowed = false) {
 		if ($constraints->isEmpty()) return true;

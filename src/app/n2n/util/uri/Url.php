@@ -178,14 +178,26 @@ class Url {
 			($fragment === null ? $this->fragment : $fragment));
 	}
 
+	/**
+	 * @param mixed ...$pathPartExts
+	 * @return \n2n\util\uri\Url
+	 */
 	public function pathExt(...$pathPartExts) {
 		return new Url($this->scheme, $this->authority, $this->getPath()->ext(...$pathPartExts), $this->query, $this->fragment);
 	}
 
+	/**
+	 * @param mixed ...$pathExts
+	 * @return \n2n\util\uri\Url
+	 */
 	public function pathExtEnc(...$pathExts) {
 		return new Url($this->scheme, $this->authority, $this->getPath()->extEnc(...$pathExts), $this->query, $this->fragment);
 	}
 
+	/**
+	 * @param mixed $query
+	 * @return \n2n\util\uri\Url
+	 */
 	public function queryExt($query) {
 		return new Url($this->scheme, $this->authority, $this->getPath(), $this->getQuery()->ext($query), $this->fragment);
 	}
