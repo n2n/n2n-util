@@ -307,6 +307,29 @@ class DataMap implements AttributeReader {
 	 *
 	 * @param array $data
 	 */
+	public function set($path, $value) {
+		$names = AttributePath::create($path)->toArray();
+		
+		$data = &$this->data;
+		while (true) {
+			$name = array_shift($names);
+			if (empty($names)) {
+				$data[$name] = $value;
+				return;
+			}
+			
+			if (!isset($data[$name]) || !is_array($data[$name])) {
+				$data[$name] = [];
+			}
+			
+			$data = &$data[$name];
+		}
+	}
+	
+	/**
+	 *
+	 * @param array $data
+	 */
 	public function setAll(array $data) {
 		$this->data = $data;
 	}
