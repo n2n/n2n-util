@@ -148,7 +148,7 @@ class DateUtils {
 	 * @param \DateTime $dateTime
 	 * @return null|string
 	 */
-	static function dateTimeToSql(\DateTime $dateTime = null) {
+	static function dateTimeToSql(?\DateTime $dateTime) {
 		if (null === $dateTime) return null;
 		
 		return $dateTime->format(self::SQL_DATE_TIME_FORMAT);
