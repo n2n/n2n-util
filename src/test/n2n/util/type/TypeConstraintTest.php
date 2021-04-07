@@ -7,7 +7,7 @@ use n2n\util\type\TypeConstraints;
 use n2n\util\type\AtuschMock;
 use n2n\util\type\ArrayLikeMock;
 
-class TypeConstraintTest extends TestCase  {
+class TypeConstraintTest extends TestCase {
 	
 	function testCreate() {
 		$tc = TypeConstraint::create('string');
