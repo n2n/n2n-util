@@ -145,7 +145,7 @@ class DateUtils {
 	const SQL_DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 	
 	/**
-	 * @param \DateTime $dateTime
+	 * @param \DateTime|null $dateTime
 	 * @return null|string
 	 */
 	static function dateTimeToSql(?\DateTime $dateTime) {
@@ -155,7 +155,7 @@ class DateUtils {
 	}
 	
 	/**
-	 * @param string $sqlDateTimeString
+	 * @param string|null $sqlDateTimeString
 	 * @return null|\DateTime
 	 */
 	static function sqlToDateTime(?string $sqlDateTimeString) {
