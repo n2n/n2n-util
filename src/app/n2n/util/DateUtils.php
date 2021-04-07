@@ -158,7 +158,7 @@ class DateUtils {
 	 * @param string $sqlDateTimeString
 	 * @return null|\DateTime
 	 */
-	static function sqlToDateTime(string $sqlDateTimeString) {
+	static function sqlToDateTime(?string $sqlDateTimeString) {
 		if (null === $sqlDateTimeString) return null;
 		
 		return self::createDateTimeFromFormat(self::SQL_DATE_TIME_FORMAT,
