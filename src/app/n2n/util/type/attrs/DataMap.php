@@ -113,6 +113,16 @@ class DataMap implements AttributeReader {
 	}
 	
 	/**
+	 * @param string|AttributePath $path
+	 * @return bool
+	 */
+	function has($path) {
+		$found = false;
+		$this->retrieve($path, null, false, null, $found);
+		return $found;
+	}
+	
+	/**
 	 * @param string $name
 	 * @param bool $mandatory
 	 * @param mixed $defaultValue
