@@ -304,6 +304,36 @@ class DataMap implements AttributeReader {
 		return null;
 	}
 	
+	
+	
+	/**
+	 * @param string|AttributePath|string[] $path
+	 * @param mixed $defaultValue
+	 * @param bool $nullAllowed
+	 * @return \n2n\util\type\attrs\DataMap|null
+	 */
+	public function reqDataMap($path, bool $nullAllowed = false) {
+		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
+			return new DataMap($array);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * @param string|AttributePath|string[] $path
+	 * @param mixed $defaultValue
+	 * @param bool $nullAllowed
+	 * @return \n2n\util\type\attrs\DataMap|null
+	 */
+	public function optDataMap($path, $defaultValue = null, bool $nullAllowed = true) {
+		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
+			return new DataMap($array);
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * @param string $name
 	 * @param mixed $key scalar
