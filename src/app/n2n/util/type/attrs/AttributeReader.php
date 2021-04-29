@@ -24,6 +24,12 @@ namespace n2n\util\type\attrs;
 use n2n\util\type\TypeConstraint;
 
 interface AttributeReader {
+	
+	/**
+	 * @param AttributePath $path
+	 * @return bool
+	 */
+	function containsAttribute(AttributePath $path): bool;
 
 	/**
 	 * @param AttributePath $path
@@ -33,7 +39,7 @@ interface AttributeReader {
 	 * @return mixed|null
 	 * @throws AttributesException
 	 */
-	public function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true,
+	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true,
 			$defaultValue = null);
 }
 

@@ -102,8 +102,19 @@ class DataMap implements AttributeReader {
 		return $value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\attrs\AttributeReader::containsAttribute()
+	 */
+	function containsAttribute(AttributePath $path): bool {
+		return $this->has($path);
+	}
 	
-	public function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
+	/**
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
+	 */
+	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
 			$defaultValue = null) {
 		if ($mandatory) {
 			return $this->req($path, $typeConstraint);
