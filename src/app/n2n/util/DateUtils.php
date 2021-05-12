@@ -157,11 +157,16 @@ class DateUtils {
 	/**
 	 * @param string|null $sqlDateTimeString
 	 * @return null|\DateTime
+	 * 
+	 * @throws \InvalidArgumentException
 	 */
 	static function sqlToDateTime(?string $sqlDateTimeString) {
 		if (null === $sqlDateTimeString) return null;
-		
-		return self::createDateTimeFromFormat(self::SQL_DATE_TIME_FORMAT,
-				$sqlDateTimeString);
+		try {
+			return self::createDateTimeFromFormat(self::SQL_DATE_TIME_FORMAT,
+					$sqlDateTimeString);
+		} catch (DateParseException $e) {
+			throw new \InvalidArgumentException(null, null, $e);
+		}
 	}
 }
