@@ -34,11 +34,11 @@ final class Path {
 	protected $leadingDelimiter;
 	protected $endingDelimiter;
 	
-	public function __construct(array $pathParts, $leadingDelimiter = false, $endingDelimiter = false) {
+	public function __construct(array $pathParts, bool $leadingDelimiter = false, bool $endingDelimiter = false) {
 		$this->pathParts = array();
 		$this->applyPathPartArray($pathParts);
-		$this->leadingDelimiter = (boolean) $leadingDelimiter;
-		$this->endingDelimiter = (boolean) $endingDelimiter;
+		$this->leadingDelimiter = $leadingDelimiter;
+		$this->endingDelimiter = $endingDelimiter;
 		
 		if (empty($this->pathParts) && $this->leadingDelimiter != $this->endingDelimiter) {
 			$this->leadingDelimiter = true;
@@ -77,7 +77,7 @@ final class Path {
 		$this->str = null;
 	}
 	
-	public function isEmpty($checkDelimiters = false) {
+	public function isEmpty(bool $checkDelimiters = false) {
 		if ($checkDelimiters && ($this->leadingDelimiter || $this->endingDelimiter)) {
 			return true;
 		}

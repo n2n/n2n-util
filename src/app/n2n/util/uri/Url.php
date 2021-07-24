@@ -137,6 +137,15 @@ class Url {
 		if ($path === $this->path) return $this;
 		return new Url($this->scheme, $this->authority, Path::create($path), $this->query, $this->fragment);
 	}
+	
+	/**
+	 * @param bool $endingDelimitter
+	 * @return \n2n\util\uri\Url
+	 */
+	function chPathEndingDelimiter(bool $endingDelimitter) {
+		return $this->chPath($this->getPath()->chEndingDelimiter($endingDelimitter));
+	}
+	
 	/**
 	 * @param mixed $query
 	 * @return \n2n\util\uri\Url
