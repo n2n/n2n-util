@@ -30,7 +30,7 @@ use n2n\util\cache\CacheItem;
 use n2n\util\StringUtils;
 use n2n\util\UnserializationFailedException;
 use n2n\util\cache\CorruptedCacheStoreException;
-use n2n\io\IoException;
+use n2n\util\io\IoException;
 use n2n\util\DateUtils;
 use n2n\io\fs\FileResourceStream;
 
