@@ -32,7 +32,7 @@ use n2n\util\UnserializationFailedException;
 use n2n\util\cache\CorruptedCacheStoreException;
 use n2n\util\io\IoException;
 use n2n\util\DateUtils;
-use n2n\io\fs\FileResourceStream;
+use n2n\util\io\stream\impl\FileResourceStream;
 
 class FileCacheStore implements CacheStore {
 	const CHARACTERISTIC_DELIMITER = '.';

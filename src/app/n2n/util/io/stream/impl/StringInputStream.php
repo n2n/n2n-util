@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\io\stream\impl;
+namespace n2n\util\io\stream\impl;
 
 use n2n\util\ex\NotYetImplementedException;
 use n2n\util\io\stream\InputStream;

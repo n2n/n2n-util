@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\io\stream\impl;
+namespace n2n\util\io\stream\impl;
 
 use n2n\util\io\stream\InputStream;
 use n2n\util\io\stream\OutputStream;
@@ -35,7 +35,7 @@ class FileResourceStream extends ResourceStream implements InputStream, OutputSt
 	 * @param string $fileName
 	 * @param string $mode
 	 * @param int $lock
-	 * @throws \n2n\io\CouldNotAchieveFlockException
+	 * @throws \n2n\util\io\fs\CouldNotAchieveFlockException
 	 */
 	public function __construct(string $fileName, string $mode = 'c+', $lock = null) {
 		$this->fileName = $fileName;
