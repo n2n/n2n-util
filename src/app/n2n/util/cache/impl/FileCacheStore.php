@@ -22,8 +22,8 @@
 namespace n2n\util\cache\impl;
 
 use n2n\util\cache\CacheStore;
-use n2n\io\fs\FsPath;
-use n2n\io\IoUtils;
+use n2n\util\io\fs\FsPath;
+use n2n\util\io\IoUtils;
 use n2n\util\ex\IllegalStateException;
 use n2n\util\HashUtils;
 use n2n\util\cache\CacheItem;
@@ -54,7 +54,7 @@ class FileCacheStore implements CacheStore {
 		$this->filePerm = $filePerm;
 	}
 	/**
-	 * @return \n2n\io\fs\FsPath
+	 * @return \n2n\util\io\fs\FsPath
 	 */
 	public function getDirPath() {
 		return $this->dirPath;
