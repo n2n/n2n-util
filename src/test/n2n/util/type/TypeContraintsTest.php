@@ -16,4 +16,19 @@ class TypeConstraintsTest extends TestCase {
 		$this->expectException(ValueIncompatibleWithConstraintsException::class);
 		$typeConstraint->validate('2');
 	}
+	
+	function testConvertableInt() {
+		$typeConstraint = TypeConstraints::int(false, true);
+		
+		$this->assertTrue($typeConstraint->isValueValid(2));
+		$this->assertTrue($typeConstraint->isValueValid('2'));
+		$this->assertFalse($typeConstraint->isValueValid('zwei'));
+		
+		
+		$this->assertEquals(2, $typeConstraint->validate(2));
+		$this->assertEquals(2, $typeConstraint->validate('2'));
+		
+		$this->expectException(ValueIncompatibleWithConstraintsException::class);
+		$typeConstraint->validate('zwei');
+	}
 }

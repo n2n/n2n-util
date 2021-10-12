@@ -66,6 +66,26 @@ class TypeName {
 	}
 	
 	/**
+	 * @param mixed $value
+	 * @param string $typeName
+	 * @return bool
+	 */
+	static function isValueConvertTo($value, string $typeName) {
+		switch ($typeName) {
+			case self::STRING;
+				return is_scalar($value);
+			case self::BOOL:
+				return true;
+			case self::FLOAT:
+				return is_numeric($value);
+			case self::INT:
+				return is_numeric($value) && ((int) $value == $value);
+			default:
+				return false;
+		}
+	}
+	
+	/**
 	 * @param string $typeName
 	 * @return bool
 	 */

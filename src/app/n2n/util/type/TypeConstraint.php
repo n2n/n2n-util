@@ -137,7 +137,11 @@ class TypeConstraint implements Constraint {
 		}
 		
 		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
-			return false;
+			if (!$this->convertable) {
+				return false;
+			}
+			
+			return TypeName::isValueConvertTo($value, $this->typeName);
 		}
 		
 		if (!$this->isArrayLike()) return true;
