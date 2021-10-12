@@ -35,24 +35,24 @@ class TypeConstraints {
 	 * @param bool $nullable
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	static function string(bool $nullable = false) {
-		return TypeConstraint::createSimple('string', $nullable);
+	static function string(bool $nullable = false, bool $convertable = false) {
+		return TypeConstraint::createSimple('string', $nullable, $convertable);
 	}
 	
 	/**
 	 * @param bool $nullable
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	static function int(bool $nullable = false) {
-		return TypeConstraint::createSimple('int', $nullable);
+	static function int(bool $nullable = false, bool $convertable = false) {
+		return TypeConstraint::createSimple('int', $nullable, $convertable);
 	}
 	
 	/**
 	 * @param bool $nullable
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	static function float(bool $nullable = false) {
-		return TypeConstraint::createSimple('float', $nullable);
+	static function float(bool $nullable = false, bool $convertable = false) {
+		return TypeConstraint::createSimple('float', $nullable, $convertable);
 	}
 	
 	/**

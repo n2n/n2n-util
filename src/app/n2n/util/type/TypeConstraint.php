@@ -25,7 +25,7 @@ use n2n\reflection\ReflectionUtils;
 use n2n\util\col\ArrayUtils;
 use n2n\util\ex\IllegalStateException;
 
-class TypeConstraint {	
+class TypeConstraint implements Constraint {	
 	private $typeName;
 	private $allowsNull;
 	private $arrayFieldTypeConstraint;
@@ -127,7 +127,7 @@ class TypeConstraint {
 // 		return $this->whitelistTypes;
 // 	}
 	
-	public function isValueValid($value) {
+	public function isValueValid($value): bool {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) return true;
 		}
@@ -155,10 +155,7 @@ class TypeConstraint {
 		
 		return true;
 	}
-	/**
-	 * @param mixed $value
-	 * @throws ValueIncompatibleWithConstraintsException
-	 */
+	
 	public function validate($value) {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) {
