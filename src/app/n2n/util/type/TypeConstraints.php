@@ -64,12 +64,24 @@ class TypeConstraints {
 	}
 	
 	/**
-	 * @param string $name
+	 * @param string|\ReflectionType $name
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @return \n2n\util\type\Constraint
 	 */
-	static function type($name, bool $nullable = false) {
-		return TypeConstraint::createSimple($name, $nullable);
+	static function type(string|\ReflectionType|\ReflectionParameter $type, bool $nullable = false) {
+		if ($type instanceof \ReflectionParameter) {
+			$type = $type->getType();
+			
+			if ($type === null) {
+				return TypeConstraint::createSimple(null, true);
+			}
+		}
+		
+		if (TypeName::isUnionType($type)) {
+			return UnionTypeConstraint::create($type);
+		}
+		
+		return TypeConstraint::create($type);
 	}
 	
 	/**

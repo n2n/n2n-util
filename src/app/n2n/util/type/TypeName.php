@@ -1,7 +1,11 @@
 <?php
 namespace n2n\util\type;
 
+use n2n\util\StringUtils;
+use n2n\util\io\IoUtils;
+
 class TypeName {
+	const NULL = 'null';
 	const STRING = 'string';
 	const INT = 'int';
 	const FLOAT = 'float';
@@ -173,7 +177,7 @@ class TypeName {
 				return is_resource($value);
 			case TypeName::PSEUDO_ARRAYLIKE:
 				return self::isValueArrayLike($value);
-			case 'null':
+			case TypeName::NULL:
 			case 'NULL':
 				return $value === null;
 			default:
@@ -217,6 +221,7 @@ class TypeName {
 			case self::ARRAY:
 			case self::RESOURCE:
 			case self::OBJECT:
+			case self::NULL:
 			case self::PSEUDO_SCALAR:
 			case self::PSEUDO_MIXED:
 			case self::PSEUDO_ARRAYLIKE:
@@ -227,6 +232,19 @@ class TypeName {
 		return is_subclass_of($typeName, 'ArrayAccess')
 				&& is_subclass_of($typeName, 'IteratorAggregate')
 				&& is_subclass_of($typeName, 'Countable');
+	}
+	
+	/**
+	 * @param string $typeName
+	 */
+	static function isNullable(string $typeName) {
+		switch ($typeName) {
+			case self::PSEUDO_MIXED:
+			case self::NULL:
+				return true;
+			default:
+				return false;
+		}
 	}
 	
 	/**
@@ -251,5 +269,34 @@ class TypeName {
 	 */
 	static function isValid(string $typeName) {
 		return (bool) preg_match('/[0-9a-zA-Z_\\\\]/', $typeName);
+	}
+	
+	const UNION_TYPE_SEPARATOR = '|';
+	
+	static function isUnionType(string|\ReflectionType $type) {
+		if (is_string($type)) {
+			return StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type);
+		}
+		
+		return ($type instanceof \ReflectionUnionType);
+	}
+	
+	static function extractUnionTypeNames(string|\ReflectionUnionType $type) {
+		if ($type instanceof \ReflectionUnionType) {
+			return array_map(function ($namedType) { return $namedType->getName(); }, $type->getTypes());
+		}
+		
+		return array_map(
+				function ($typeName) use ($type) {
+					$typeName = trim($typeName);
+					
+					if (empty($typeName) || IoUtils::hasSpecialChars($typeName)) {
+						throw new \InvalidArgumentException('Invalid union type: ' . $type);
+					}
+					
+					return $typeName;
+				}, explode(self::UNION_TYPE_SEPARATOR, $type));
+		
+			
 	}
 }

@@ -41,7 +41,7 @@ class TypeConstraint implements Constraint {
 	protected function __construct(string $typeName, bool $allowsNull, 
 			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false) {
 		$this->typeName = $typeName;
-		$this->allowsNull = $allowsNull;
+		$this->allowsNull = TypeName::isNullable($typeName) || $allowsNull;
 		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraint;
 		$this->whitelistTypes = $whitelistTypes;
 		$this->setConvertable($convertable);
@@ -284,6 +284,7 @@ class TypeConstraint implements Constraint {
 	/**
 	 * @param \ReflectionParameter $parameter
 	 * @return TypeConstraint
+	 * @deprecated
 	 */
 	public static function createFromParameter(\ReflectionParameter $parameter) {
 		if (ReflectionUtils::isArrayParameter($parameter)) {
@@ -364,10 +365,10 @@ class TypeConstraint implements Constraint {
 	}
 	
 	/**
-	 * @param string|\ReflectionClass|TypeConstraint|null $type
+	 * @param string|\ReflectionClass|TypeConstraint $type
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	public static function create($type) {
+	public static function create(string|\ReflectionNamedType|\ReflectionClass|TypeConstraint $type) {
 		if ($type instanceof TypeConstraint) {
 			return $type;
 		}
@@ -376,9 +377,8 @@ class TypeConstraint implements Constraint {
 			return self::createSimple($type);
 		}
 		
-		if (!is_scalar($type)) {
-			ArgUtils::valType($type, ['scalar', \ReflectionClass::class, TypeConstraint::class]);
-			throw new IllegalStateException();
+		if ($type instanceof \ReflectionNamedType) {
+			return self::createSimple($type->getName(), $type->allowsNull());
 		}
 		
 		return self::createFromExpresion($type);
