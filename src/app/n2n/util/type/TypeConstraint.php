@@ -58,7 +58,6 @@ abstract class TypeConstraint implements Constraint {
 		return NamedTypeConstraint::from($type);
 	}
 	
-	
 	/**
 	 * @param string|\ReflectionClass|null $type
 	 * @param bool $allowsNull
