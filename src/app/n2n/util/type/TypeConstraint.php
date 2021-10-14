@@ -44,6 +44,7 @@ abstract class TypeConstraint implements Constraint {
 	abstract function getNamedTypeConstraints(): array;		
 	
 	/**
+	 * @param string|\ReflectionClass|\ReflectionType|TypeConstraint $type
 	 * @return TypeConstraint 
 	 */
 	static function create(string|\ReflectionClass|\ReflectionType|TypeConstraint $type) {
