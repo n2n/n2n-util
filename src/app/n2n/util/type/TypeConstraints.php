@@ -28,7 +28,7 @@ class TypeConstraints {
 	 * @return \n2n\util\type\TypeConstraint
 	 */
 	static function scalar(bool $nullable = false) {
-		return TypeConstraint::createSimple('scalar', $nullable);
+		return NamedTypeConstraint::createSimple('scalar', $nullable);
 	}
 	
 	/**
@@ -36,7 +36,7 @@ class TypeConstraints {
 	 * @return \n2n\util\type\TypeConstraint
 	 */
 	static function string(bool $nullable = false, bool $convertable = false) {
-		return TypeConstraint::createSimple('string', $nullable, $convertable);
+		return NamedTypeConstraint::createSimple('string', $nullable, $convertable);
 	}
 	
 	/**
@@ -44,7 +44,7 @@ class TypeConstraints {
 	 * @return \n2n\util\type\TypeConstraint
 	 */
 	static function int(bool $nullable = false, bool $convertable = false) {
-		return TypeConstraint::createSimple('int', $nullable, $convertable);
+		return NamedTypeConstraint::createSimple('int', $nullable, $convertable);
 	}
 	
 	/**
@@ -52,7 +52,7 @@ class TypeConstraints {
 	 * @return \n2n\util\type\TypeConstraint
 	 */
 	static function float(bool $nullable = false, bool $convertable = false) {
-		return TypeConstraint::createSimple('float', $nullable, $convertable);
+		return NamedTypeConstraint::createSimple('float', $nullable, $convertable);
 	}
 	
 	/**
@@ -60,28 +60,28 @@ class TypeConstraints {
 	 * @return \n2n\util\type\TypeConstraint
 	 */
 	static function mixed(bool $nullable = false) {
-		return TypeConstraint::createSimple(TypeName::PSEUDO_MIXED, $nullable);
+		return NamedTypeConstraint::createSimple(TypeName::PSEUDO_MIXED, $nullable);
 	}
 	
 	/**
-	 * @param string|\ReflectionType $name
+	 * @param string|\ReflectionType|\ReflectionParameter $type
 	 * @param bool $nullable
-	 * @return \n2n\util\type\Constraint
+	 * @return \n2n\util\type\TypeConstraint
 	 */
 	static function type(string|\ReflectionType|\ReflectionParameter $type, bool $nullable = false) {
 		if ($type instanceof \ReflectionParameter) {
 			$type = $type->getType();
 			
 			if ($type === null) {
-				return TypeConstraint::createSimple(null, true);
+				return NamedTypeConstraint::createSimple(null, true);
 			}
 		}
 		
 		if (TypeName::isUnionType($type)) {
-			return UnionTypeConstraint::create($type);
+			return UnionTypeConstraint::from($type);
 		}
 		
-		return TypeConstraint::create($type);
+		return NamedTypeConstraint::from($type);
 	}
 	
 	/**

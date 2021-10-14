@@ -296,7 +296,10 @@ class TypeName {
 					
 					return $typeName;
 				}, explode(self::UNION_TYPE_SEPARATOR, $type));
-		
-			
+	}
+	
+	static function concatUnionTypeNames(array $typeNames) {
+		ArgUtils::valArray($typeNames, 'string');
+		return implode(self::UNION_TYPE_SEPARATOR, $typeNames);
 	}
 }

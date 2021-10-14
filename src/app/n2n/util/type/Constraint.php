@@ -23,16 +23,5 @@ namespace n2n\util\type;
 
 interface Constraint extends \Stringable {
 	
-	/**
-	 * @param mixed $value
-	 * @return boolean
-	 */
-	function isValueValid($value): bool;
 	
-	/**
-	 * @param mixed $value
-	 * @return mixed maybe converted value
-	 * @throws ValueIncompatibleWithConstraintsException
-	 */
-	function validate($value);
 }

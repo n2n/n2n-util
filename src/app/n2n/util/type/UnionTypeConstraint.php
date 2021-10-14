@@ -21,37 +21,27 @@
  */
 namespace n2n\util\type;
 
-use n2n\reflection\ReflectionUtils;
 use n2n\util\col\ArrayUtils;
 use n2n\util\ex\IllegalStateException;
 
-class UnionTypeConstraint implements Constraint {	
-	private $typeConstraints = [];
+class UnionTypeConstraint extends TypeConstraint {	
+	private $namedTypeConstraints = [];
 
 	/**
-	 * @param TypeConstraint[] $typeConstraints
+	 * @param NamedTypeConstraint[] $namedTypeConstraints
 	 * @param array $whitelistTypes
 	 */
-	protected function __construct(array $typeConstraints = [], array $whitelistTypes = array()) {
-		ArgUtils::valArray($typeConstraints, TypeConstraint::class);
-		$this->typeConstraints = $typeConstraints;
+	protected function __construct(array $namedTypeConstraints = [], array $whitelistTypes = array()) {
+		ArgUtils::valArray($namedTypeConstraints, NamedTypeConstraint::class);
+		$this->namedTypeConstraints = $namedTypeConstraints;
 		$this->whitelistTypes = $whitelistTypes;
-	}
-	
-	function setWhitelistTypes(array $whitelistTypes) {
-		$this->whitelistTypes = $whitelistTypes;
-		return $this;
-	}
-	
-	function getWhitelistTypes() {
-		return $this->whitelistTypes;
 	}
 	
 	/**
 	 * @return TypeConstraint[]
 	 */
 	function getTypeConstraints() {
-		return $this->typeConstraints;
+		return $this->namedTypeConstraints;
 	}
 	
 	function isValueValid($value): bool {
@@ -59,8 +49,8 @@ class UnionTypeConstraint implements Constraint {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) return true;
 		}
 		
-		foreach ($this->typeConstraints as $typeConstraint) {
-			if ($typeConstraint->isValueValid($value)) {
+		foreach ($this->namedTypeConstraints as $namedTypeConstraint) {
+			if ($namedTypeConstraint->isValueValid($value)) {
 				return true;
 			}
 		}
@@ -120,168 +110,44 @@ class UnionTypeConstraint implements Constraint {
 		return $value;
 	}
 	
-	private function createIncompatbleValueException($value, $previousE = null) {
-		throw new ValueIncompatibleWithConstraintsException(
-				'Value type not allowed with constraints. Required type: '
-				. $this->__toString() . '; Given type: '
-				. TypeUtils::getTypeInfo($value), null, $previousE);
-	}
 	
-	function isEmpty() {
-		return $this->typeName === TypeName::PSEUDO_MIXED && $this->allowsNull 
-				&& ($this->arrayFieldTypeConstraint === null || $this->arrayFieldTypeConstraint->isEmpty());
-	}
+	
 	/**
-	 * Returns true if all values which are compatible with the constraints of this instance are also 
-	 * compatible with the passed constraints (but not necessary the other way around)
-	 * @param TypeConstraint $constraints
-	 * @return bool
+	 * {@inheritDoc}
+	 * @see \n2n\util\type\TypeConstraint::getNamedTypeConstraints()
 	 */
-	function isPassableTo(TypeConstraint $constraints, $ignoreNullAllowed = false) {
-		if ($constraints->isEmpty()) return true;
-		 
-		if (!(TypeUtils::isTypeA($this->getTypeName(), $constraints->getTypeName()) 
-				&& ($ignoreNullAllowed || $constraints->allowsNull() || !$this->allowsNull()))) return false;
-				
-		$arrayFieldConstraints = $constraints->getArrayFieldTypeConstraint();
-		if ($arrayFieldConstraints === null) return true;
-		if ($this->arrayFieldTypeConstraint === null) return true;
-		
-		return $this->arrayFieldTypeConstraint->isPassableTo($arrayFieldConstraints, $ignoreNullAllowed);
-	}
-	
-	function isPassableBy(TypeConstraint $constraints, $ignoreNullAllowed = false) {
-		if ($this->isEmpty()) return true;
-
-		if (!(TypeUtils::isTypeA($constraints->getTypeName(), $this->getTypeName())
-				&& ($ignoreNullAllowed || $this->allowsNull() || !$constraints->allowsNull()))) return false;
-		
-		if ($this->arrayFieldTypeConstraint === null) return true;
-		$arrayFieldConstraints = $constraints->getArrayFieldTypeConstraint();
-		if ($arrayFieldConstraints === null) return true;
-
-		return $this->arrayFieldTypeConstraint->isPassableBy($arrayFieldConstraints, $ignoreNullAllowed);
+	function getNamedTypeConstraints(): array {
+		return $this->namedTypeConstraints;
 	}
 	
 	function getLenientCopy() {
-		if (($this->allowsNull && $this->convertable) || $this->isArrayLike()) return $this;
-				
-		$convertable =  $this->convertable || TypeName::isConvertable($this->typeName);
-		
-		return new TypeConstraint($this->typeName, true, $this->arrayFieldTypeConstraint, 
-				$this->whitelistTypes, $convertable);
+		return array_map(fn ($ntc) => $ntc->getLenientCopy());
 	}
 	
 	function __toString(): string {
-		$str = '';
-		
-		if ($this->allowsNull) {
-			$str .= '?';
-		}
-		
-		$str .= $this->typeName;
-		
-		if ($this->arrayFieldTypeConstraint !== null) {
-			$str .= '<' . $this->arrayFieldTypeConstraint . '>';
-		}
-		
-		return $str;
-	}
-	
-	
-	
-	
-	private static function buildTypeName($type) {
-		if ($type instanceof \ReflectionClass) {
-			return $type->getName();
-		}
-		
-		if ($type === null) {
-			return TypeName::PSEUDO_MIXED;
-		}
-		
-		if (!is_scalar($type)) {
-			ArgUtils::valType($type, [TypeName::PSEUDO_SCALAR, \ReflectionClass::class], false, 'type');
-			throw new IllegalStateException();
-		}
-		
-		if (TypeName::isValid($type)) {
-			return $type;
-		}
-		
-		throw new \InvalidArgumentException('Type name contains invalid characters: ' . $type);
-		
-// 		throw new \InvalidArgumentException(
-// 				'Invalid type parameter passed for TypeConstraint (Allowed: string, ReflectionClass): ' 
-// 						. TypeUtils::getTypeInfo($type));
-	}
-	
-	private static function createFromExpresion(string $type) {
-		$matches = null;
-		if (!preg_match('/^(\\?)?([^<>]+)(<(.+)>)?$/', $type, $matches)) {
-			throw new \InvalidArgumentException('Invalid TypeConstraint expression: ' . $type);
-		}
-		
-		$typeName = $matches[2];
-		
-		if (!TypeName::isValid($typeName)) {
-			throw new \InvalidArgumentException($type . ' is an invalid TypeConstraint expression. Reason: '
-					. $typeName . ' contains invalid characters.');
-		}
-		
-		$allowsNull = $matches[1] == '?';
-				
-		$arrayFieldTypeConstraint = null;
-		if (isset($matches[4])) {
-			if (!TypeName::isArrayLike($typeName)) {
-				throw new \InvalidArgumentException('Array field generics disabled for ' . $type . '. Reason '
-						. $typeName . ' is not arraylike.');
-			}
-			
-			try {
-				$arrayFieldTypeConstraint = self::create($matches[4]);
-			} catch (\InvalidArgumentException $e) {
-				throw new \InvalidArgumentException($type . ' is an invalid TypeConstraint expression. Reason: '
-						. $e->getMessage(), 0, $e);
-			}
-		}
-		
-		
-		return new TypeConstraint($typeName, $allowsNull, $arrayFieldTypeConstraint);
+		return TypeName::concatUnionTypeNames(array_map(fn ($ntc) => $ntc->getTypeName(), $this->namedTypeConstraints));
 	}
 	
 	/**
-	 * @param string|UnionTypeConstraint $type
-	 * @return \n2n\util\type\TypeConstraint
+	 * @param string|\ReflectionUnionType|UnionTypeConstraint $type
+	 * @return \n2n\util\type\UnionTypeConstraint
 	 */
-	public static function create(string|\ReflectionUnionType|UnionTypeConstraint $type) {
+	public static function from(string|\ReflectionUnionType|UnionTypeConstraint $type) {
 		if ($type instanceof UnionTypeConstraint) {
 			return $type;
 		}
 		
 		if ($type instanceof \ReflectionUnionType) {
 			return new UnionTypeConstraint(array_map(
-					fn ($namedType) => TypeConstraint::create($namedType),
+					fn ($namedType) => NamedTypeConstraint::from($namedType),
 					$type->getTypes()));
 		}
 		
-		
 		return new UnionTypeConstraint(array_map(
-				fn ($typeName) => TypeConstraint::create($typeName), 
+				fn ($typeName) => NamedTypeConstraint::from($typeName), 
 				TypeName::extractUnionTypeNames($type)));
 	}
 	
-	/**
-	 * @param string|\ReflectionUnionType|UnionTypeConstraint|null $type
-	 * @return \n2n\util\type\TypeConstraint
-	 */
-	public static function build(string|\ReflectionUnionType|UnionTypeConstraint|null $type) {
-		if ($type === null) {
-			return null;
-		}
-		
-		return self::create($type);
-	}
 	
 	
 	
