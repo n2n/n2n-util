@@ -50,7 +50,7 @@ class ResourceStream implements InputStream, OutputStream {
 		return $this->resource;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\io\OutputStream::write()
+	 * @see \n2n\util\io\stream\OutputStream::write()
 	 */
 	public function write(string $contents) {
 		IoUtils::fwrite($this->getResource(), $contents);
@@ -84,7 +84,7 @@ class ResourceStream implements InputStream, OutputStream {
 		return $this->resource !== null;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\io\InputStream::available()
+	 * @see \n2n\util\io\stream\InputStream::available()
 	 */
 	public function available() {
 		throw new NotYetImplementedException();

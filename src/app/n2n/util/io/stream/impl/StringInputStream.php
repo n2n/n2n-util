@@ -31,13 +31,13 @@ class StringInputStream implements InputStream {
 		$this->str = (string) $str;
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\io\InputStream::available()
+	 * @see \n2n\util\io\stream\InputStream::available()
 	 */
 	public function available() {
 		return strlen($this->str);
 	}
 	/* (non-PHPdoc)
-	 * @see \n2n\io\InputStream::read()
+	 * @see \n2n\util\io\stream\InputStream::read()
 	 */
 	public function read($length = null) {
 		if (isset($length)) {
