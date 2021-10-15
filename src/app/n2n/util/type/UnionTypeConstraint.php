@@ -65,49 +65,13 @@ class UnionTypeConstraint extends TypeConstraint {
 			}
 		}
 		
-		if ($value === null) {
-			if ($this->allowsNull()) return $value;
-			
-			throw new ValueIncompatibleWithConstraintsException(
-					'Null not allowed with constraints.');
-		}
-		
-		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
-			if (!$this->convertable) {
-				throw $this->createIncompatbleValueException($value);
-			}
-			
-			try {
-				$value = TypeName::convertValue($value, $this->typeName);
-			} catch (\InvalidArgumentException $e) {
-				throw $this->createIncompatbleValueException($value, $e);
+		foreach ($this->namedTypeConstraints as $namedTypeConstraint) {
+			if ($namedTypeConstraint->isValueValid($value)) {
+				return $namedTypeConstraint->validate($value);
 			}
 		}
 		
-		if ($this->arrayFieldTypeConstraint === null) {
-			return $value;
-		}
-		
-		if (!ArrayUtils::isArrayLike($value)) {
-			if ($this->typeName === null) {
-				throw $this->createIncompatbleValueException($value);
-			}
-			
-			throw new IllegalStateException('Illegal constraint ' . $this->__toString() . ' defined:'
-					. $this->typeName . ' is no ArrayType.');
-		}
-		
-		foreach ($value as $key => $fieldValue) {
-			try {
-				$value[$key] = $this->arrayFieldTypeConstraint->validate($fieldValue);
-			} catch (ValueIncompatibleWithConstraintsException $e) {
-				throw new ValueIncompatibleWithConstraintsException(
-						'Value type not allowed with constraints '
-						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
-			}
-		}
-		
-		return $value;
+		throw $this->createIncompatbleValueException($value);
 	}
 	
 	
@@ -136,7 +100,7 @@ class UnionTypeConstraint extends TypeConstraint {
 		if ($type instanceof \ReflectionUnionType) {
 			return new UnionTypeConstraint(array_map(
 					fn ($namedType) => NamedTypeConstraint::from($namedType, $convertable),
-					$type->getTypes()));
+					array_reverse($type->getTypes())));
 		}
 		
 		return new UnionTypeConstraint(array_map(
