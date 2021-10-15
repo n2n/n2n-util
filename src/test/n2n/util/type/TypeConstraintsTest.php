@@ -77,9 +77,9 @@ class TypeConstraintsTest extends TestCase {
 		
 		$typeConstraints = $unionTypeConstraint->getTypeConstraints();
 		$this->assertEquals(2, count($typeConstraints));
-		$this->assertEquals(TypeName::INT, $typeConstraints[0]->getTypeName());
+		$this->assertEquals(TypeName::STRING, $typeConstraints[0]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[0]->allowsNull());
-		$this->assertEquals(TypeName::STRING, $typeConstraints[1]->getTypeName());
+		$this->assertEquals(TypeName::INT, $typeConstraints[1]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[1]->allowsNull());
 		
 		$unionTypeConstraint = TypeConstraints::type($parameter->getType());
@@ -87,9 +87,9 @@ class TypeConstraintsTest extends TestCase {
 		
 		$typeConstraints = $unionTypeConstraint->getTypeConstraints();
 		$this->assertEquals(2, count($typeConstraints));
-		$this->assertEquals(TypeName::INT, $typeConstraints[0]->getTypeName());
+		$this->assertEquals(TypeName::STRING, $typeConstraints[0]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[0]->allowsNull());
-		$this->assertEquals(TypeName::STRING, $typeConstraints[1]->getTypeName());
+		$this->assertEquals(TypeName::INT, $typeConstraints[1]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[1]->allowsNull());
 		
 		$unionTypeConstraint = TypeConstraints::type('int|string');
@@ -100,6 +100,23 @@ class TypeConstraintsTest extends TestCase {
 		$this->assertEquals(TypeName::INT, $typeConstraints[0]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[0]->allowsNull());
 		$this->assertEquals(TypeName::STRING, $typeConstraints[1]->getTypeName());
+		$this->assertEquals(false, $typeConstraints[1]->allowsNull());
+	}
+	
+	
+	function testTypeStringIntByParameter() {
+		$class = new \ReflectionClass(TypedMethodsMock::class);
+		$parameter = $class->getMethod('stringIntParam')->getParameters()[0];
+		$types = $parameter->getType()->getTypes();
+		
+		$unionTypeConstraint = TypeConstraints::type($parameter);
+		$this->assertInstanceOf(UnionTypeConstraint::class, $unionTypeConstraint);
+		
+		$typeConstraints = $unionTypeConstraint->getTypeConstraints();
+		$this->assertEquals(2, count($typeConstraints));
+		$this->assertEquals(TypeName::STRING, $typeConstraints[0]->getTypeName());
+		$this->assertEquals(false, $typeConstraints[0]->allowsNull());
+		$this->assertEquals(TypeName::INT, $typeConstraints[1]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[1]->allowsNull());
 	}
 	

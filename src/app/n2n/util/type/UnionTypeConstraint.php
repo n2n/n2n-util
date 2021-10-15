@@ -100,7 +100,7 @@ class UnionTypeConstraint extends TypeConstraint {
 		if ($type instanceof \ReflectionUnionType) {
 			return new UnionTypeConstraint(array_map(
 					fn ($namedType) => NamedTypeConstraint::from($namedType, $convertable),
-					array_reverse($type->getTypes())));
+					$type->getTypes()));
 		}
 		
 		return new UnionTypeConstraint(array_map(

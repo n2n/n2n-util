@@ -8,4 +8,7 @@ class TypedMethodsMock {
 	
 	function intStringParam(int|string $arg) {
 	}
+	
+	function stringIntParam(string|int $arg) {
+	}
 }
