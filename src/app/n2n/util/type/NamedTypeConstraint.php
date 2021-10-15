@@ -40,10 +40,11 @@ class NamedTypeConstraint extends TypeConstraint {
 	protected function __construct(string $typeName, bool $allowsNull, 
 			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false) {
 		$this->typeName = $typeName;
-		$this->allowsNull = TypeName::isNullable($typeName) || $allowsNull;
+		$this->allowsNull = $allowsNull || TypeName::isNullable($typeName);
+		$this->convertable = $convertable && TypeName::isConvertable($typeName);
 		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraint;
 		$this->whitelistTypes = $whitelistTypes;
-		$this->setConvertable($convertable);
+		
 	}
 	
 	public function setWhitelistTypes(array $whitelistTypes) {
@@ -65,6 +66,7 @@ class NamedTypeConstraint extends TypeConstraint {
 	/**
 	 * @param bool $convertable
 	 * @throws IllegalStateException
+	 * @return NamedTypeConstraint
 	 */
 	public function setConvertable(bool $convertable) {
 		if ($convertable && !TypeName::isConvertable($this->typeName)) {
@@ -72,6 +74,7 @@ class NamedTypeConstraint extends TypeConstraint {
 		}
 		
 		$this->convertable = $convertable;
+		return $this;
 	}
 	
 	/**
@@ -306,7 +309,7 @@ class NamedTypeConstraint extends TypeConstraint {
 	}
 	
 	
-	private static function createFromExpresion(string $type) {
+	private static function createFromExpresion(string $type, bool $convertable) {
 		ArgUtils::assertTrue(!TypeName::isUnionType($type));
 		
 		$matches = null;
@@ -338,27 +341,23 @@ class NamedTypeConstraint extends TypeConstraint {
 			}
 		}
 
-		return new NamedTypeConstraint($typeName, $allowsNull, $arrayFieldTypeConstraint);
+		return new NamedTypeConstraint($typeName, $allowsNull, $arrayFieldTypeConstraint, [], $convertable);
 	}
 	
 	/**
 	 * @param string|\ReflectionClass|TypeConstraint $type
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	static function from(string|\ReflectionNamedType|\ReflectionClass|NamedTypeConstraint $type) {
+	static function from(string|\ReflectionNamedType $type, bool $convertable = false) {
 		if ($type instanceof NamedTypeConstraint) {
 			return $type;
 		}
 		
-		if ($type instanceof \ReflectionClass) {
-			return self::createSimple($type);
-		}
-		
 		if ($type instanceof \ReflectionNamedType) {
-			return self::createSimple($type->getName(), $type->allowsNull());
+			return self::createSimple($type->getName(), $type->allowsNull(), $convertable);
 		}
 		
-		return self::createFromExpresion($type);
+		return self::createFromExpresion($type, $convertable);
 	}
 	
 	

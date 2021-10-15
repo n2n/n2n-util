@@ -121,7 +121,7 @@ class UnionTypeConstraint extends TypeConstraint {
 	}
 	
 	function getLenientCopy() {
-		return array_map(fn ($ntc) => $ntc->getLenientCopy());
+		return new UnionTypeConstraint(array_map(fn ($ntc) => $ntc->getLenientCopy(), $this->namedTypeConstraints));
 	}
 	
 	function __toString(): string {
@@ -129,22 +129,18 @@ class UnionTypeConstraint extends TypeConstraint {
 	}
 	
 	/**
-	 * @param string|\ReflectionUnionType|UnionTypeConstraint $type
+	 * @param string|\ReflectionUnionType $type
 	 * @return \n2n\util\type\UnionTypeConstraint
 	 */
-	public static function from(string|\ReflectionUnionType|UnionTypeConstraint $type) {
-		if ($type instanceof UnionTypeConstraint) {
-			return $type;
-		}
-		
+	public static function from(string|\ReflectionUnionType $type, bool $convertable = false) {
 		if ($type instanceof \ReflectionUnionType) {
 			return new UnionTypeConstraint(array_map(
-					fn ($namedType) => NamedTypeConstraint::from($namedType),
+					fn ($namedType) => NamedTypeConstraint::from($namedType, $convertable),
 					$type->getTypes()));
 		}
 		
 		return new UnionTypeConstraint(array_map(
-				fn ($typeName) => NamedTypeConstraint::from($typeName), 
+				fn ($typeName) => NamedTypeConstraint::from($typeName, $convertable), 
 				TypeName::extractUnionTypeNames($type)));
 	}
 	

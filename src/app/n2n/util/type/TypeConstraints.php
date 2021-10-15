@@ -68,20 +68,20 @@ class TypeConstraints {
 	 * @param bool $nullable
 	 * @return \n2n\util\type\TypeConstraint
 	 */
-	static function type(string|\ReflectionType|\ReflectionParameter $type, bool $nullable = false) {
+	static function type(string|\ReflectionType|\ReflectionParameter $type, bool $convertable = false) {
 		if ($type instanceof \ReflectionParameter) {
 			$type = $type->getType();
 			
 			if ($type === null) {
-				return NamedTypeConstraint::createSimple(null, true);
+				return NamedTypeConstraint::createSimple(null, true, $convertable);
 			}
 		}
 		
 		if (TypeName::isUnionType($type)) {
-			return UnionTypeConstraint::from($type);
+			return UnionTypeConstraint::from($type, $convertable);
 		}
 		
-		return NamedTypeConstraint::from($type);
+		return NamedTypeConstraint::from($type, $convertable);
 	}
 	
 	/**

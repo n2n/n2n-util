@@ -8,6 +8,9 @@ class TypeConstraintsTest extends TestCase {
 	
 	function testInt() {
 		$typeConstraint = TypeConstraints::int();
+		$this->assertInstanceOf(NamedTypeConstraint::class, $typeConstraint);
+		$this->assertFalse($typeConstraint->allowsNull());
+		$this->assertFalse($typeConstraint->isConvertable());
 		
 		$this->assertTrue($typeConstraint->isValueValid(2));
 		$this->assertFalse($typeConstraint->isValueValid('2'));
@@ -48,7 +51,7 @@ class TypeConstraintsTest extends TestCase {
 		$this->assertEquals(false, $typeConstraint->allowsNull());
 	}
 	
-	function testTypeIntString() {
+	function testTypeIntStringByParameter() {
 		$class = new \ReflectionClass(TypedMethodsMock::class);
 		$parameter = $class->getMethod('intStringParam')->getParameters()[0];
 		$types = $parameter->getType()->getTypes();		
@@ -82,5 +85,32 @@ class TypeConstraintsTest extends TestCase {
 		$this->assertEquals(false, $typeConstraints[0]->allowsNull());
 		$this->assertEquals(TypeName::STRING, $typeConstraints[1]->getTypeName());
 		$this->assertEquals(false, $typeConstraints[1]->allowsNull());
+	}
+	
+	function testTypeConvertable() {
+		$namedTypeConstraint = TypeConstraints::type('?int', true);
+		$this->assertInstanceOf(NamedTypeConstraint::class, $namedTypeConstraint);
+		
+		$this->assertEquals(TypeName::INT, $namedTypeConstraint->getTypeName());
+		$this->assertEquals(true, $namedTypeConstraint->allowsNull());
+		$this->assertEquals(true, $namedTypeConstraint->isConvertable());
+		
+		$unionTypeConstraint = TypeConstraints::type('string|int|null', true);
+		$this->assertInstanceOf(UnionTypeConstraint::class, $unionTypeConstraint);
+		
+		$typeConstraints = $unionTypeConstraint->getTypeConstraints();
+		$this->assertEquals(3, count($typeConstraints));
+		
+		$this->assertEquals(TypeName::STRING, $typeConstraints[0]->getTypeName());
+		$this->assertEquals(false, $typeConstraints[0]->allowsNull());
+		$this->assertEquals(true, $typeConstraints[0]->isConvertable());
+		
+		$this->assertEquals(TypeName::INT, $typeConstraints[1]->getTypeName());
+		$this->assertEquals(false, $typeConstraints[1]->allowsNull());
+		$this->assertEquals(true, $typeConstraints[1]->isConvertable());
+		
+		$this->assertEquals(TypeName::NULL, $typeConstraints[2]->getTypeName());
+		$this->assertEquals(true, $typeConstraints[2]->allowsNull());
+		$this->assertEquals(false, $typeConstraints[2]->isConvertable());
 	}
 }
