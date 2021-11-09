@@ -532,12 +532,19 @@ class IoUtils {
 	 * @throws IoException
 	 */
 	public static function imageCreateFromPng($filePath) {
+		$image = null;
 		try {
-			return imagecreatefrompng($filePath);
+			$image = imagecreatefrompng($filePath);
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefrompng of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
+
+		if ($image === false) {
+			throw new IoException('Imagecreatefrompng of \'' . $filePath . '\' failed.');
+		}
+
+		return $image;
 	}
 
 	/**
@@ -546,12 +553,19 @@ class IoUtils {
 	 * @throws IoException
 	 */
 	public static function imageCreateFromGif($filePath) {
+		$image = null;
 		try {
-			return imagecreatefromgif($filePath);
+			$image = imagecreatefromgif($filePath);
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefromgif of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
+
+		if ($image === false) {
+			throw new IoException('Imagecreatefromgif of \'' . $filePath . '\' failed.');
+		}
+
+		return $image;
 	}
 
 	/**
@@ -560,12 +574,19 @@ class IoUtils {
 	 * @throws IoException
 	 */
 	public static function imageCreateFromJpeg($filePath) {
+		$image = null;
 		try {
-			return imagecreatefromjpeg($filePath);
+			$image = imagecreatefromjpeg($filePath);
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefromjpeg of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 				null, $e);
 		}
+
+		if ($image === false) {
+			throw new IoException('Imagecreatefromjpeg of \'' . $filePath . '\' failed.');
+		}
+
+		return $image;
 	}
 
 	/**
@@ -574,12 +595,18 @@ class IoUtils {
 	 * @throws IoException
 	 */
 	public static function imageCreateFromWebp($filePath) {
+		$image = null;
 		try {
-			return imagecreatefromwebp($filePath);
+			$image = imagecreatefromwebp($filePath);
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefromwebp of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
+
+		if ($image === false) {
+			throw new IoException('Imagecreatefromwebp of \'' . $filePath . '\' failed.');
+		}
+		return $image;
 	}
 
 	/**
