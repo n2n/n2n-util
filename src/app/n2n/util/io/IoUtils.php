@@ -23,6 +23,7 @@ namespace n2n\util\io;
 
 use n2n\util\io\fs\CouldNotAchieveFlockException;
 use n2n\io\Flock;
+use n2n\util\io\fs\FileOperationException;
 
 class IoUtils {
 	
