@@ -56,7 +56,11 @@ class ArrayUtils {
 	
 		return null;
 	}
-	
+
+	/**
+	 * @param array $array
+	 * @return mixed|null
+	 */
 	public static function current(array &$array) {
 		if (false !== ($result = current($array))) {
 			return $result;
