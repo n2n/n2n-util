@@ -33,8 +33,7 @@ class ResourceStream implements InputStream, OutputStream {
 		$this->resource = $resource;
 	}
 	/**
-	 * (non-PHPdoc)
-	 * @see n2n\io.Stream::isOpen()
+	 * @see \n2n\util\io\stream\Stream::isOpen()
 	 */
 	public function isOpen() {
 		return $this->resource !== null;
