@@ -17,7 +17,6 @@ class IoUtilsTest extends TestCase {
 
 	protected function setUp(): void {
 		$this->recursiveRmDir(self::TEST_DIR);
-		var_dump(self::TEST_DIR);
 		mkdir(self::TEST_DIR);
 		touch(self::TEST_FILE);
 		file_put_contents(self::TEST_FILE, self::TEST_FILE_DATA);
@@ -123,8 +122,8 @@ class IoUtilsTest extends TestCase {
 	}
 
 	public function testFopen() {
-		$resource = IoUtils::fopen(self::TEST_FILE, 'r');
-		$this->assertTrue(is_resource($resource));
+		$result = IoUtils::fopen(self::TEST_FILE, 'r');
+		$this->assertIsResource($result);
 	}
 
 	public function testFopenNotFound() {
@@ -213,8 +212,8 @@ class IoUtilsTest extends TestCase {
 	}
 
 	public function testImageCreateFromPng() {
-		$resource = IoUtils::imageCreateFromPng(self::TEST_PNG);
-		$this->assertIsResource($resource);
+		$result = IoUtils::imageCreateFromPng(self::TEST_PNG);
+		$this->assertTrue($result instanceof \GdImage);
 	}
 
 	public function testImageCreateFromPngWrongFormat() {
@@ -223,8 +222,8 @@ class IoUtilsTest extends TestCase {
 	}
 
 	public function testImageCreateFromGif() {
-		$resource = IoUtils::imageCreateFromGif(self::TEST_GIF);
-		$this->assertIsResource($resource);
+		$result = IoUtils::imageCreateFromGif(self::TEST_GIF);
+		$this->assertTrue($result instanceof \GdImage);
 	}
 
 	public function testImageCreateFromGifWrongFormat() {
@@ -234,7 +233,7 @@ class IoUtilsTest extends TestCase {
 
 	public function testImageCreateFromJpeg() {
 		$resource = IoUtils::imageCreateFromJpeg(self::TEST_JPEG);
-		$this->assertIsResource($resource);
+		$this->assertTrue($resource instanceof \GdImage);
 	}
 
 	public function testImageCreateFromJpegWrongFormat() {
@@ -243,8 +242,8 @@ class IoUtilsTest extends TestCase {
 	}
 
 	public function testImageCreateFromWebp() {
-		$resource = IoUtils::imageCreateFromWebp(self::TEST_WEBP);
-		$this->assertIsResource($resource);
+		$result = IoUtils::imageCreateFromWebp(self::TEST_WEBP);
+		$this->assertTrue($result instanceof \GdImage);
 	}
 
 	public function testImageCreateFromWebpWrongFormat() {
@@ -253,23 +252,23 @@ class IoUtilsTest extends TestCase {
 	}
 
 	public function testImagePng() {
-		$resource = IoUtils::imagePng(imagecreatefrompng(self::TEST_PNG));
-		$this->assertNotFalse($resource);
+		$result = IoUtils::imagePng(imagecreatefrompng(self::TEST_PNG));
+		$this->assertNotFalse($result);
 	}
 
 	public function testImageGif() {
-		$resource = IoUtils::imageGif(imagecreatefromgif(self::TEST_GIF));
-		$this->assertNotFalse($resource);
+		$result = IoUtils::imageGif(imagecreatefromgif(self::TEST_GIF));
+		$this->assertNotFalse($result);
 	}
 
 	public function testImageJpeg() {
-		$resource = IoUtils::imageJpeg(imagecreatefromjpeg(self::TEST_JPEG));
-		$this->assertNotFalse($resource);
+		$result = IoUtils::imageJpeg(imagecreatefromjpeg(self::TEST_JPEG));
+		$this->assertNotFalse($result);
 	}
 
 	public function testImageWebp() {
-		$resource = IoUtils::imageWebp(imagecreatefromwebp(self::TEST_WEBP));
-		$this->assertNotFalse($resource);
+		$result = IoUtils::imageWebp(imagecreatefromwebp(self::TEST_WEBP));
+		$this->assertNotFalse($result);
 	}
 
 	public function testGetImageSize() {
