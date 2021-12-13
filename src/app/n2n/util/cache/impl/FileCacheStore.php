@@ -132,7 +132,7 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::store()
 	 */
-	public function store(string $name, array $characteristics, $data, \DateTime $lastMod = null) {
+	public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null) {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->isDir()) {
 			if ($this->dirPerm === null) {

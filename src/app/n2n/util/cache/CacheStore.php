@@ -25,9 +25,9 @@ interface CacheStore {
 	/**
 	 * @param string $name
 	 * @param array $characteristics
-	 * @param array $data
+	 * @param mixed $data
 	 */
-	public function store(string $name, array $characteristics, $data, \DateTime $lastMod = null);
+	public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null);
 	/**
 	 * @param string $name
 	 * @param array $characteristics
