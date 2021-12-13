@@ -354,11 +354,21 @@ class StringUtils {
 	}
 	
 	/**
-	 * @param string|null $value
-	 * @return string
+	 * @param string|array|null $value
+	 * @return string|array|null
 	 */
-	public static function convertNonPrintables(?string $value) {
+	public static function convertNonPrintables(string|array|null $value) {
 		if (empty($value)) {
+			return $value;
+		}
+
+		if (is_array($value)) {
+			foreach ($value as $key => $fieldValue) {
+				$cleanKey = (is_string($key) ? self::convertNonPrintables($key) : $key);
+				$cleanValue = (is_string($fieldValue) || is_array($fieldValue) ? self::convertNonPrintables($fieldValue) : $fieldValue);
+				$value[$cleanKey] = $cleanValue;
+
+			}
 			return $value;
 		}
 		
