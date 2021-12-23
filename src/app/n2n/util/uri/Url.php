@@ -22,6 +22,8 @@
 namespace n2n\util\uri;
 
 use n2n\util\type\ArgUtils;
+use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\UriFactoryInterface;
 
 class Url {
 	const SCHEME_SEPARATOR = ':';
@@ -352,5 +354,9 @@ class Url {
 	 */
 	public function equals($url): bool {
 		return $url instanceof Url && (string) $this  === (string) $url;
+	}
+
+	public function toPsr(UriFactoryInterface $uriFactory): UriInterface {
+		return $uriFactory->createUri((string) $this);
 	}
 }
