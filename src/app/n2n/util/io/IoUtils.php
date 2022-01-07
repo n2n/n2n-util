@@ -506,11 +506,17 @@ class IoUtils {
 	 */
 	public static function parseIniString($iniString, $processSections = false, $scannerMode = null) {
 		try {
-			return parse_ini_string($iniString, $processSections, $scannerMode);
+			$result = parse_ini_string($iniString, $processSections, $scannerMode);
 		} catch (\Throwable $e) {
 			throw new IoException('ParseIniString of \'' . $iniString . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
+
+		if ($result === false) {
+			throw new IoException('ParseIniString of \'' . $iniString . '\' failed.');
+		}
+
+		return $result;
 	}
 	/**
 	 * 
@@ -522,10 +528,16 @@ class IoUtils {
 	 */
 	public static function parseIniFile($path, $processSections = false, $scannerMode = null) {
 		try {
-			return parse_ini_file($path, $processSections, $scannerMode);
+			$result = parse_ini_file($path, $processSections, $scannerMode);
 		} catch (\Throwable $e) {
 			throw new IoException('ParseIniFile of \'' . $path . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
+
+		if ($result === false) {
+			throw new IoException('ParseIniFile of \'' . $path . '\' failed.');
+		}
+
+		return $result;
 	}
 
 	/**
