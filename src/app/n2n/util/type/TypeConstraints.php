@@ -21,6 +21,8 @@
  */
 namespace n2n\util\type;
 
+use ReflectionClass;
+
 class TypeConstraints {
 	
 	/**
@@ -82,6 +84,16 @@ class TypeConstraints {
 		}
 		
 		return NamedTypeConstraint::from($type, $convertable);
+	}
+
+	/**
+	 * @param string|ReflectionClass|null $type
+	 * @param bool $allowsNull
+	 * @param bool $convertable
+	 * @return NamedTypeConstraint
+	 */
+	static function namedType(string|ReflectionClass|null $type, bool $allowsNull = true, bool $convertable = false) {
+		return NamedTypeConstraint::createSimple($type, $allowsNull, $convertable);
 	}
 	
 	/**
