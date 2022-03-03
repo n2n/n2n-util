@@ -169,4 +169,41 @@ class DateUtils {
 			throw new \InvalidArgumentException(null, null, $e);
 		}
 	}
+
+	/**
+	 * @param \DateTime $dateTime
+	 */
+	static function stripTime(\DateTime $dateTime): \DateTime {
+		return $dateTime->setTime(0, 0, 0, 0);
+	}
+
+	/**
+	 * @param \DateTimeImmutable $dateTimeImmutable
+	 * @return \DateTimeImmutable
+	 */
+	static function stripTimeFromImmutable(\DateTimeImmutable $dateTimeImmutable): \DateTimeImmutable {
+		return $dateTimeImmutable->setTime(0, 0, 0, 0);
+	}
+
+	/**
+	 * @param \DateTimeImmutable $dateTime1
+	 * @param \DateTimeImmutable $dateTime2
+	 * @return int days difference
+	 */
+	/**
+	 * @param \DateTimeImmutable $dateTime1
+	 * @param \DateTimeImmutable $dateTime2
+	 * @return int days difference
+	 */
+	static function compareDates(\DateTimeInterface $dateTime1, \DateTimeInterface $dateTime2): int {
+		$date1 = self::stripTimeFromImmutable(\DateTimeImmutable::createFromInterface($dateTime1));
+		$date2 = self::stripTimeFromImmutable(\DateTimeImmutable::createFromInterface($dateTime2));
+
+		$diff = $date1->diff($date2);
+		if ($diff->invert) {
+			return -$diff->days;
+		}
+
+		return $diff->days;
+	}
 }
