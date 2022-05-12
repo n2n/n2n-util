@@ -113,9 +113,13 @@ class IoUtils {
 	 * @throws IoException
 	 * @return bool
 	 */
-	public static function mkdirs($path, $permission) {
+	public static function mkdirs(string $path, int|string $permission = 0777) {
+		if (is_string($permission)) {
+			$permission = octdec($permission);
+		}
+
 		try {
-			return mkdir($path, octdec($permission), true);
+			return mkdir($path, $permission, true);
 		} catch(\Throwable $e) {
 			throw new FileOperationException('Mkdir of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -281,7 +285,7 @@ class IoUtils {
 	 * @throws IoException
 	 * @return bool
 	 */
-	public static function chmod($path, $filePermission) {
+	public static function chmod($path, int|string $filePermission = 077) {
 		if (is_string($filePermission)) {
 			$filePermission = octdec($filePermission);
 		}

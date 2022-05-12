@@ -137,7 +137,7 @@ class FsPath {
 	 * 
 	 * @param string $perm
 	 */
-	public function mkdirs($perm) {
+	public function mkdirs(int|string $perm = 0777) {
 		if ($this->isDir()) return;
 		IoUtils::mkdirs($this->path, $perm);
 	}

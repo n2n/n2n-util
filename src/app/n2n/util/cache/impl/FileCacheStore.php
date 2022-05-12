@@ -150,7 +150,16 @@ class FileCacheStore implements CacheStore {
 				throw new IllegalStateException('No directory permission set for FileCacheStore.');
 			}
 
+			$parentDirPath = $nameDirPath->getParent();
+			if (!$parentDirPath->isDir()) {
+				$parentDirPath->mkdirs($this->dirPerm);
+				// chmod after mkdirs because of possible umask restrictions.
+				$parentDirPath->chmod($this->dirPerm);
+			}
+
 			$nameDirPath->mkdirs($this->dirPerm);
+			// chmod after mkdirs because of possible umask restrictions.
+			$nameDirPath->chmod($this->dirPerm);
 		}
 
 		if ($this->filePerm === null) {
