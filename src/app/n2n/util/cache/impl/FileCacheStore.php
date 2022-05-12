@@ -39,7 +39,7 @@ class FileCacheStore implements CacheStore {
 	const CHARACTERISTIC_HASH_LENGTH = 4;
 	const CACHE_FILE_SUFFIX = '.cache';
 	const LOCK_FILE_SUFFIX = '.lock';
-	
+
 	private $dirPath;
 	private $dirPerm;
 	private $filePerm;
@@ -89,9 +89,7 @@ class FileCacheStore implements CacheStore {
 	 */
 	private function createReadLock(string $filePath) {
 		$lockFilePath = $filePath . self::LOCK_FILE_SUFFIX;
-		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_SH));
-		IoUtils::chmod($lockFilePath, $this->filePerm);
-		return $lock;
+		return new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_SH));
 	}
 	/**
 	 * @param string $filePath
@@ -100,39 +98,41 @@ class FileCacheStore implements CacheStore {
 	private function createWriteLock(string $filePath) {
 		$lockFilePath = $filePath . self::LOCK_FILE_SUFFIX;
 		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_EX));
+		IllegalStateException::assertTrue($this->filePerm !== null,
+				'Can not create write lock if no file permission is defined for FileCacheStore.');
 		IoUtils::chmod($lockFilePath, $this->filePerm);
 		return $lock;
 	}
-	
+
 	private function buildNameDirPath($name) {
 		if (IoUtils::hasSpecialChars($name)) {
 			$name = HashUtils::base36Md5Hash($name);
 		}
-		
+
 		return $this->dirPath->ext($name);
 	}
-	
+
 	private function buildFileName(array $characteristics) {
 		ksort($characteristics);
-		
+
 		$fileName = HashUtils::base36Md5Hash(serialize($characteristics));
 		foreach ($characteristics as $key => $value) {
 			$fileName .= self::CHARACTERISTIC_DELIMITER . HashUtils::base36Md5Hash(
-					serialize(array($key, $value)), self::CHARACTERISTIC_HASH_LENGTH); 
+							serialize(array($key, $value)), self::CHARACTERISTIC_HASH_LENGTH);
 		}
-		
-		return $fileName . self::CACHE_FILE_SUFFIX;		
+
+		return $fileName . self::CACHE_FILE_SUFFIX;
 	}
-	
+
 	private function buildGlobPattern(array $characteristics) {
 		ksort($characteristics);
-	
+
 		$fileName = HashUtils::base36Md5Hash(serialize($characteristics));
 		foreach ($characteristics as $key => $value) {
 			$fileName .= '*' . self::CHARACTERISTIC_DELIMITER . HashUtils::base36Md5Hash(
-					serialize(array($key, $value)), self::CHARACTERISTIC_HASH_LENGTH);
+							serialize(array($key, $value)), self::CHARACTERISTIC_HASH_LENGTH);
 		}
-	
+
 		return '*' . self::CACHE_FILE_SUFFIX;
 	}
 	/* (non-PHPdoc)
@@ -144,25 +144,25 @@ class FileCacheStore implements CacheStore {
 			if ($this->dirPerm === null) {
 				throw new IllegalStateException('No directory permission set for FileCacheStore.');
 			}
-			
+
 			$nameDirPath->mkdirs($this->dirPerm);
 		}
-		
+
 		if ($this->filePerm === null) {
 			throw new IllegalStateException('No file permission set for FileCacheStore.');
 		}
-		
+
 		if ($lastMod === null) {
 			$lastMod = new \DateTime();
 		}
-		
+
 		$filePath = $nameDirPath->ext($this->buildFileName($characteristics));
-				
+
 		$lock = $this->createWriteLock((string) $filePath);
-		IoUtils::putContentsSafe($filePath->__toString(), serialize(array('characteristics' => $characteristics, 
+		IoUtils::putContentsSafe($filePath->__toString(), serialize(array('characteristics' => $characteristics,
 				'data' => $data, 'lastMod' => $lastMod->getTimestamp())));
-		
-		
+
+
 		$filePath->chmod($this->filePerm);
 		$lock->release();
 	}
@@ -174,13 +174,13 @@ class FileCacheStore implements CacheStore {
 	 */
 	private function read($name, FsPath $filePath) {
 		if (!$filePath->exists()) return null;
-		
+
 		$lock = $this->createReadLock($filePath);
 		if (!$filePath->exists()) {
 			$lock->release(true);
 			return null;
 		}
-		
+
 		$contents = null;
 		try {
 			$contents = IoUtils::getContentsSafe($filePath);
@@ -189,12 +189,12 @@ class FileCacheStore implements CacheStore {
 			return null;
 		}
 		$lock->release();
-		
+
 		// file could be empty due to writing anomalies
 		if (empty($contents)) {
 			return null;
 		}
-		
+
 		$attrs = null;
 		try {
 // 			$time_start = microtime(true);
@@ -204,14 +204,14 @@ class FileCacheStore implements CacheStore {
 		} catch (UnserializationFailedException $e) {
 			throw new CorruptedCacheStoreException('Could not retrive file: ' . $filePath, 0, $e);
 		}
-		
+
 		if (!isset($attrs['characteristics']) || !is_array($attrs['characteristics']) || !isset($attrs['data'])
 				|| !isset($attrs['data']) || !isset($attrs['lastMod']) || !is_numeric($attrs['lastMod'])) {
 			throw new CorruptedCacheStoreException('Corrupted cache file: ' . $filePath);
 		}
 
 
-		$ci = new CacheItem($name, $attrs['characteristics'], null, 
+		$ci = new CacheItem($name, $attrs['characteristics'], null,
 				DateUtils::createDateTimeFromTimestamp($attrs['lastMod']));
 		$ci->data = &$attrs['data'];
 		return $ci;
@@ -232,16 +232,16 @@ class FileCacheStore implements CacheStore {
 		if (!$nameDirPath->exists()) return;
 
 		$filePath = $nameDirPath->ext($this->buildFileName($characteristics));
-		$this->unlink($filePath);		
+		$this->unlink($filePath);
 	}
 	/**
 	 * @param FsPath $filePath
 	 */
 	private function unlink(FsPath $filePath) {
 		if (!$filePath->exists()) return;
-		
+
 		$lock = $this->createWriteLock($filePath);
-		
+
 		if ($filePath->exists())  {
 			try {
 				IoUtils::unlink($filePath->__toString());
@@ -250,7 +250,7 @@ class FileCacheStore implements CacheStore {
 				throw $e;
 			}
 		}
-		
+
 		$lock->release(true);
 	}
 	/**
@@ -259,10 +259,10 @@ class FileCacheStore implements CacheStore {
 	 */
 	private function inCharacteristics(array $characteristicNeedles, array $characteristics) {
 		foreach ($characteristicNeedles as $key => $value) {
-			if (!array_key_exists($key, $characteristics)  
+			if (!array_key_exists($key, $characteristics)
 					|| $value !== $characteristics[$key]) return false;
 		}
-		
+
 		return true;
 	}
 	/**
@@ -272,31 +272,31 @@ class FileCacheStore implements CacheStore {
 	 */
 	private function findFilePaths($name, array $characteristicNeedles = null) {
 		$filePaths = array();
-		
+
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->exists()) {
 			return $filePaths;
 		}
-		
+
 		return $nameDirPath->getChildren($this->buildGlobPattern((array) $characteristicNeedles));
-		
+
 	}
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::findAll()
 	 */
 	public function findAll(string $name, array $characteristicNeedles = null) {
 		$cacheItems = array();
-		
+
 		foreach ($this->findFilePaths($name, $characteristicNeedles) as $filePath) {
 			$cacheItem = $this->read($name, $filePath);
 			if ($cacheItem === null) continue;
-			
-			if ($characteristicNeedles === null 
+
+			if ($characteristicNeedles === null
 					|| $this->inCharacteristics($characteristicNeedles, $cacheItem->getCharacteristics())) {
 				$cacheItems[] = $cacheItem;
 			}
 		}
-		
+
 		return $cacheItems;
 	}
 	/* (non-PHPdoc)
@@ -308,11 +308,11 @@ class FileCacheStore implements CacheStore {
 				$this->unlink($filePath);
 				continue;
 			}
-			
+
 			$cacheItem = $this->read($name, $filePath);
 			if ($cacheItem === null) continue;
-			
-			if ($characteristicNeedles === null 
+
+			if ($characteristicNeedles === null
 					|| $this->inCharacteristics($characteristicNeedles, $cacheItem->getCharacteristics())) {
 				$this->unlink($filePath);
 			}
@@ -323,12 +323,12 @@ class FileCacheStore implements CacheStore {
 	 */
 	public function clear() {
 		foreach ($this->dirPath->getChildDirectories() as $nameDirPath) {
-			$this->removeAll($nameDirPath->getName());	
+			$this->removeAll($nameDirPath->getName());
 		}
 	}
 }
 
-class CacheFileLock {	
+class CacheFileLock {
 	private $frs;
 	/**
 	 * @param FileResourceStream $frs
@@ -337,19 +337,19 @@ class CacheFileLock {
 		$this->frs = $frs;
 	}
 	/**
-	 * @param bool $removeLockFile unlink could collide with fopen command from another thread. Set online true 
+	 * @param bool $removeLockFile unlink could collide with fopen command from another thread. Set online true
 	 * when necesseary. fopen will cause a permission denied exception in this case.
 	 */
 	public function release(bool $removeLockFile = false) {
 		$this->frs->close();
-		
+
 		if (!$removeLockFile) return;
-		
+
 		try {
 			IoUtils::unlink($this->frs->getFileName());
 		} catch (IoException $e) { };
 	}
-	
+
 // 	public function __destruct() {
 // 		$this->release();
 // 	}
