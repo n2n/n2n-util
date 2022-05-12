@@ -49,7 +49,7 @@ interface CacheStore {
 
 	/**
 	 * Returns the CacheItems which has been stored with exactly this name and contains all the passed characteristicNeedles.
-	 * For example if the data was store with the characteristics <code>['category' => 'news', 'mode' => 'some-mode']</code>
+	 * For example if the data was stored with the characteristics <code>['category' => 'news', 'mode' => 'some-mode']</code>
 	 * the characteristicNeedles ['category' => 'news'] would match, but characteristicNeedles
 	 * ['category' => 'news', 'mode' => 'some-other-mode] not.
 	 *
