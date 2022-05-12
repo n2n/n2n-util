@@ -42,7 +42,7 @@ class IoUtilsTest extends TestCase {
 
 	public function testMkdir() {
 		$newDir = self::TEST_DIR . '/dir1/dir2';
-		IoUtils::mkdirs($newDir, 777);
+		IoUtils::mkdirs($newDir, 0777);
 		$this->assertTrue(is_dir($newDir));
 	}
 
@@ -61,7 +61,7 @@ class IoUtilsTest extends TestCase {
 
 	public function testRmdirs() {
 		$newDir = self::TEST_DIR . '/dir1/dir2';
-		IoUtils::mkdirs($newDir, 777);
+		IoUtils::mkdirs($newDir, 0777);
 		IoUtils::rmdirs(self::TEST_DIR);
 		$this->assertFalse(is_dir($newDir));
 	}
