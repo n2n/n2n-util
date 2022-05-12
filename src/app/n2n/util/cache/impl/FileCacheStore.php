@@ -88,14 +88,20 @@ class FileCacheStore implements CacheStore {
 	 * @return \n2n\util\cache\impl\CacheFileLock
 	 */
 	private function createReadLock(string $filePath) {
-		return new CacheFileLock(new FileResourceStream($filePath . self::LOCK_FILE_SUFFIX, 'w', LOCK_SH));
+		$lockFilePath = $filePath . self::LOCK_FILE_SUFFIX;
+		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_SH));
+		IoUtils::chmod($lockFilePath, $this->filePerm);
+		return $lock;
 	}
 	/**
 	 * @param string $filePath
 	 * @return \n2n\util\cache\impl\CacheFileLock
 	 */
 	private function createWriteLock(string $filePath) {
-		return new CacheFileLock(new FileResourceStream($filePath . self::LOCK_FILE_SUFFIX, 'w', LOCK_EX));
+		$lockFilePath = $filePath . self::LOCK_FILE_SUFFIX;
+		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_EX));
+		IoUtils::chmod($lockFilePath, $this->filePerm);
+		return $lock;
 	}
 	
 	private function buildNameDirPath($name) {
