@@ -85,10 +85,14 @@ class FileCacheStore implements CacheStore {
 	}
 	/**
 	 * @param string $filePath
-	 * @return \n2n\util\cache\impl\CacheFileLock
+	 * @return \n2n\util\cache\impl\CacheFileLock|null
 	 */
-	private function createReadLock(string $filePath) {
-		$lockFilePath = $filePath . self::LOCK_FILE_SUFFIX;
+	private function buildReadLock(FsPath $filePath) {
+		$lockFilePath = new FsPath($filePath . self::LOCK_FILE_SUFFIX);
+		if (!$lockFilePath->exists()) {
+			return null;
+		}
+
 		return new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_SH));
 	}
 	/**
@@ -96,11 +100,12 @@ class FileCacheStore implements CacheStore {
 	 * @return \n2n\util\cache\impl\CacheFileLock
 	 */
 	private function createWriteLock(string $filePath) {
-		$lockFilePath = $filePath . self::LOCK_FILE_SUFFIX;
-		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_EX));
 		IllegalStateException::assertTrue($this->filePerm !== null,
 				'Can not create write lock if no file permission is defined for FileCacheStore.');
-		IoUtils::chmod($lockFilePath, $this->filePerm);
+
+		$lockFilePath = new FsPath($filePath . self::LOCK_FILE_SUFFIX);
+		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_EX));
+		$lockFilePath->chmod($this->filePerm);
 		return $lock;
 	}
 
@@ -175,7 +180,12 @@ class FileCacheStore implements CacheStore {
 	private function read($name, FsPath $filePath) {
 		if (!$filePath->exists()) return null;
 
-		$lock = $this->createReadLock($filePath);
+		$lock = $this->buildReadLock($filePath);
+		if ($lock === null) {
+			$filePath->delete();
+			return null;
+		}
+
 		if (!$filePath->exists()) {
 			$lock->release(true);
 			return null;
@@ -197,10 +207,7 @@ class FileCacheStore implements CacheStore {
 
 		$attrs = null;
 		try {
-// 			$time_start = microtime(true);
 			$attrs = StringUtils::unserialize($contents);
-// 			$time_end = microtime(true);
-// 			test($time_end - $time_start);
 		} catch (UnserializationFailedException $e) {
 			throw new CorruptedCacheStoreException('Could not retrive file: ' . $filePath, 0, $e);
 		}
