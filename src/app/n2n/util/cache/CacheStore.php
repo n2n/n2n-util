@@ -24,35 +24,51 @@ namespace n2n\util\cache;
 interface CacheStore {
 	/**
 	 * @param string $name
-	 * @param array $characteristics
+	 * @param string[] $characteristics e. g. <code>['category' => 'news', 'mode' => 'some-mode']</code>
 	 * @param mixed $data
 	 */
 	public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null);
+
 	/**
+	 * Returns the CacheItem which has been stored with exactly these params (name and characteristics).
+	 *
 	 * @param string $name
-	 * @param array $characteristics
-	 * @return CacheItem or null if item does not exist
+	 * @param string[] $characteristics
+	 * @return CacheItem|null null if item does not exist
 	 * @throws CorruptedCacheStoreException
 	 */
 	public function get(string $name, array $characteristics);
+
 	/**
+	 * Remove the data which has been stored with exactly these params (name and characteristics).
+	 *
 	 * @param string $name
-	 * @param array $characteristics
+	 * @param string[] $characteristics
 	 */
 	public function remove(string $name, array $characteristics);
+
 	/**
+	 * Returns the CacheItems which has been stored with exactly this name and contains all the passed characteristicNeedles.
+	 * For example if the data was store with the characteristics <code>['category' => 'news', 'mode' => 'some-mode']</code>
+	 * the characteristicNeedles ['category' => 'news'] would match, but characteristicNeedles
+	 * ['category' => 'news', 'mode' => 'some-other-mode] not.
+	 *
 	 * @param string $name
-	 * @param array $characteristicNeedles
+	 * @param string[] $characteristicNeedles
 	 * @return CacheItem[]
 	 */
 	public function findAll(string $name, array $characteristicNeedles = null);
+
 	/**
+	 * Returns the CacheItems which has been stored with exactly this name and contains all the passed characteristicNeedles
+	 * (see {@link CacheStore::findAll()} to understand the concept of characteristicNeedles).
 	 * @param string $name
-	 * @param array $characteristicNeedles
+	 * @param string[] $characteristicNeedles
 	 */
 	public function removeAll(string $name, array $characteristicNeedles = null);
+
 	/**
-	 * 
+	 * Removes all stored CacheItems.
 	 */
 	public function clear();
 }
