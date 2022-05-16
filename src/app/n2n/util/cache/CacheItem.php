@@ -21,20 +21,23 @@
  */
 namespace n2n\util\cache;
 
+use n2n\util\type\ArgUtils;
+
 class CacheItem {
 	private $name;
 	private $characteristics;
 	public $data;
 	/**
 	 * @param string $name
-	 * @param array $characteristics
+	 * @param string[] $characteristics
 	 * @param mixed $data
 	 */
 	public function __construct($name, array $characteristics, $data) {
 		$this->name = $name;
-		$this->characteristics = $characteristics;
+		$this->setCharacteristics($characteristics);
 		$this->data = $data;
 	}
+
 	/**
 	 * @return string
 	 */
@@ -53,12 +56,38 @@ class CacheItem {
 	public function getCharacteristics() {
 		return $this->characteristics;
 	}
+
 	/**
 	 * @param array $characteristics
 	 */
 	public function setCharacteristics(array $characteristics) {
+		ArgUtils::valArray($characteristics, 'string');
 		$this->characteristics = $characteristics;
 	}
+
+	/**
+	 * @param array $characteristics
+	 * @return bool
+	 */
+	function matchesCharacteristics(array $characteristics) {
+		return $this->characteristics === $characteristics;
+	}
+
+	/**
+	 * @param array $characteristicNeedles
+	 * @return bool
+	 */
+	function containsCharacteristics(array $characteristicNeedles) {
+		foreach ($characteristicNeedles as $key => $value) {
+			if (!array_key_exists($key, $this->characteristics)
+					|| $value !== $this->characteristics[$key]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * @return mixed
 	 */
@@ -70,5 +99,5 @@ class CacheItem {
 	 */
 	public function setData($data) {
 		$this->data = $data;
-	}	
+	}
 }
