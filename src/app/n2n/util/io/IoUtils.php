@@ -22,7 +22,6 @@
 namespace n2n\util\io;
 
 use n2n\util\io\fs\CouldNotAchieveFlockException;
-use n2n\util\io\Flock;
 use n2n\util\io\fs\FileOperationException;
 use n2n\util\io\stream\impl\FileResourceStream;
 
@@ -223,9 +222,9 @@ class IoUtils {
 	 * @throws IoException
 	 * @return int|false
 	 */
-	public static function putContents(string $path, $contents, $flags = null, $context = null) {
+	public static function putContents(string $path, string $contents, int $flags = 0, $context = null) {
 		try {
-			return file_put_contents((string) $path, $contents, $flags, $context);
+			return file_put_contents($path, $contents, $flags, $context);
 		} catch (\Throwable $e) {
 			throw new FileOperationException('PutContents of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -367,14 +366,14 @@ class IoUtils {
 		}
 	}
 
-	/**
-	 * @param $handle
-	 * @param $string
-	 * @return int
-	 * @throws IoResourceException
-	 */
-	public static function fwrite($handle, $string) {
-		$num = fwrite($handle, $string);
+    /**
+     * @param $handle
+     * @param string|null $string
+     * @return int
+     * @throws IoResourceException
+     */
+	public static function fwrite($handle, ?string $string) {
+		$num = fwrite($handle, (string) $string);
 		if (false === $num) {
 			throw new IoResourceException('Could not write to resource: ' . $handle);
 		}
@@ -525,12 +524,12 @@ class IoUtils {
 	/**
 	 * 
 	 * @param string $path
-	 * @param string $processSections
-	 * @param string $scannerMode
+	 * @param bool $processSections
+	 * @param int $scannerMode
 	 * @throws IoException
 	 * @return array
 	 */
-	public static function parseIniFile($path, $processSections = false, $scannerMode = null) {
+	public static function parseIniFile(string $path, bool $processSections = false, int $scannerMode = INI_SCANNER_NORMAL) {
 		try {
 			$result = parse_ini_file($path, $processSections, $scannerMode);
 		} catch (\Throwable $e) {

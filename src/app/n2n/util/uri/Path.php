@@ -244,7 +244,7 @@ final class Path {
 			$pathExtStr .= $part->toRealString(false, false);
 		}
 		
-		if (!strlen($pathExtStr)) {
+		if ($pathExtStr === null || !strlen($pathExtStr)) {
 			return $this->chEndingDelimiter($this->endingDelimiter || $leadingDelimiter);
 		}
 		

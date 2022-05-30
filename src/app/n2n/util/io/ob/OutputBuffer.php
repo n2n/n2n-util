@@ -25,7 +25,7 @@ use n2n\util\StringUtils;
 use n2n\util\ex\NotYetImplementedException;
 
 class OutputBuffer {
-	const DEFAULT_CHUNK_SIZE = null; // 131072
+//	const DEFAULT_CHUNK_SIZE = null; // 131072
 	private $sealed = false;
 	
 	private $obLevel = null;
@@ -36,7 +36,7 @@ class OutputBuffer {
 	 * 
 	 * @throws OutputBufferDisturbedException
 	 */
-	public function start($chunkSize = self::DEFAULT_CHUNK_SIZE) {
+	public function start(int $chunkSize = 0) {
 		if ($this->isBuffering()) {
 			throw new OutputBufferDisturbedException('Output buffer was already started. Buffer level: ' 
 					. $this->obLevel);
@@ -166,7 +166,8 @@ class OutputBuffer {
 	 * @param string $key
 	 * @param string $contents
 	 */
-	public function insertOnBreakPoint($key, $contents) {
+	public function insertOnBreakPoint(string $key, ?string $contents) {
+        $contents = (string) $contents;
 		if (!mb_strlen($contents) || !isset($this->breakPoints[$key])) return;
 
 		$buffering = $this->isBuffering();

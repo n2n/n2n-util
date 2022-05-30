@@ -92,7 +92,7 @@ class Query {
 	}
 	
 	public function __toString(): string {
-		return http_build_query($this->attrs, null, '&',  PHP_QUERY_RFC3986);
+		return http_build_query($this->attrs, '', '&',  PHP_QUERY_RFC3986);
 		
 // 		$strs = array();
 // 		foreach ($this->attrs as $name => $value) {
