@@ -31,28 +31,28 @@ class GenericArrayObject extends \ArrayObject implements Collection {
 		$this->genericType = $genericType;
 	}
 
-	public function offsetSet($index, $newval) {
+	public function offsetSet($index, $newval): void {
 		ArgUtils::valType($newval, $this->genericType);
 		parent::offsetSet($index, $newval);
 	}
 
-	public function append($value) {
+	public function append($value): void {
 		ArgUtils::valType($value, $this->genericType);
 		parent::append($value);
 	}
 	
-	public function isEmpty() {
+	public function isEmpty(): bool {
 		return 0 == $this->count();
 	}
 	
-	public function clear() {
+	public function clear(): void {
 		$this->exchangeArray(array());
 	}
 	
-	public function exchangeArray($input) {
+	public function exchangeArray($input): array {
 		if (is_array($input)) {
 			ArgUtils::valArray($input, $this->genericType);
 		}
-		parent::exchangeArray($input);
+		return parent::exchangeArray($input);
 	}
 }

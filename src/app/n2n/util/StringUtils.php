@@ -26,8 +26,8 @@ use n2n\util\type\TypeUtils;
 class StringUtils {
 	const CRLF = "\r\n";
 	
-	public static function isEmpty($str) {
-		return ctype_space($str) || mb_strlen($str) === 0;
+	public static function isEmpty(?string $str) {
+		return $str === null || ctype_space($str) || mb_strlen($str) === 0;
 	}
 	
 	public static function camelCased(string $str, bool $ucFirst = false) {
@@ -35,7 +35,7 @@ class StringUtils {
 				function ($found) { return ucfirst($found[1]); },
 				$str);
 	
-		if($ucFirst) $str = ucfirst($str);
+		if ($ucFirst) $str = ucfirst($str);
 	
 		return $str;
 	}
