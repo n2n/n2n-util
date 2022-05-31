@@ -331,7 +331,7 @@ class StringUtils {
 				// match[] return ascii pos (NOT UNICODE)
 				$str = substr($str, 0, $match[1]);
 				if ((mb_strlen($str) + $suffixLen) > $length) {
-					continue;
+					continue; 
 				}
 				
 				return mb_substr($str, 0, $match[1]) . $suffix;

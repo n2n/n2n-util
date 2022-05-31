@@ -61,7 +61,7 @@ class CacheItem {
 	 * @param array $characteristics
 	 */
 	public function setCharacteristics(array $characteristics) {
-		ArgUtils::valArray($characteristics, 'string');
+//		ArgUtils::valArray($characteristics, 'string');
 		$this->characteristics = $characteristics;
 	}
 
