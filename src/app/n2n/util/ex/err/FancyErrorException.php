@@ -42,7 +42,7 @@ class FancyErrorException extends \ErrorException implements Documentable, Enhan
 	public function __construct(string $message = null, string $file = null, int $line = null, 
 			int $startLine = null, int $endLine = null, \Exception $previous = null, 
 			string $documentId = null, int $code = null, int $severity = E_USER_ERROR) {
-		parent::__construct((string) $message, $code, $severity, $file, $line, $previous);
+		parent::__construct((string) $message, (int) $code, $severity, $file, $line, $previous);
 		 
 		$this->startLine = $startLine;
 		$this->endLine = $endLine;
