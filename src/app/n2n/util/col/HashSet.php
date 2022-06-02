@@ -87,21 +87,21 @@ class HashSet implements Set {
 	/* (non-PHPdoc)
 	 * @see IteratorAggregate::getIterator()
 	 */
-	public function getIterator() {
+	public function getIterator(): \Traversable {
 		return new \ArrayIterator($this->values);	
 	}
 	
 	/* (non-PHPdoc)
 	 * @see Countable::count()
 	 */
-	public function count() {
+	public function count(): int {
 		return sizeof($this->values);
 	}
 	
 	/* (non-PHPdoc)
 	 * @see \n2n\util\Set::toArray()
 	 */
-	public function toArray() {
+	public function toArray(): array {
 		return $this->values;
 	}
 }
