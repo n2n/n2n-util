@@ -46,7 +46,7 @@ class HashMap implements Map {
 	/* (non-PHPdoc)
 	 * @see ArrayAccess::offsetSet()
 	 */
-	public function offsetSet($key, $value) {
+	public function offsetSet($key, $value): void {
 		ArgUtils::valType($key, $this->genericKeyType);
 		ArgUtils::valType($value, $this->genericValueType);
 		
@@ -57,7 +57,7 @@ class HashMap implements Map {
 	/* (non-PHPdoc)
 	 * @see ArrayAccess::offsetGet()
 	 */
-	public function offsetGet($key) {
+	public function offsetGet($key): mixed {
 		$hashCode = HashUtils::hashCode($key);
 		if (isset($this->values[$hashCode])) {
 			return $this->values[$hashCode];
@@ -67,40 +67,40 @@ class HashMap implements Map {
 	/* (non-PHPdoc)
 	 * @see ArrayAccess::offsetUnset()
 	 */
-	public function offsetUnset($key) {
+	public function offsetUnset($key): void {
 		$hashCode = HashUtils::hashCode($key);
 		unset($this->keys[$hashCode]);
 		unset($this->values[$hashCode]);
 	}
 
-	public function clear() {
+	public function clear(): void {
 		$this->keys = array();
 		$this->values = array();
 	}
 
-	public function isEmpty() {
+	public function isEmpty(): bool {
 		return empty($this->values);
 	}
 
-	public function count() {
+	public function count(): int {
 		return sizeof($this->values);
 	}
 	/* (non-PHPdoc)
 	 * @see ArrayAccess::offsetExists()
 	 */
-	public function offsetExists($key) {
+	public function offsetExists($key): bool {
 		return isset($this->keys[HashUtils::hashCode($key)]);
 	}
 
-	public function getIterator() {
+	public function getIterator(): \Traversable {
 		return new HashMapIterator(array_keys($this->keys), array_values($this->values));
 	}
 	
-	public function getKeys() {
+	public function getKeys(): array {
 		return $this->keys;
 	}
 	
-	public function getValues() {
+	public function getValues(): array {
 		return $this->values;
 	}
 }
