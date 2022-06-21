@@ -26,30 +26,30 @@ use n2n\util\io\fs\FileOperationException;
 use n2n\util\io\stream\impl\FileResourceStream;
 
 class IoUtils {
-	
+
 // 	public static function hasFsSpecialChars($string) {
 // 		return false === strpbrk($string, '<>:"/\|?*') && ctype_print($string)
 // 				&& !StringUtils::isEmpty($string);
 // 	}
 	/**
- 	 * strips and converts characters of a string so it can be enbedded into urls
- 	 * or file paths without any encoding nessesary 
- 	 *
- 	 * @param string $string string to be cleaned
- 	 * @return string
- 	 */
+	 * strips and converts characters of a string so it can be enbedded into urls
+	 * or file paths without any encoding nessesary
+	 *
+	 * @param string $string string to be cleaned
+	 * @return string
+	 */
 	public static function stripSpecialChars($string, $pretty = true) {
 		$string = trim($string);
-		
+
 		$unwanted = array('ä', 'à', 'â', 'ç', 'é', 'è', 'ê', 'î', 'ö', 'ß', 'ü',
 				'Ä', 'À', 'Â', 'É', 'È', 'Ê', 'Î', 'Ö','Ü');
 		$wanted = array('ae', 'a', 'a', 'c', 'e', 'e', 'e', 'i', 'oe', 'ss', 'ue',
 				'Ae', 'A', 'A', 'E', 'E', 'E', 'I', 'Oe','Ue');
 		$string = str_replace($unwanted, $wanted, $string);
-	
+
 		$string = preg_replace('/\s/s', '-', $string);
 		$string = preg_replace('/[^0-9A-Za-z\\._-]/', '', $string);
-		
+
 		if ($pretty) {
 			$string = preg_replace('/-{2,}/', '-', $string);
 			$string = preg_replace('/-?\\.-?/', '.', $string);
@@ -59,39 +59,53 @@ class IoUtils {
 			$string = preg_replace('/[-,_\\.]+$/', '', $string);
 			$string = preg_replace('/^[-,_\\.]+/', '', $string);
 		}
-		
+
 		if ($string == '.') {
 			$string = '';
 		}
-	
+
 		return $string;
 	}
- 	/**
- 	 * 
- 	 * @param string $string
- 	 * @return bool
- 	 */
- 	public static function hasSpecialChars($string) {
- 		return preg_match('/[^0-9A-Za-z\\._-]/', $string) || $string == '.' || $string == '..';
- 	}
- 	
- 	/**
- 	 * @param string $string
- 	 * @return boolean
- 	 */
- 	public static function hasStrictSpecialChars($string) {
- 		return (boolean) preg_match('/\W/', $string);
- 	}
- 	
- 	/**
- 	 * @param string $string
- 	 * @return string
- 	 */
- 	public static function replaceStrictSpecialChars($string) {
- 		return preg_replace('/\W/', '_', $string);
- 	}
 	/**
-	 * 
+	 *
+	 * @param string $string
+	 * @return bool
+	 */
+	public static function hasSpecialChars($string) {
+		try {
+			return (boolean) self::valReturn(
+							@preg_match('/[^0-9A-Za-z\\._-]/', $string)) || $string == '.' || $string == '..';
+		} catch (\Throwable $e) {
+			throw new IoException('Error occured during preg_match', null, $e);
+		}
+	}
+
+	/**
+	 * @param string $string
+	 * @return boolean
+	 */
+	public static function hasStrictSpecialChars($string) {
+		try {
+			$has = self::valReturn(@preg_match('/\W/', $string));
+		} catch (\Throwable $e) {
+			throw new IoException('Error occured during preg_match', null, $e);
+		}
+	}
+
+	/**
+	 * @param string $string
+	 * @return string
+	 */
+	public static function replaceStrictSpecialChars($string) {
+		try {
+			return self::valReturn(@preg_replace('/\W/', '_', $string));
+		} catch (\Throwable $e) {
+			throw new IoException('Error during preg_replace', null, $e);
+		}
+
+	}
+	/**
+	 *
 	 * @param string $oldPath
 	 * @param string $newPath
 	 * @throws IoException
@@ -99,13 +113,13 @@ class IoUtils {
 	 */
 	public static function rename($oldPath, $newPath) {
 		try {
-			return rename($oldPath, $newPath);
+			return self::valReturn(@rename($oldPath, $newPath));
 		} catch(\Throwable $e) {
 			throw new FileOperationException('Rename of \'' . $oldPath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 	}
-	
+
 	/**
 	 * @param string $path
 	 * @param string $permission
@@ -118,7 +132,7 @@ class IoUtils {
 		}
 
 		try {
-			return mkdir($path, $permission, true);
+			return self::valReturn(@mkdir($path, $permission, true));
 		} catch(\Throwable $e) {
 			throw new FileOperationException('Mkdir of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -132,10 +146,10 @@ class IoUtils {
 	 */
 	public static function rmdir($path) {
 		try {
-			return rmdir($path);
+			return self::valReturn(@rmdir($path));
 		} catch(\Throwable $e) {
 			throw new FileOperationException('Rmdir of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
-					 null, $e);
+					null, $e);
 		}
 	}
 	/**
@@ -145,7 +159,7 @@ class IoUtils {
 	public static function rmdirs(string $path) {
 		if (is_dir($path)) {
 			try {
-				$handle = opendir($path);
+				$handle = self::valReturn(@opendir($path));
 				while (false !== ($fileName = readdir($handle))) {
 					if ($fileName == '.' || $fileName == '..') continue;
 
@@ -165,7 +179,7 @@ class IoUtils {
 			IoUtils::unlink($path);
 		}
 	}
-	
+
 	/**
 	 * @param string $path
 	 * @param resource $context
@@ -175,46 +189,46 @@ class IoUtils {
 	public static function opendir(string $path, $context = null) {
 		try {
 			if ($context === null) {
-				return opendir($path);
+				return self::valReturn(@opendir($path));
 			} else {
-				return opendir($path, $context);
+				return self::valReturn(@opendir($path, $context));
 			}
 		} catch(\Throwable $e) {
 			throw new IoException('Opendir of \'' . $path . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $pattern
 	 * @param string $flags
 	 * @return array
 	 */
 	public static function glob($pattern, $flags = 0) {
-		$paths = glob($pattern, $flags);
+		$paths = self::valReturn(@glob($pattern, $flags));
 
 		// Return array on false due to different behaviour on different systems
 		if (!is_array($paths)) {
 			return array();
 		}
-		
+
 		return $paths;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $filePermission
 	 * @throws IoException
 	 * @deprecated use IoUtils::touch() and IoUtils::chmod()
 	 */
 	public static function createFile($path, $filePermission = null) {
-		IoUtils::touch($path);
+		self::touch($path);
 		if (isset($filePermission)) {
-			IoUtils::chmod($path, $filePermission);
+			self::chmod($path, $filePermission);
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $contents
 	 * @param int $flags
@@ -224,14 +238,14 @@ class IoUtils {
 	 */
 	public static function putContents(string $path, string $contents, int $flags = 0, $context = null) {
 		try {
-			return file_put_contents($path, $contents, $flags, $context);
+			return @file_put_contents($path, $contents, $flags, $context);
 		} catch (\Throwable $e) {
 			throw new FileOperationException('PutContents of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @return string|false
 	 * @throws IoException
@@ -245,7 +259,7 @@ class IoUtils {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @return string
 	 * @throws IoException
@@ -259,7 +273,7 @@ class IoUtils {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $targetPath
 	 * @throws IoException
@@ -278,7 +292,7 @@ class IoUtils {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $filePermission octal string
 	 * @throws IoException
@@ -290,7 +304,7 @@ class IoUtils {
 		}
 
 		try {
-			return chmod($path, $filePermission);
+			return self::valReturn(@chmod($path, $filePermission));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Chmod of \'' . $path . '\' (permission: ' . $filePermission . ') 
 					failed. Reason: ' . $e->getMessage(), null, $e);
@@ -299,18 +313,18 @@ class IoUtils {
 
 	/**
 	 * @return bool
-	 * @todo add param time and atime  
+	 * @todo add param time and atime
 	 */
 	public static function touch($filename) {
 		try {
-			return touch($filename);
+			return self::valReturn(@touch($filename));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Touch of \'' . $filename . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $mode
 	 * @throws IoException
@@ -318,7 +332,7 @@ class IoUtils {
 	 */
 	public static function fopen(string $path, string $mode) {
 		try {
-			return fopen($path, $mode);
+			return self::valReturn(@fopen($path, $mode));
 		} catch (\Throwable $e) {
 			throw new IoException('Fopen of \'' . $path . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
@@ -331,7 +345,7 @@ class IoUtils {
 	 */
 	public static function stat(string $path) {
 		try {
-			return stat($path);
+			return self::valReturn(@stat($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Stat of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -345,7 +359,7 @@ class IoUtils {
 	 */
 	public static function filesize(string $path) {
 		try {
-			return filesize($path);
+			return self::valReturn(@filesize($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Filesize of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -359,25 +373,25 @@ class IoUtils {
 	 */
 	public static function readfile(string $path) {
 		try {
-			return readfile($path);
+			return self::valReturn(@readfile($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Readfile of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 	}
 
-    /**
-     * @param $handle
-     * @param string|null $string
-     * @return int
-     * @throws IoResourceException
-     */
+	/**
+	 * @param $handle
+	 * @param string|null $string
+	 * @return int
+	 * @throws IoResourceException
+	 */
 	public static function fwrite($handle, ?string $string) {
-		$num = fwrite($handle, (string) $string);
+		$num = self::valReturn(@fwrite($handle, (string) $string));
 		if (false === $num) {
 			throw new IoResourceException('Could not write to resource: ' . $handle);
 		}
-		
+
 		return $num;
 	}
 
@@ -388,11 +402,11 @@ class IoUtils {
 	 * @throws IoResourceException
 	 */
 	public static function fread($handle, int $length = null) {
-		$str = fread($handle, $length);
+		$str = self::valReturn(@fread($handle, $length));
 		if (false === $str) {
 			throw new IoResourceException('Could not read from file');
 		}
-		
+
 		return $str;
 	}
 
@@ -403,11 +417,8 @@ class IoUtils {
 	 * @throws IoResourceException
 	 */
 	public static function fgets($handle, int $length = null) {
-		$str = fgets($handle, $length);
-		if (false === $str) {
-			throw new IoResourceException('Could not read from file');
-		}
-	
+		$str = self::valReturn(@fgets($handle, $length));
+
 		return $str;
 	}
 
@@ -420,7 +431,7 @@ class IoUtils {
 	 */
 	public static function streamGetContents($handle, int $maxlength = -1, int $offset = -1) {
 		try {
-			return stream_get_contents($handle, $maxlength, $offset);
+			return self::valReturn(@stream_get_contents($handle, $maxlength, $offset));
 		} catch (\Throwable $e) {
 			throw new IoResourceException('Streamgetcontents failed. Reason: ' . $e->getMessage(), null, $e);
 		}
@@ -435,14 +446,14 @@ class IoUtils {
 		return new FileResourceStream($filePath, 'c+', LOCK_EX);
 	}
 	/**
-	 * 
+	 *
 	 * @return FileResourceStream
 	 */
 	public static function createSafeFileOutputStream(string $filePath) {
 		return new FileResourceStream($filePath, 'w', LOCK_EX);
 	}
 	/**
-	 * 
+	 *
 	 * @param string $filePath
 	 * @return FileResourceStream
 	 */
@@ -450,7 +461,7 @@ class IoUtils {
 		return new FileResourceStream($filePath, 'r', LOCK_SH);
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param string $contents
 	 * @throws IoException
@@ -461,7 +472,7 @@ class IoUtils {
 		$fileOutputStream->close();
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @return string
 	 * @throws IoException
@@ -473,34 +484,34 @@ class IoUtils {
 		return $contents;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @return string
 	 * @throws IoException
 	 */
 	public static function filemtime($path) {
 		try {
-			return filemtime($path);
+			return self::valReturn(@filemtime($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Filemtime of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @throws IoException
 	 */
 	public static function unlink($path) {
 		try {
-			return unlink($path);
+			return self::valReturn(@unlink($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Unlink of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
-	}	
+	}
 	/**
-	 * 
+	 *
 	 * @param string $iniString
 	 * @param string $processSections
 	 * @param string $scannerMode
@@ -509,20 +520,16 @@ class IoUtils {
 	 */
 	public static function parseIniString($iniString, $processSections = false, $scannerMode = null) {
 		try {
-			$result = parse_ini_string($iniString, $processSections, $scannerMode);
+			$result = self::valReturn(@parse_ini_string($iniString, $processSections, $scannerMode));
 		} catch (\Throwable $e) {
 			throw new IoException('ParseIniString of \'' . $iniString . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 
-		if ($result === false) {
-			throw new IoException('ParseIniString of \'' . $iniString . '\' failed.');
-		}
-
 		return $result;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $path
 	 * @param bool $processSections
 	 * @param int $scannerMode
@@ -531,13 +538,9 @@ class IoUtils {
 	 */
 	public static function parseIniFile(string $path, bool $processSections = false, int $scannerMode = INI_SCANNER_NORMAL) {
 		try {
-			$result = parse_ini_file($path, $processSections, $scannerMode);
+			$result = self::valReturn(@parse_ini_file($path, $processSections, $scannerMode));
 		} catch (\Throwable $e) {
 			throw new IoException('ParseIniFile of \'' . $path . '\' failed. Reason: ' . $e->getMessage(), null, $e);
-		}
-
-		if ($result === false) {
-			throw new IoException('ParseIniFile of \'' . $path . '\' failed.');
 		}
 
 		return $result;
@@ -551,14 +554,10 @@ class IoUtils {
 	public static function imageCreateFromPng($filePath) {
 		$image = null;
 		try {
-			$image = imagecreatefrompng($filePath);
+			$image = self::valReturn(@imagecreatefrompng($filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefrompng of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
-		}
-
-		if ($image === false) {
-			throw new IoException('Imagecreatefrompng of \'' . $filePath . '\' failed.');
 		}
 
 		return $image;
@@ -572,14 +571,10 @@ class IoUtils {
 	public static function imageCreateFromGif($filePath) {
 		$image = null;
 		try {
-			$image = imagecreatefromgif($filePath);
+			$image = self::valReturn(@imagecreatefromgif($filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefromgif of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
-		}
-
-		if ($image === false) {
-			throw new IoException('Imagecreatefromgif of \'' . $filePath . '\' failed.');
 		}
 
 		return $image;
@@ -593,14 +588,10 @@ class IoUtils {
 	public static function imageCreateFromJpeg($filePath) {
 		$image = null;
 		try {
-			$image = imagecreatefromjpeg($filePath);
+			$image = self::valReturn(@imagecreatefromjpeg($filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefromjpeg of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
-				null, $e);
-		}
-
-		if ($image === false) {
-			throw new IoException('Imagecreatefromjpeg of \'' . $filePath . '\' failed.');
+					null, $e);
 		}
 
 		return $image;
@@ -614,15 +605,12 @@ class IoUtils {
 	public static function imageCreateFromWebp($filePath) {
 		$image = null;
 		try {
-			$image = imagecreatefromwebp($filePath);
+			$image = self::valReturn(@imagecreatefromwebp($filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagecreatefromwebp of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
 		}
 
-		if ($image === false) {
-			throw new IoException('Imagecreatefromwebp of \'' . $filePath . '\' failed.');
-		}
 		return $image;
 	}
 
@@ -636,7 +624,7 @@ class IoUtils {
 	 */
 	public static function imagePng($resource, $filePath = null, $quality = null, $filters = null) {
 		try {
-			return imagepng($resource, $filePath, $quality, $filters);
+			return self::valReturn(@imagepng($resource, $filePath, $quality, $filters));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagepng of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
@@ -650,7 +638,7 @@ class IoUtils {
 	 */
 	public static function imageGif($resource, $filePath = null) {
 		try {
-			return imagegif($resource, $filePath);
+			return self::valReturn(@imagegif($resource, $filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagegif of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
@@ -665,7 +653,7 @@ class IoUtils {
 	 */
 	public static function imageJpeg($resource, $filePath = null, $quality = null) {
 		try {
-			return imagejpeg($resource, $filePath);
+			return self::valReturn(@imagejpeg($resource, $filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagejpeg of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
@@ -680,14 +668,14 @@ class IoUtils {
 	 */
 	public static function imageWebp($resource, $filePath = null, $quality = null) {
 		try {
-			return imagewebp($resource, $filePath);
+			return self::valReturn(@imagewebp($resource, $filePath));
 		} catch (\Throwable $e) {
 			throw new IoException('Imagejpeg of \'' . $filePath . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $filePath
 	 * @param int $operation
 	 * @return Flock
@@ -701,25 +689,21 @@ class IoUtils {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $orgPath
 	 * @throws InvalidPathException
 	 */
 	public static function realpath($orgPath, $fileRequired = null) {
-		$path = realpath($orgPath);
-		
-		if ($path === false) {
-			throw new InvalidPathException('Path not found:' . $orgPath);
-		}
-		
+		$path = self::valReturn(@realpath($orgPath));
+
 		if ($fileRequired === true && !is_file($path)) {
 			throw new InvalidPathException('Path points to non file:' . $path);
 		}
-		
+
 		if ($fileRequired === false && !is_dir($path)) {
 			throw new InvalidPathException('Path points to non directory: ' . $path);
 		}
-		
+
 		return $path;
 	}
 
@@ -731,8 +715,10 @@ class IoUtils {
 	 * @throws CouldNotAchieveFlockException
 	 */
 	public static function flock($handle, $operation, &$wouldblock = null) {
-		if (!flock($handle, $operation, $wouldblock)) {
-			throw new CouldNotAchieveFlockException('Could not achieve flock: ' . $operation);
+		try {
+			self::valReturn(@flock($handle, $operation, $wouldblock));
+		} catch (\Throwable $e) {
+			throw new CouldNotAchieveFlockException('Could not achieve flock: ' . $operation, null, $e);
 		}
 		return true;
 	}
@@ -743,8 +729,10 @@ class IoUtils {
 	 * @throws IoResourceException
 	 */
 	public static function ftruncate($handle, $size) {
-		if (!ftruncate($handle, $size)) {
-			throw new IoResourceException('Could not truncate.');
+		try {
+			return self::valReturn(@ftruncate($handle, $size));
+		} catch (\Throwable $e) {
+			throw new IoResourceException('Could not truncate.', null, $e);
 		}
 	}
 
@@ -755,8 +743,10 @@ class IoUtils {
 	 * @throws IoResourceException
 	 */
 	public static function fseek($handle, $offset, $whence = SEEK_SET) {
-		if (false === fseek($handle, $offset, $whence)) {
-			throw new IoResourceException('Could not seek. Offset: ' . $offset);
+		try {
+			return self::valReturn(@fseek($handle, $offset, $whence));
+		} catch (\Throwable $e) {
+			throw new IoResourceException('Could not seek. Offset: ' . $offset, null, $e);
 		}
 	}
 
@@ -768,20 +758,22 @@ class IoUtils {
 	 * @throws IoResourceException
 	 */
 	public static function ftell($handle, $offset, $whence = SEEK_SET) {
-		$offset = ftell($handle);
-		if (false === $offset) {
-			throw new IoResourceException('Could not tell.');
+		try {
+			$offset = self::valReturn(@ftell($handle));
+		} catch (\Throwable $e) {
+			throw new IoResourceException('Could not tell.', null, $e);
 		}
+
 		return $offset;
 	}
-					
+
 // 	public static function ensureFileIsAccessibleThroughHttp(Managable $file) {
 // 		if ($file->getFileManager() instanceof HttpAccessible) return;
 // 		throw new FileManagingException(
 // 				SysTextUtils::get('n2n_error_io_file_is_not_accessible_through_http',
 // 						array('file' => $file->getPath(), 'file_name' => $file->getOriginalName())));
 // 	}
-	
+
 	/**
 	 * @param string $filename
 	 * @throws IoException
@@ -790,14 +782,10 @@ class IoUtils {
 	public static function getimagesize($filename) {
 		$size = null;
 		try {
-			$size = getimagesize($filename);
+			$size = self::valReturn(@getimagesize($filename));
 		} catch (\Throwable $e) {
 			throw new IoException('Getimagesize of \'' . $filename . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
-		}
-
-		if ($size === false) {
-			throw new IoException('Getimagesize of \'' . $filename . '\' failed.');
 		}
 
 		return $size;
@@ -809,11 +797,11 @@ class IoUtils {
 	 */
 	public static function determineFileUploadMaxSize() {
 		static $maxSize = -1;
-	
+
 		if ($maxSize < 0) {
 			// Start with post_max_size.
 			$maxSize = self::parsePhpIniSize(ini_get('post_max_size'));
-			
+
 			// If upload_max_size is less, then reduce. Except if upload_max_size is
 			// zero, which indicates no limit.
 			$upload_max = self::parsePhpIniSize(ini_get('upload_max_filesize'));
@@ -821,28 +809,28 @@ class IoUtils {
 				$maxSize = $upload_max;
 			}
 		}
-		
+
 		return $maxSize;
 	}
-	
+
 	const DEFAULT_MEMORY_LIMIT = 33554432;
-	
+
 	/**
 	 * @return int
 	 */
 	static function determinMemoryLimit() {
 		static $memoryLimit = null;
-		
+
 		if ($memoryLimit !== null) {
 			return $memoryLimit;
 		}
-		
+
 		$memoryLimit = self::parsePhpIniSize(ini_get('memory_limit'));
-		
+
 		if (empty($memoryLimit)) {
 			$memoryLimit = self::DEFAULT_MEMORY_LIMIT;
 		}
-		
+
 		return $memoryLimit;
 	}
 
@@ -853,7 +841,7 @@ class IoUtils {
 	 */
 	public static function curlExec($ch) {
 		try {
-			$result = curl_exec($ch);
+			$result = self::valReturn(@curl_exec($ch));
 		} catch (\Throwable $e) {
 			throw new CurlOperationException('Curlexec of \'' . $ch . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -876,5 +864,17 @@ class IoUtils {
 		} else {
 			return round($size);
 		}
+	}
+
+	private static function valReturn($result) {
+		if ($result === false) {
+			$lastError = error_get_last();
+			if ($lastError !== null) {
+				throw new IoException($lastError['message']);
+			}
+			throw new IoException('method returns false');
+		}
+
+		return $result;
 	}
 }

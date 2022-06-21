@@ -281,6 +281,14 @@ class IoUtilsTest extends TestCase {
 		IoUtils::getimagesize(self::TEST_PDF);
 	}
 
+	public function testValReturnException() {
+		try {
+			IoUtils::chmod('doesnt exist');
+		} catch (\Throwable $e) {
+			$this->assertInstanceOf(IoException::class, $e->getPrevious());
+		}
+	}
+
 	private function recursiveRmDir($dir) {
 		if (!is_dir($dir)) return;
 
