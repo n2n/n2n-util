@@ -108,7 +108,7 @@ class IoUtils {
 	
 	/**
 	 * @param string $path
-	 * @param string $permission
+	 * @param int|string $permission keep possible umask restrictions in mind.
 	 * @throws IoException
 	 * @return bool
 	 */
