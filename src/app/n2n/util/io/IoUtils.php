@@ -73,8 +73,8 @@ class IoUtils {
 	 */
 	public static function hasSpecialChars($string) {
 		try {
-			return (boolean) self::valReturn(
-							@preg_match('/[^0-9A-Za-z\\._-]/', $string)) || $string == '.' || $string == '..';
+			return (boolean) self::valReturn(@preg_match('/[^0-9A-Za-z\\._-]/', $string))
+					|| $string == '.' || $string == '..';
 		} catch (\Throwable $e) {
 			throw new IoException('Error occured during preg_match', null, $e);
 		}
@@ -867,14 +867,14 @@ class IoUtils {
 	}
 
 	private static function valReturn($result) {
-		if ($result === false) {
-			$lastError = error_get_last();
-			if ($lastError !== null) {
-				throw new IoException($lastError['message']);
-			}
-			throw new IoException('method returns false');
+		if ($result !== false) {
+			return $result;
 		}
 
-		return $result;
+		$lastError = error_get_last();
+		if ($lastError !== null) {
+			throw new IoException($lastError['message']);
+		}
+		throw new IoException('method returns false');
 	}
 }
