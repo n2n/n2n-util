@@ -76,6 +76,12 @@ class ArrayUtils {
 		
 		return null;
 	}
+
+	static function unsetByValue(array &$array, $needle, bool $strict = true) {
+		foreach (array_keys($array, $needle, $strict) as $key) {
+			unset($array[$key]);
+		}
+	}
 	
 	public static function isArrayLike($value) {
 		return TypeName::isValueArrayLike($value);
