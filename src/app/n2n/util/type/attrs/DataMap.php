@@ -246,7 +246,7 @@ class DataMap implements AttributeReader {
 	}
 	
 	public function reqEnum($path, array $allowedValues, bool $nullAllowed = false) {
-		return $this->getEnum($path, $allowedValues);
+		return $this->getEnum($path, $allowedValues, true, null, $nullAllowed);
 	}
 	
 	public function optEnum($path, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
