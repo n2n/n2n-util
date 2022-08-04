@@ -343,30 +343,3 @@ class FileCacheStore implements CacheStore {
 		}
 	}
 }
-
-class CacheFileLock {
-	private $frs;
-	/**
-	 * @param FileResourceStream $frs
-	 */
-	public function __construct(FileResourceStream $frs) {
-		$this->frs = $frs;
-	}
-	/**
-	 * @param bool $removeLockFile unlink could collide with fopen command from another thread. Set online true
-	 * when necesseary. fopen will cause a permission denied exception in this case.
-	 */
-	public function release(bool $removeLockFile = false) {
-		$this->frs->close();
-
-		if (!$removeLockFile) return;
-
-		try {
-			IoUtils::unlink($this->frs->getFileName());
-		} catch (IoException $e) { };
-	}
-
-// 	public function __destruct() {
-// 		$this->release();
-// 	}
-}
