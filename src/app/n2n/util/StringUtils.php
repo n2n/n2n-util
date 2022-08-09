@@ -353,7 +353,7 @@ class StringUtils {
 		return mb_substr($str, $len);
 	}
 
-	static function clean(string $value, bool $simpleWhitespacesOnly = true, bool $trimed = true) {
+	static function clean(string $value, bool $simpleWhitespacesOnly = true) {
 		$value = self::convertNonPrintables($value);
 
 		if ($simpleWhitespacesOnly) {
