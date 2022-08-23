@@ -352,6 +352,17 @@ class StringUtils {
 		
 		return mb_substr($str, $len);
 	}
+
+	static function clean(string $value, bool $simpleWhitespacesOnly = true) {
+		$value = self::convertNonPrintables($value);
+
+		if ($simpleWhitespacesOnly) {
+			$value = trim(preg_replace('/\W+/', ' ', $value));
+		}
+
+		return $value;
+
+	}
 	
 	/**
 	 * @param string|array|null $value
@@ -383,7 +394,7 @@ class StringUtils {
 					|| (($current >= 0x10000) && ($current <= 0x10FFFF))) {
 				$ret .= chr($current);
 			} else {
-				$ret .= ' ';
+				$ret .= '';
 			}
 		}
 		return $ret;

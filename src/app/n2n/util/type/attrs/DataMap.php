@@ -26,12 +26,13 @@ use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
-use n2n\web\http\controller\Interceptor;
+use n2n\util\type\TypeConstraints;
+use n2n\util\ex\NotYetImplementedException;
 
-class DataMap implements AttributeReader {
+class DataMap implements AttributeReader, AttributeWriter {
 
 	private $data;
-// 	private $interceptor;
+
 	/**
 	 *
 	 * @param array $attrs
@@ -39,12 +40,7 @@ class DataMap implements AttributeReader {
 	public function __construct(array $data = null) {
 		$this->data = (array) $data;
 	}
-	
-// 	public function setInterceptor(?Interceptor $interceptor) {
-// 		$this->interceptor = $interceptor;
-// 		return $this;
-// 	}
-	
+
 	/**
 	 *
 	 * @return boolean
@@ -94,12 +90,10 @@ class DataMap implements AttributeReader {
 		}
 		
 		try {
-			$typeConstraint->validate($value);
+			return $typeConstraint->validate($value);
 		} catch (ValueIncompatibleWithConstraintsException $e) {
 			throw new InvalidAttributeException('Property contains invalid value: ' . $attributePath, 0, $e);
 		}
-		
-		return $value;
 	}
 
 	/**
@@ -122,7 +116,73 @@ class DataMap implements AttributeReader {
 		
 		return $this->opt($path, $typeConstraint, $defaultValue);
 	}
-	
+
+	function writeAttribute(AttributePath $path, mixed $value): void {
+		$this->set($path, $value);
+	}
+
+	function removeAttribute(AttributePath $path): bool {
+		throw new NotYetImplementedException();
+	}
+
+	/**
+	 * @param array $paths
+	 * @param \Closure $closure
+	 * @return DataMap
+	 */
+	function mapStrings(array $paths, \Closure $closure) {
+		foreach (AttributePath::createArray($paths) as $path) {
+			$this->mapString($path, $closure);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @param $path
+	 * @param \Closure $closure
+	 * @return DataMap
+	 */
+	function mapString($path, \Closure $closure) {
+		$path = AttributePath::create($path);
+
+		$found = false;
+		$value = $this->retrieve($path, TypeConstraints::string(true), false, null, $found);
+
+		if (!$found || $value === null) {
+			return $this;
+		}
+
+		$this->set($path, $closure($value));
+
+		return $this;
+	}
+
+	/**
+	 * @param $path
+	 * @param bool $simpleWhitespacesOnly
+	 * @return DataMap
+	 */
+	function cleanString($path, bool $simpleWhitespacesOnly = true) {
+		$this->mapString($path, fn ($value) => StringUtils::clean($value, $simpleWhitespacesOnly));
+		return $this;
+	}
+
+	/**
+	 * @param array $paths
+	 * @param bool $simpleWhitespacesOnly
+	 * @return DataMap
+	 */
+	function cleanStrings(array $paths, bool $simpleWhitespacesOnly = true) {
+		$paths = AttributePath::createArray($paths);
+
+		foreach ($paths as $path) {
+			$this->cleanString($path, $simpleWhitespacesOnly);
+		}
+
+		return $this;
+	}
+
 	/**
 	 * @param string|AttributePath $path
 	 * @return bool
@@ -156,7 +216,7 @@ class DataMap implements AttributeReader {
 	public function optScalar($path, $defaultValue = null, bool $nullAllowed = true) {
 		return $this->opt($path, TypeConstraint::createSimple('scalar', $nullAllowed));
 	}
-	
+
 	public function getString($path, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
 		if ($mandatory) {
 			return $this->reqString($path, $nullAllowed);

@@ -38,7 +38,7 @@ class ResourceStream implements InputStream, OutputStream {
 	public function isOpen() {
 		return $this->resource !== null;
 	}
-	/* (non-PHPdoc)
+	/**
 	 * @see \n2n\util\io\stream\Stream::getResource()
 	 */
 	public function getResource() {
@@ -48,7 +48,7 @@ class ResourceStream implements InputStream, OutputStream {
 	
 		return $this->resource;
 	}
-	/* (non-PHPdoc)
+	/**
 	 * @see \n2n\util\io\stream\OutputStream::write()
 	 */
 	public function write(string $contents) {
