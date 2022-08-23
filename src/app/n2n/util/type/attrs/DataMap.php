@@ -27,8 +27,9 @@ use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeConstraints;
+use n2n\util\ex\NotYetImplementedException;
 
-class DataMap implements AttributeReader {
+class DataMap implements AttributeReader, AttributeWriter {
 
 	private $data;
 
@@ -114,6 +115,14 @@ class DataMap implements AttributeReader {
 		}
 		
 		return $this->opt($path, $typeConstraint, $defaultValue);
+	}
+
+	function writeAttribute(AttributePath $path, mixed $value): void {
+		$this->set($path, $value);
+	}
+
+	function removeAttribute(AttributePath $path): bool {
+		throw new NotYetImplementedException();
 	}
 
 	/**
