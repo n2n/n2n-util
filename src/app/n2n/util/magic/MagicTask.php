@@ -24,8 +24,9 @@ namespace n2n\util\magic;
 interface MagicTask {
 
 	/**
+	 * @param MagicContext
 	 * @return ExecResult
 	 * @throws MagicTaskExecutionException
 	 */
-	function exec(): ExecResult;
+	function exec(MagicContext $magicContext): ExecResult;
 }
