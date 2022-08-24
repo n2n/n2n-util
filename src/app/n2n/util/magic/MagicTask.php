@@ -25,8 +25,8 @@ interface MagicTask {
 
 	/**
 	 * @param MagicContext
-	 * @return ExecResult
+	 * @return TaskResult
 	 * @throws MagicTaskExecutionException
 	 */
-	function exec(MagicContext $magicContext): ExecResult;
+	function exec(MagicContext $magicContext): TaskResult;
 }
