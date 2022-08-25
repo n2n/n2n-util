@@ -23,7 +23,7 @@ namespace n2n\util\magic;
 
 use n2n\util\ex\IllegalStateException;
 
-interface ErrorResult {
+interface TaskResult {
 
 	/**
 	 * @return bool
