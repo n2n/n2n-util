@@ -12,14 +12,24 @@ class TypeUtils {
 	 * @param mixed $value
 	 * @param int $maxChars
 	 * @return string
+	 * @deprecated spelling error, use {@link TypeUtils::buildUsefulValueIdentifier()}.
 	 */
 	public static function buildUsefullValueIdentifier($value, int $maxChars = self::COMMON_MAX_CHARS) {
+		self::buildUsefulValueIdentifier($value, $maxChars);
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param int $maxChars
+	 * @return string
+	 */
+	public static function buildUsefulValueIdentifier($value, int $maxChars = self::COMMON_MAX_CHARS) {
 		if (is_scalar($value)) {
 			return mb_substr($value, 0, $maxChars);
 		}
 		return self::getTypeInfo($value);
 	}
-	
+
 	/**
 	 * @param mixed $value
 	 * @return string
