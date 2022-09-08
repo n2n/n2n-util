@@ -380,8 +380,9 @@ class StringUtils {
 		foreach ($value as $key => $fieldValue) {
 			$cleanKey = (is_string($key) ? self::convertNonPrintables($key) : $key);
 
-			if (!is_scalar($fieldValue)) {
-				throw new \InvalidArgumentException('Array field with key \'' . $key . '\' is not scalar: '
+			if (!is_scalar($fieldValue) && !is_array($fieldValue)) {
+				throw new \InvalidArgumentException('Array field with key \'' . $key
+						. '\' is not scalar no an array: '
 						. TypeUtils::buildUsefulValueIdentifier($value));
 			}
 
