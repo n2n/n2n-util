@@ -22,7 +22,6 @@
 namespace n2n\util;
 
 use n2n\util\type\TypeUtils;
-use http\Exception\InvalidArgumentException;
 
 class StringUtils {
 	const CRLF = "\r\n";
@@ -382,7 +381,7 @@ class StringUtils {
 			$cleanKey = (is_string($key) ? self::convertNonPrintables($key) : $key);
 
 			if (!is_scalar($fieldValue)) {
-				throw new InvalidArgumentException('Array field with key \'' . $key . '\' is not scalar: '
+				throw new \InvalidArgumentException('Array field with key \'' . $key . '\' is not scalar: '
 						. TypeUtils::buildUsefulValueIdentifier($value));
 			}
 
