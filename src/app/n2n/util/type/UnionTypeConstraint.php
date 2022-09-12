@@ -93,14 +93,21 @@ class UnionTypeConstraint extends TypeConstraint {
 	}
 	
 	/**
-	 * @param string|\ReflectionUnionType $type
+	 * @param string|\ReflectionUnionType|array $type
 	 * @return \n2n\util\type\UnionTypeConstraint
 	 */
-	public static function from(string|\ReflectionUnionType $type, bool $convertable = false) {
+	public static function from(string|\ReflectionUnionType|array $type, bool $convertable = false) {
 		if ($type instanceof \ReflectionUnionType) {
 			return new UnionTypeConstraint(array_map(
 					fn ($namedType) => NamedTypeConstraint::from($namedType, $convertable),
 					$type->getTypes()));
+		}
+
+		if (is_array($type)) {
+			ArgUtils::valArray($type, 'string');
+			return new UnionTypeConstraint(array_map(
+					fn ($iType) => NamedTypeConstraint::from($iType, $convertable),
+					$type));
 		}
 		
 		return new UnionTypeConstraint(array_map(
