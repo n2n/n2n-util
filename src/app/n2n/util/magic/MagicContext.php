@@ -22,25 +22,27 @@
 namespace n2n\util\magic;
 
 use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use ReflectionParameter;
 
 interface MagicContext extends ContainerInterface {
 
-	function has(string|\ReflectionClass $id): bool;
+	function has(string|ReflectionClass $id): bool;
 
 	/**
-	 * @param string $id
+	 * @param string|ReflectionClass $id
 	 * @param bool $required
 	 * @return mixed
 	 * @throws MagicLookupFailedException general lookup error
 	 * @throws MagicObjectUnavailableException only if $required is true and object was not found.
 	 */
-	function lookup(string|\ReflectionClass $id, bool $required = true): mixed;
+	function lookup(string|ReflectionClass $id, bool $required = true): mixed;
 	
 	/**
-	 * @param \ReflectionParameter
+	 * @param ReflectionParameter $parameter
 	 * @return mixed
 	 * @throws MagicLookupFailedException general lookup error
 	 * @throws MagicObjectUnavailableException only if parameter is not nullable and object was not found.
 	 */
-	function lookupParameterValue(\ReflectionParameter $parameter): mixed;
+	function lookupParameterValue(ReflectionParameter $parameter): mixed;
 }
