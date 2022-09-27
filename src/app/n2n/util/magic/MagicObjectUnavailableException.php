@@ -21,5 +21,7 @@
  */
 namespace n2n\util\magic;
 
-class MagicObjectUnavailableException extends \Exception {
+use Psr\Container\NotFoundExceptionInterface;
+
+class MagicObjectUnavailableException extends MagicLookupFailedException implements NotFoundExceptionInterface {
 }

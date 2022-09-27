@@ -21,18 +21,23 @@
  */
 namespace n2n\util\magic;
 
-interface MagicContext {
+use Psr\Container\ContainerInterface;
+
+interface MagicContext extends ContainerInterface {
 	/**
 	 * @param string $id
 	 * @param bool $required
 	 * @return mixed
-	 * @throws MagicObjectUnavailableException only if $required is false.
+	 * @throws MagicLookupFailedException general lookup error
+	 * @throws MagicObjectUnavailableException only if $required is true and object was not found.
 	 */
-	public function lookup($id, $required = true);
+	public function lookup($id, bool $required = true);
+	
 	/**
 	 * @param \ReflectionParameter
-	 * @throws MagicObjectUnavailableException
 	 * @return mixed
+	 * @throws MagicLookupFailedException general lookup error
+	 * @throws MagicObjectUnavailableException only if parameter is not nullable and object was not found.
 	 */
 	public function lookupParameterValue(\ReflectionParameter $parameter);
 }
