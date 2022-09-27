@@ -34,11 +34,19 @@ class SimpleMagicContext implements MagicContext {
 		return $this->lookup($id, true);
 	}
 
-	public function has(string $id): bool {
+	public function has(string|\ReflectionClass $id): bool {
+		if ($id instanceof \ReflectionClass) {
+			$id = $id->getName();
+		}
+
 		return isset($this->objs[$id]);
 	}
 
-	public function lookup($id, bool $required = true) {
+	public function lookup(string|\ReflectionClass $id, bool $required = true): mixed {
+		if ($id instanceof \ReflectionClass) {
+			$id = $id->getName();
+		}
+
 		if (isset($this->objs[$id])) {
 			return $this->objs[$id];
 		}
@@ -50,7 +58,7 @@ class SimpleMagicContext implements MagicContext {
 		return null;
 	}
 	
-	public function lookupParameterValue(\ReflectionParameter $parameter) {
+	public function lookupParameterValue(\ReflectionParameter $parameter): mixed {
 		throw new NotYetImplementedException();
 	}
 }
