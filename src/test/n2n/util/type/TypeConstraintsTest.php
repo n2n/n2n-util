@@ -3,6 +3,7 @@ namespace n2n\util\type;
 
 use PHPUnit\Framework\TestCase;
 use n2n\util\type\mock\TypedMethodsMock;
+use n2n\util\uri\Url;
 
 class TypeConstraintsTest extends TestCase {
 	
@@ -149,5 +150,31 @@ class TypeConstraintsTest extends TestCase {
 		
 		$this->assertTrue('2' === $unionTypeConstraint->validate('2'));
 		$this->assertTrue('2' === $unionTypeConstraint->validate(2));
+	}
+
+	function testUnion() {
+		$typeConstraint = TypeConstraints::type('string|null');
+		$this->assertEquals('huii', $typeConstraint->validate('huii'));
+		$this->assertEquals(null, $typeConstraint->validate(null));
+
+		try {
+			$typeConstraint->validate(array());
+			$this->fail();
+		} catch (ValueIncompatibleWithConstraintsException $e) {
+		}
+	}
+
+	function testUnionWithArray() {
+		$typeConstraint = TypeConstraints::type(['string', 'null', Url::class]);
+		$this->assertEquals('huii', $typeConstraint->validate('huii'));
+		$this->assertEquals(null, $typeConstraint->validate(null));
+		$url = new Url();
+		$this->assertEquals($url, $typeConstraint->validate($url));
+
+		try {
+			$typeConstraint->validate(array());
+			$this->fail();
+		} catch (ValueIncompatibleWithConstraintsException $e) {
+		}
 	}
 }

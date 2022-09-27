@@ -357,13 +357,13 @@ class StringUtils {
 		$value = self::convertNonPrintables($value);
 
 		if ($simpleWhitespacesOnly) {
-			$value = trim(preg_replace('/\W+/', ' ', $value));
+			$value = trim(preg_replace('/[\p{Z}\t\r\n]+/u', ' ', $value));
 		}
 
 		return $value;
 
 	}
-	
+
 	/**
 	 * @param string|array|null $value
 	 * @return string|array|null
@@ -373,31 +373,24 @@ class StringUtils {
 			return $value;
 		}
 
-		if (is_array($value)) {
-			foreach ($value as $key => $fieldValue) {
-				$cleanKey = (is_string($key) ? self::convertNonPrintables($key) : $key);
-				$cleanValue = (is_string($fieldValue) || is_array($fieldValue) ? self::convertNonPrintables($fieldValue) : $fieldValue);
-				$value[$cleanKey] = $cleanValue;
+		if (is_string($value)) {
+			return preg_replace('/[^\p{L}\p{M}\p{Z}\p{S}\p{N}\p{P}\t\r\n]+/u', '', $value);
+		}
 
+		foreach ($value as $key => $fieldValue) {
+			$cleanKey = (is_string($key) ? self::convertNonPrintables($key) : $key);
+
+			if (!is_scalar($fieldValue) && !is_array($fieldValue)) {
+				throw new \InvalidArgumentException('Array field with key \'' . $key
+						. '\' is not scalar no an array: '
+						. TypeUtils::buildUsefulValueIdentifier($value));
 			}
-			return $value;
+
+			$cleanValue = (is_string($fieldValue) || is_array($fieldValue) ? self::convertNonPrintables($fieldValue) : $fieldValue);
+			$value[$cleanKey] = $cleanValue;
 		}
-		
-		$ret = '';
-		$length = strlen($value);
-		for($i = 0; $i < $length; $i ++) {
-			$current = ord($value[$i]);
-			
-			if (($current == 0x9) || ($current == 0xA) || ($current == 0xD)
-					|| (($current >= 0x20) && ($current <= 0xD7FF)) 
-					|| (($current >= 0xE000) && ($current <= 0xFFFD)) 
-					|| (($current >= 0x10000) && ($current <= 0x10FFFF))) {
-				$ret .= chr($current);
-			} else {
-				$ret .= '';
-			}
-		}
-		return $ret;
+
+		return $value;
 	}
 	
 // 	public static function generateBase36Uid($maxLentgh = null) {
