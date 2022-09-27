@@ -22,11 +22,32 @@
 namespace n2n\util\magic;
 
 use n2n\util\ex\NotYetImplementedException;
+use n2n\util\type\ArgUtils;
 
 class SimpleMagicContext implements MagicContext {
-	
-	public function lookup($id, $required = true) {
-		throw new NotYetImplementedException();		
+
+	function __construct(private array $objs) {
+		ArgUtils::valArray($this->objs, 'object');
+	}
+
+	public function get(string $id) {
+		return $this->lookup($id, true);
+	}
+
+	public function has(string $id): bool {
+		return isset($this->objs[$id]);
+	}
+
+	public function lookup($id, bool $required = true) {
+		if (isset($this->objs[$id])) {
+			return $this->objs[$id];
+		}
+
+		if ($required) {
+			throw new MagicObjectUnavailableException('Unknown id: ' . $id);
+		}
+
+		return null;
 	}
 	
 	public function lookupParameterValue(\ReflectionParameter $parameter) {

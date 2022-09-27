@@ -5,8 +5,31 @@ use PHPUnit\Framework\TestCase;
 
 class SimpleMagicContextTest extends TestCase {
 
-	function testCreate() {
-		$simpleMagicContext = new SimpleMagicContext();
+	function testLookupAndGet() {
+		$someObject = new SomeObject();
+		$simpleMagicContext = new SimpleMagicContext(['some-id' => $someObject]);
+
+		$this->assertTrue($someObject === $simpleMagicContext->lookup('some-id'));
+		$this->assertTrue($someObject === $simpleMagicContext->get('some-id'));
 	}
+
+	function testHas() {
+		$someObject = new SomeObject();
+		$simpleMagicContext = new SimpleMagicContext(['some-id' => $someObject]);
+
+		$this->assertTrue($simpleMagicContext->has('some-id'));
+		$this->assertFalse($simpleMagicContext->has('some-other-id'));
+	}
+
+	function testLookupUnavaliable() {
+		$simpleMagicContext = new SimpleMagicContext(['some-id' => new SomeObject()]);
+
+		$this->expectException(MagicObjectUnavailableException::class);
+		$simpleMagicContext->lookup('some-other-id');
+	}
+
+}
+
+class SomeObject {
 
 }
