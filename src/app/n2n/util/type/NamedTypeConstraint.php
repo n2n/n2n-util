@@ -44,7 +44,10 @@ class NamedTypeConstraint extends TypeConstraint {
 		$this->convertable = $convertable && TypeName::isConvertable($typeName);
 		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraint;
 		$this->whitelistTypes = $whitelistTypes;
-		
+	}
+
+	function isMixed() {
+		return $this->typeName === TypeName::PSEUDO_MIXED;
 	}
 	
 	public function setWhitelistTypes(array $whitelistTypes) {

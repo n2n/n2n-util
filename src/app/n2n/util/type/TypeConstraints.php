@@ -73,13 +73,13 @@ class TypeConstraints {
 	 * @param bool $nullable
 	 * @return TypeConstraint
 	 */
-	static function type(string|\ReflectionType|\ReflectionParameter|array $type, bool $convertable = false) {
+	static function type(string|\ReflectionType|\ReflectionParameter|array|null $type, bool $convertable = false) {
 		if ($type instanceof \ReflectionParameter) {
 			$type = $type->getType();
-			
-			if ($type === null) {
-				return NamedTypeConstraint::createSimple(null, true, $convertable);
-			}
+		}
+
+		if ($type === null) {
+			return NamedTypeConstraint::createSimple(null, true, $convertable);
 		}
 
 		if (is_array($type) || TypeName::isUnionType($type)) {
