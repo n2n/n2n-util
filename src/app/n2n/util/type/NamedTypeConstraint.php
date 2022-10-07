@@ -129,7 +129,7 @@ class NamedTypeConstraint extends TypeConstraint {
 // 		return $this->whitelistTypes;
 // 	}
 	
-	public function isValueValid($value): bool {
+	public function isValueValid(mixed $value): bool {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) return true;
 		}
@@ -162,7 +162,7 @@ class NamedTypeConstraint extends TypeConstraint {
 		return true;
 	}
 	
-	public function validate($value) {
+	public function validate(mixed $value): mixed {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) {
 				return $value;

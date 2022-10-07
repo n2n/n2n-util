@@ -42,7 +42,7 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 	public function __construct(string $message = null, string $file = null, int $line = null, 
 			int $startLine = null, int $endLine = null, \Throwable $previous = null, 
 			$documentId = null, $code = null) {
-		parent::__construct((string) $message, $code, $previous);
+		parent::__construct((string) $message, $code ?? 0, $previous);
 		 
 		$this->file = $file;
 		$this->line = $line;
