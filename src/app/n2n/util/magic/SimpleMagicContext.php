@@ -34,6 +34,10 @@ class SimpleMagicContext implements MagicContext {
 		return $this->lookup($id, true);
 	}
 
+	public function set(string $id, object $obj) {
+		$this->objs[$id] = $obj;
+	}
+
 	public function has(string|\ReflectionClass $id): bool {
 		if ($id instanceof \ReflectionClass) {
 			$id = $id->getName();

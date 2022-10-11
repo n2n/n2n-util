@@ -29,6 +29,6 @@ class IllegalStateException extends \RuntimeException {
 	public static function assertTrue($arg, string $exMessage = null) {
 		if ($arg === true) return;
 			
-		throw new IllegalStateException($exMessage);
+		throw new IllegalStateException($exMessage ?? '');
 	}
 }
