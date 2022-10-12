@@ -58,7 +58,7 @@ class UnionTypeConstraint extends TypeConstraint {
 		return false;
 	}
 	
-	function validate($value) {
+	function validate(mixed $value): mixed {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) {
 				return $value;
