@@ -106,7 +106,7 @@ class Authority {
 		if ($idn) {
 			$str .= $this->host;
 		} else {
-			$str .= idn_to_ascii($this->host, null, INTL_IDNA_VARIANT_UTS46);
+			$str .= idn_to_ascii($this->host, 0, INTL_IDNA_VARIANT_UTS46);
 		}
 
 		if ($this->port !== null) {
