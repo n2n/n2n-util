@@ -99,7 +99,7 @@ class NamedTypeConstraint extends TypeConstraint {
 	/**
 	 * @return boolean
 	 */
-	public function allowsNull() {
+	function allowsNull(): bool {
 		return $this->allowsNull;
 	}
 	

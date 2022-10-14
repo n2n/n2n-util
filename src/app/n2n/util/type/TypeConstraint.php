@@ -30,6 +30,11 @@ abstract class TypeConstraint implements Constraint {
 	 * @return boolean
 	 */
 	abstract function isValueValid($value): bool;
+
+	/**
+	 * @return bool
+	 */
+	abstract function allowsNull(): bool;
 	
 	/**
 	 * @param mixed $value
