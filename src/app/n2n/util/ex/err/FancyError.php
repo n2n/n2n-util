@@ -45,7 +45,9 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 		parent::__construct((string) $message, $code ?? 0, $previous);
 		 
 		$this->file = $file;
-		$this->line = $line;
+		if ($line !== null) {
+			$this->line = $line;
+		}
 		$this->errStartLineNo = $startLine;
 		$this->endLine = $endLine;
 		$this->documentId = $documentId;
