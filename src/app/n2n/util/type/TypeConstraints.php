@@ -116,4 +116,13 @@ class TypeConstraints {
 	static function arrayObject(bool $nullable, $fieldTypeConstraint = null) {
 		return TypeConstraint::createArrayLike('ArrayObject', $nullable, TypeConstraint::build($fieldTypeConstraint));
 	}
+
+	/**
+	 * @param bool $nullable
+	 * @param TypeConstraint|string $fieldTypeConstraint
+	 * @return TypeConstraint
+	 */
+	static function arrayLike(bool $nullable, $fieldTypeConstraint = null) {
+		return TypeConstraint::createArrayLike(null, $nullable, TypeConstraint::build($fieldTypeConstraint));
+	}
 }
