@@ -59,6 +59,15 @@ class TypeConstraints {
 	static function float(bool $nullable = false, bool $convertable = false) {
 		return NamedTypeConstraint::createSimple('float', $nullable, $convertable);
 	}
+
+	/**
+	 * @param bool $nullable
+	 * @param bool $convertable
+	 * @return TypeConstraint
+	 */
+	static function bool(bool $nullable = false, bool $convertable = false) {
+		return NamedTypeConstraint::createSimple('bool', $nullable, $convertable);
+	}
 	
 	/**
 	 * @param bool $nullable
