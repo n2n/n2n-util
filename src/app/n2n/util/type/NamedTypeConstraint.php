@@ -23,6 +23,7 @@ namespace n2n\util\type;
 
 use n2n\util\col\ArrayUtils;
 use n2n\util\ex\IllegalStateException;
+use n2n\reflection\ReflectionUtils;
 
 class NamedTypeConstraint extends TypeConstraint {	
 	private $typeName;
@@ -210,7 +211,7 @@ class NamedTypeConstraint extends TypeConstraint {
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new ValueIncompatibleWithConstraintsException(
 						'Value type not allowed with constraints '
-						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
+						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', 0, $e);
 			}
 		}
 		
