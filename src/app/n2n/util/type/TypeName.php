@@ -272,6 +272,7 @@ class TypeName {
 	}
 	
 	const UNION_TYPE_SEPARATOR = '|';
+	const INTERSECTION_TYPE_SEPARATOR = '&';
 	
 	static function isUnionType(string|\ReflectionType $type) {
 		if (is_string($type)) {
@@ -279,6 +280,15 @@ class TypeName {
 		}
 		
 		return ($type instanceof \ReflectionUnionType);
+	}
+
+	static function isNamedType(string|\ReflectionType $type) {
+		if (is_string($type)) {
+			return !StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type)
+					&& !StringUtils::contains(self::INTERSECTION_TYPE_SEPARATOR, $type);
+		}
+
+		return $type instanceof \ReflectionNamedType;
 	}
 	
 	static function extractUnionTypeNames(string|\ReflectionUnionType $type) {
