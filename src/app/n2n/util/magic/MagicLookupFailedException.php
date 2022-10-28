@@ -23,5 +23,5 @@ namespace n2n\util\magic;
 
 use Psr\Container\ContainerExceptionInterface;
 
-class MagicLookupFailedException extends \Exception implements ContainerExceptionInterface {
+class MagicLookupFailedException extends \RuntimeException implements ContainerExceptionInterface {
 }
