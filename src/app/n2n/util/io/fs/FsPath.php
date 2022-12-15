@@ -139,7 +139,18 @@ class FsPath {
 	 */
 	public function mkdirs(int|string $perm = 0777) {
 		if ($this->isDir()) return;
-		IoUtils::mkdirs($this->path, $perm);
+
+		try {
+			IoUtils::mkdirs($this->path, $perm);
+		} catch (FileOperationException $e) {
+			// php is not thread safe. if the directory was created in the time after $this->isDir() and
+			// IoUtils::mkdirs() an unwanted FileOperationException would be thrown with message 'File exists'.
+			if ($this->isDir()) {
+				return;
+			}
+
+			throw $e;
+		}
 	}
 	/**
 	 * Returns the abstract pathname of this abstract pathname's parent, or null if this pathname does not name a parent directory.
