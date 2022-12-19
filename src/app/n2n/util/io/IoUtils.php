@@ -123,10 +123,10 @@ class IoUtils {
 	/**
 	 * @param string $path
 	 * @param int|string $permission keep possible umask restrictions in mind.
-	 * @throws IoException
+	 * @throws FileOperationException
 	 * @return bool
 	 */
-	public static function mkdirs(string $path, int|string $permission = 0777) {
+	public static function mkdirs(string $path, int|string $permission = 0777): bool {
 		if (is_string($permission)) {
 			$permission = octdec($permission);
 		}
