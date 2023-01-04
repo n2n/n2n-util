@@ -21,7 +21,6 @@
  */
 namespace n2n\util\magic\impl;
 
-use n2n\util\ex\NotYetImplementedException;
 use n2n\util\type\ArgUtils;
 use n2n\util\magic\MagicContext;
 use n2n\util\magic\MagicObjectUnavailableException;
@@ -29,15 +28,21 @@ use n2n\util\magic\MagicObjectUnavailableException;
 class SimpleMagicContext implements MagicContext {
 
 	function __construct(private array $objs) {
-		ArgUtils::valArray($this->objs, 'object');
+		ArgUtils::valArray($this->objs, ['object']);
 	}
 
 	public function get(string $id) {
 		return $this->lookup($id, true);
 	}
 
-	public function set(string $id, object $obj) {
+	public function set(string $id, object $obj): static {
 		$this->objs[$id] = $obj;
+		return $this;
+	}
+
+	function setCallback(string $id, \Closure $closure): static {
+		$this->objs[$id] = $closure;
+		return $this;
 	}
 
 	public function has(string|\ReflectionClass $id): bool {
@@ -54,7 +59,13 @@ class SimpleMagicContext implements MagicContext {
 		}
 
 		if (isset($this->objs[$id])) {
-			return $this->objs[$id];
+			if (!($this->objs[$id] instanceof \Closure)) {
+				return $this->objs[$id];
+			}
+
+			$result = $this->objs[$id]();
+			ArgUtils::valObjectReturn($result, null, $this->objs[$id]);
+			return $result;
 		}
 
 		if ($required) {
