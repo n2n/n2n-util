@@ -22,32 +22,32 @@
 namespace n2n\util\col;
 
 class HashMapIterator implements \Iterator {
-	private $current = 0;
-	private $keys;
-	private $values;
+	private int $current = 0;
+	private array $keys;
+	private array $values;
 
 	public function __construct(array $refs, array $values) {
 		$this->keys = $refs;
 		$this->values = $values;
 	}
 
-	public function next() {
+	public function next(): void {
 		$this->current++;
 	}
 
-	public function valid() {
+	public function valid(): bool {
 		return array_key_exists($this->current, $this->values);
 	}
 
-	public function key() {
+	public function key(): mixed {
 		return $this->keys[$this->current];
 	}
 
-	public function current() {
+	public function current(): mixed {
 		return $this->values[$this->current];
 	}
 
-	public function rewind() {
+	public function rewind(): void {
 		$this->current = 0;
 	}
 }
