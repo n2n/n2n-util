@@ -112,4 +112,20 @@ class ArrayUtils {
 		
 		return false;
 	}
+
+	static function insertBeforeKey(array &$arr, string $beforeKey, array $values): void {
+		$newArr = [];
+		foreach ($arr as $key => $value) {
+			if ($key === $beforeKey) {
+				$newArr = array_merge($newArr, $values);
+				$values = [];
+			}
+
+			if (!array_key_exists($key, $newArr)) {
+				$newArr[$key] = $value;
+			}
+		}
+
+		$arr = array_merge($newArr, $values);
+	}
 }

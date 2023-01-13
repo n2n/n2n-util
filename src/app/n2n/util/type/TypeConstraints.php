@@ -27,39 +27,51 @@ class TypeConstraints {
 	
 	/**
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @return TypeConstraint
 	 */
 	static function scalar(bool $nullable = false) {
 		return NamedTypeConstraint::createSimple('scalar', $nullable);
 	}
-	
+
 	/**
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @param bool $convertable
+	 * @return TypeConstraint
 	 */
 	static function string(bool $nullable = false, bool $convertable = false) {
 		return NamedTypeConstraint::createSimple('string', $nullable, $convertable);
 	}
-	
+
 	/**
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @param bool $convertable
+	 * @return TypeConstraint
 	 */
 	static function int(bool $nullable = false, bool $convertable = false) {
 		return NamedTypeConstraint::createSimple('int', $nullable, $convertable);
 	}
-	
+
 	/**
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @param bool $convertable
+	 * @return TypeConstraint
 	 */
 	static function float(bool $nullable = false, bool $convertable = false) {
 		return NamedTypeConstraint::createSimple('float', $nullable, $convertable);
 	}
+
+	/**
+	 * @param bool $nullable
+	 * @param bool $convertable
+	 * @return TypeConstraint
+	 */
+	static function bool(bool $nullable = false, bool $convertable = false) {
+		return NamedTypeConstraint::createSimple('bool', $nullable, $convertable);
+	}
 	
 	/**
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @return TypeConstraint
 	 */
 	static function mixed(bool $nullable = false) {
 		return NamedTypeConstraint::createSimple(TypeName::PSEUDO_MIXED, $nullable);
@@ -68,15 +80,15 @@ class TypeConstraints {
 	/**
 	 * @param string|\ReflectionType|\ReflectionParameter|array $type
 	 * @param bool $nullable
-	 * @return \n2n\util\type\TypeConstraint
+	 * @return TypeConstraint
 	 */
-	static function type(string|\ReflectionType|\ReflectionParameter|array $type, bool $convertable = false) {
+	static function type(string|\ReflectionType|\ReflectionParameter|array|null $type, bool $convertable = false) {
 		if ($type instanceof \ReflectionParameter) {
 			$type = $type->getType();
-			
-			if ($type === null) {
-				return NamedTypeConstraint::createSimple(null, true, $convertable);
-			}
+		}
+
+		if ($type === null) {
+			return NamedTypeConstraint::createSimple(null, true, $convertable);
 		}
 
 		if (is_array($type) || TypeName::isUnionType($type)) {
@@ -99,7 +111,7 @@ class TypeConstraints {
 	/**
 	 * @param bool $nullable
 	 * @param TypeConstraint|string $fieldTypeConstraint
-	 * @return \n2n\util\type\TypeConstraint
+	 * @return TypeConstraint
 	 */
 	static function array(bool $nullable = false, $fieldTypeConstraint = null) {
 		return TypeConstraint::createArrayLike('array', $nullable, TypeConstraint::build($fieldTypeConstraint));
@@ -108,9 +120,18 @@ class TypeConstraints {
 	/**
 	 * @param bool $nullable
 	 * @param TypeConstraint|string $fieldTypeConstraint
-	 * @return \n2n\util\type\TypeConstraint
+	 * @return TypeConstraint
 	 */
 	static function arrayObject(bool $nullable, $fieldTypeConstraint = null) {
 		return TypeConstraint::createArrayLike('ArrayObject', $nullable, TypeConstraint::build($fieldTypeConstraint));
+	}
+
+	/**
+	 * @param bool $nullable
+	 * @param TypeConstraint|string $fieldTypeConstraint
+	 * @return TypeConstraint
+	 */
+	static function arrayLike(bool $nullable, $fieldTypeConstraint = null) {
+		return TypeConstraint::createArrayLike(null, $nullable, TypeConstraint::build($fieldTypeConstraint));
 	}
 }

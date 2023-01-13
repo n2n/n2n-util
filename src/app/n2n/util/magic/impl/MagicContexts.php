@@ -19,9 +19,21 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\magic;
+namespace n2n\util\magic\impl;
 
-use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use n2n\util\magic\MagicContext;
 
-class MagicLookupFailedException extends \RuntimeException implements ContainerExceptionInterface {
+class MagicContexts {
+	static function psr(ContainerInterface|MagicContext $container): MagicContext {
+		if ($container instanceof MagicContext) {
+			return $container;
+		}
+
+		return new PsrMagicContext($container);
+	}
+
+	static function simple(array $objs): MagicContext {
+		return new SimpleMagicContext($objs);
+	}
 }

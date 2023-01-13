@@ -23,6 +23,7 @@ namespace n2n\util\type;
 
 use n2n\util\col\ArrayUtils;
 use n2n\util\ex\IllegalStateException;
+use n2n\reflection\ReflectionUtils;
 
 class NamedTypeConstraint extends TypeConstraint {	
 	private $typeName;
@@ -44,7 +45,10 @@ class NamedTypeConstraint extends TypeConstraint {
 		$this->convertable = $convertable && TypeName::isConvertable($typeName);
 		$this->arrayFieldTypeConstraint = $arrayFieldTypeConstraint;
 		$this->whitelistTypes = $whitelistTypes;
-		
+	}
+
+	function isMixed() {
+		return $this->typeName === TypeName::PSEUDO_MIXED;
 	}
 	
 	public function setWhitelistTypes(array $whitelistTypes) {
@@ -96,7 +100,7 @@ class NamedTypeConstraint extends TypeConstraint {
 	/**
 	 * @return boolean
 	 */
-	public function allowsNull() {
+	function allowsNull(): bool {
 		return $this->allowsNull;
 	}
 	
@@ -129,7 +133,7 @@ class NamedTypeConstraint extends TypeConstraint {
 // 		return $this->whitelistTypes;
 // 	}
 	
-	public function isValueValid($value): bool {
+	public function isValueValid(mixed $value): bool {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) return true;
 		}
@@ -162,7 +166,7 @@ class NamedTypeConstraint extends TypeConstraint {
 		return true;
 	}
 	
-	public function validate($value) {
+	public function validate(mixed $value): mixed {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) {
 				return $value;
@@ -207,7 +211,7 @@ class NamedTypeConstraint extends TypeConstraint {
 			} catch (ValueIncompatibleWithConstraintsException $e) {
 				throw new ValueIncompatibleWithConstraintsException(
 						'Value type not allowed with constraints '
-						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', null, $e);
+						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', 0, $e);
 			}
 		}
 		

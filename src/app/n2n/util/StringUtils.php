@@ -57,7 +57,7 @@ class StringUtils {
 	public static function pretty(string $str) {
 		return ucfirst(preg_replace_callback('/[_-]+([^_-]?)/',
 				function ($found) { return ' ' . ucfirst($found[1]); },
-				$str));
+				self::hyphenated($str)));
 	}
 	
 	

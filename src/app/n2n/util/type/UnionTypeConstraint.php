@@ -43,7 +43,17 @@ class UnionTypeConstraint extends TypeConstraint {
 	function getTypeConstraints() {
 		return $this->namedTypeConstraints;
 	}
-	
+
+	function allowsNull(): bool {
+		foreach ($this->namedTypeConstraints as $namedTypeConstraint) {
+			if ($namedTypeConstraint->allowsNull()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	function isValueValid($value): bool {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) return true;
@@ -58,7 +68,7 @@ class UnionTypeConstraint extends TypeConstraint {
 		return false;
 	}
 	
-	function validate($value) {
+	function validate(mixed $value): mixed {
 		foreach ($this->whitelistTypes as $whitelistType) {
 			if (TypeUtils::isValueA($value, $whitelistType, false)) {
 				return $value;

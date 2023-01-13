@@ -127,7 +127,7 @@ class TypeName {
 		switch ($testingTypeName) {
 			case self::INT:
 			case self::FLOAT:
-				return $typeName == self::PSEUDO_NUMERIC || $typeName == self::PSEUDO_SCALAR;
+				return $typeName == self::INT || $typeName == self::PSEUDO_NUMERIC || $typeName == self::PSEUDO_SCALAR;
 			case self::STRING:
 			case self::BOOL:
 			case self::PSEUDO_NUMERIC:
@@ -168,7 +168,7 @@ class TypeName {
 			case TypeName::INT:
 				return is_int($value);
 			case TypeName::FLOAT:
-				return is_float($value);
+				return is_float($value) || is_int($value);
 			case TypeName::BOOL:
 				return is_bool($value);
 			case TypeName::OBJECT:
@@ -218,13 +218,11 @@ class TypeName {
 			case self::INT:
 			case self::FLOAT:
 			case self::BOOL:
-			case self::ARRAY:
 			case self::RESOURCE:
 			case self::OBJECT:
 			case self::NULL:
 			case self::PSEUDO_SCALAR:
 			case self::PSEUDO_MIXED:
-			case self::PSEUDO_ARRAYLIKE:
 			case self::PSEUDO_NUMERIC:
 				return false;
 		}
@@ -272,6 +270,7 @@ class TypeName {
 	}
 	
 	const UNION_TYPE_SEPARATOR = '|';
+	const INTERSECTION_TYPE_SEPARATOR = '&';
 	
 	static function isUnionType(string|\ReflectionType $type) {
 		if (is_string($type)) {
@@ -279,6 +278,15 @@ class TypeName {
 		}
 		
 		return ($type instanceof \ReflectionUnionType);
+	}
+
+	static function isNamedType(string|\ReflectionType $type) {
+		if (is_string($type)) {
+			return !StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type)
+					&& !StringUtils::contains(self::INTERSECTION_TYPE_SEPARATOR, $type);
+		}
+
+		return $type instanceof \ReflectionNamedType;
 	}
 	
 	static function extractUnionTypeNames(string|\ReflectionUnionType $type) {

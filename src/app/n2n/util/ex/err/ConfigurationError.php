@@ -19,9 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\util\magic;
+namespace n2n\util\ex\err;
 
-use Psr\Container\ContainerExceptionInterface;
-
-class MagicLookupFailedException extends \RuntimeException implements ContainerExceptionInterface {
+class ConfigurationError extends FancyError {
 }

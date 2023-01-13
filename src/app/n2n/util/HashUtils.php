@@ -40,8 +40,8 @@ class HashUtils {
 		if ($moreEntropy == false) {
 			return base_convert(uniqid(), 16, 36);
 		}
-		
-		return self::baseConvert(str_replace('.', '', uniqid(null, true)), 16, 36);
+
+		return self::baseConvert(str_replace('.', '', uniqid('', true)), 16, 36);
 	}
 	
 	private static function baseConvert($str, $frombase, $tobase) {

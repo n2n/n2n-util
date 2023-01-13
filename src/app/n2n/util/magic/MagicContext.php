@@ -32,17 +32,11 @@ interface MagicContext extends ContainerInterface {
 	/**
 	 * @param string|ReflectionClass $id
 	 * @param bool $required
+	 * @param string|null $contextNamespace
 	 * @return mixed
 	 * @throws MagicLookupFailedException general lookup error
 	 * @throws MagicObjectUnavailableException only if $required is true and object was not found.
 	 */
-	function lookup(string|ReflectionClass $id, bool $required = true): mixed;
-	
-	/**
-	 * @param ReflectionParameter $parameter
-	 * @return mixed
-	 * @throws MagicLookupFailedException general lookup error
-	 * @throws MagicObjectUnavailableException only if parameter is not nullable and object was not found.
-	 */
-	function lookupParameterValue(ReflectionParameter $parameter): mixed;
+	function lookup(string|ReflectionClass $id, bool $required = true, string $contextNamespace = null): mixed;
+
 }
