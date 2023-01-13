@@ -2,6 +2,7 @@
 namespace n2n\util\magic;
 
 use PHPUnit\Framework\TestCase;
+use n2n\util\magic\impl\SimpleMagicContext;
 
 class SimpleMagicContextTest extends TestCase {
 
