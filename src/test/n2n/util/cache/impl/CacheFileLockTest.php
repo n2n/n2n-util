@@ -27,8 +27,27 @@ class CacheFileLockTest extends TestCase {
 			$this->assertTrue(true);
 		}
 
+		$this->assertTrue($lockFileFsPath->exists());
+
 		$lock->release(true);
 
 		$this->assertTrue(!$lockFileFsPath->exists());
+	}
+
+
+	function testKeepFile() {
+		$lockFileFsPath = new FsPath(tempnam(sys_get_temp_dir(),''));
+		$lockFileFsPath->delete();
+
+		$this->assertTrue(!$lockFileFsPath->exists());
+
+		$lock = new CacheFileLock(new FileResourceStream($lockFileFsPath, 'w', LOCK_EX));
+
+		$this->assertTrue($lockFileFsPath->exists());
+		$this->assertTrue($lockFileFsPath->isFile());
+
+		$lock->release();
+
+		$this->assertTrue($lockFileFsPath->exists());
 	}
 }

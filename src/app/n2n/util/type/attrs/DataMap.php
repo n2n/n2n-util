@@ -321,14 +321,26 @@ class DataMap implements AttributeReader, AttributeWriter {
 		if ($nullAllowed && $value === null) {
 			return $value;
 		}
+
+		$valueMap = [];
+		foreach ($allowedValues as $key => $allowedValue) {
+			if (!($allowedValue instanceof \UnitEnum)) {
+				continue;
+			}
+
+			$enhancedValue = $allowedValue->value ?? $allowedValue->name;
+			$allowedValues[$key] = $enhancedValue;
+			$valueMap[$enhancedValue] = $allowedValue;
+		}
 		
 		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
 			throw new InvalidAttributeException('Property \'' . $path
-					. '\' must contain one of following values: ' . implode(', ', $allowedValues)
+					. '\' must contain one of following values: '
+					. implode(', ', array_map(fn ($v) => StringUtils::strOf($v, true), $allowedValues))
 					. '. Given: ' . TypeUtils::buildScalar($value));
 		}
 		
-		return $value;
+		return $valueMap[$value] ?? $value;
 	}
 	
 	public function reqArray($name, $fieldType = null, bool $nullAllowed = false) {

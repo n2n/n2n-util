@@ -2,6 +2,9 @@
 namespace n2n\util\type\attrs;
 
 use PHPUnit\Framework\TestCase;
+use n2n\util\type\mock\StringBackedEnumMock;
+use n2n\util\type\mock\PureEnumMock;
+use n2n\util\StringUtils;
 
 class DataMapTest extends TestCase {
 	
@@ -29,5 +32,15 @@ class DataMapTest extends TestCase {
 		$dataMap->cleanStrings(['key1/skey1'], false);
 
 		$this->assertEquals(" \t stri\r\nng \r\n \n", $dataMap->reqString('key1/skey1'));
+	}
+
+	function testEnum() {
+		$dataMap = new DataMap(['key1' => 'value-1', 'key2' => 'CASE2']);
+
+		$this->assertEquals(StringBackedEnumMock::VALUE1,
+				$dataMap->reqEnum('key1', StringBackedEnumMock::cases()));
+
+		$this->assertEquals(PureEnumMock::CASE2,
+				$dataMap->reqEnum('key2', PureEnumMock::cases()));
 	}
 }
