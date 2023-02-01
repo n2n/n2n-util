@@ -4,6 +4,8 @@ namespace n2n\util\type;
 use PHPUnit\Framework\TestCase;
 use n2n\util\type\mock\TypedMethodsMock;
 use n2n\util\uri\Url;
+use n2n\util\type\mock\StringBackedEnumMock;
+use n2n\util\type\mock\PureEnumMock;
 
 class TypeConstraintsTest extends TestCase {
 	
@@ -176,5 +178,12 @@ class TypeConstraintsTest extends TestCase {
 			$this->fail();
 		} catch (ValueIncompatibleWithConstraintsException $e) {
 		}
+	}
+
+	function testEnum() {
+		$typeConstraint = TypeConstraints::type(StringBackedEnumMock::class);
+
+		$this->assertTrue($typeConstraint->isValueValid(StringBackedEnumMock::VALUE1));
+		$this->assertFalse($typeConstraint->isValueValid(PureEnumMock::CASE2));
 	}
 }
