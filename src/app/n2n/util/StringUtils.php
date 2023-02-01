@@ -55,9 +55,14 @@ class StringUtils {
 	 * @return string
 	 */
 	public static function pretty(string $str) {
-		return ucfirst(preg_replace_callback('/[_-]+([^_-]?)/',
+		$str = preg_replace_callback(['/([a-z0-9])([A-Z])/', '/([a-z])([0-9])/'],
+				function ($found) { return $found[1] . ' ' . $found[2]; },
+				$str);
+		$str = preg_replace_callback('/[_-]+([^_-]?)/',
 				function ($found) { return ' ' . ucfirst($found[1]); },
-				self::hyphenated($str)));
+				$str);
+		
+		return ucfirst($str);
 	}
 	
 	
