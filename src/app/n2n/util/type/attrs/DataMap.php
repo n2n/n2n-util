@@ -28,6 +28,7 @@ use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeConstraints;
 use n2n\util\ex\NotYetImplementedException;
+use n2n\util\EnumUtils;
 
 class DataMap implements AttributeReader, AttributeWriter {
 
@@ -328,9 +329,9 @@ class DataMap implements AttributeReader, AttributeWriter {
 				continue;
 			}
 
-			$enhancedValue = $allowedValue->value ?? $allowedValue->name;
-			$allowedValues[$key] = $enhancedValue;
-			$valueMap[$enhancedValue] = $allowedValue;
+			$backedValue = EnumUtils::unitToBacked($allowedValue->value);
+			$allowedValues[$key] = $backedValue;
+			$valueMap[$backedValue] = $allowedValue;
 		}
 		
 		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
