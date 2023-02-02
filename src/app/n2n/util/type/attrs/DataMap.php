@@ -329,7 +329,7 @@ class DataMap implements AttributeReader, AttributeWriter {
 				continue;
 			}
 
-			$backedValue = EnumUtils::unitToBacked($allowedValue->value);
+			$backedValue = EnumUtils::unitToBacked($allowedValue);
 			$allowedValues[$key] = $backedValue;
 			$valueMap[$backedValue] = $allowedValue;
 		}
