@@ -26,6 +26,7 @@ use n2n\util\ex\IllegalStateException;
 
 class UnionTypeConstraint extends TypeConstraint {	
 	private $namedTypeConstraints = [];
+	private $whitelistTypes = [];
 
 	/**
 	 * @param NamedTypeConstraint[] $namedTypeConstraints
