@@ -41,7 +41,7 @@ enum EnumUtils {
 		return self::valEnumArg($type)->isInstance($value);
 	}
 
-	private static function valEnumArg(\ReflectionEnum|\ReflectionClass|string $enum) {
+	static function valEnumArg(\ReflectionEnum|\ReflectionClass|string $enum) {
 		if ($enum instanceof \ReflectionEnum) {
 			return $enum;
 		}
