@@ -3,6 +3,7 @@ namespace n2n\util\type;
 
 use n2n\util\StringUtils;
 use n2n\util\io\IoUtils;
+use n2n\util\EnumUtils;
 
 class TypeName {
 	const NULL = 'null';
@@ -65,6 +66,16 @@ class TypeName {
 				throw self::createValueNotConvertableException($value, $typeName);
 				
 			default:
+				if (EnumUtils::isEnumType($typeName)) {
+					if ($value instanceof \UnitEnum) {
+						return $value;
+					}
+
+					if (is_string($value) || is_int($value)) {
+						return EnumUtils::backedToUnit($value, $typeName);
+					}
+				}
+
 				throw new \InvalidArgumentException('It is not possible to convert a value to ' . $typeName);
 		}
 	}
@@ -85,7 +96,16 @@ class TypeName {
 			case self::INT:
 				return is_numeric($value) && ((int) $value == $value);
 			default:
-				return false;
+				if (!EnumUtils::isEnumType($typeName)) {
+					return false;
+				}
+
+				if ($value instanceof \UnitEnum) {
+					return EnumUtils::isUnitEnumOfType($value, $typeName);
+				}
+
+				return (is_string($value) || is_int($value))
+						&& EnumUtils::isBackedOfUnit($value, $typeName);
 		}
 	}
 	
@@ -101,7 +121,7 @@ class TypeName {
 			case self::FLOAT:
 				return true;
 			default:
-				return false;
+				return EnumUtils::isEnumType($typeName);
 		}
 	}
 	

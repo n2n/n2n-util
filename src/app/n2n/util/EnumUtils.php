@@ -3,10 +3,23 @@
 namespace n2n\util;
 
 use n2n\util\type\ArgUtils;
+use n2n\util\type\TypeName;
 
 enum EnumUtils {
 
-	private static function valEnumArg(\ReflectionEnum|string $enum) {
+	static function isEnumType(\ReflectionEnum|\ReflectionClass|string $type): bool {
+		if ($type instanceof \ReflectionClass) {
+			return $type->isEnum();
+		}
+
+		return enum_exists($type);
+	}
+
+	static function isUnitEnumOfType(\UnitEnum $value, \ReflectionEnum|\ReflectionClass|string $type): bool {
+		return self::valEnumArg($type)->hasCase($value->name);
+	}
+
+	private static function valEnumArg(\ReflectionEnum|\ReflectionClass|string $enum) {
 		if ($enum instanceof \ReflectionEnum) {
 			return $enum;
 		}
@@ -16,6 +29,15 @@ enum EnumUtils {
 		} catch (\ReflectionException $e) {
 			throw new \InvalidArgumentException('Invalid enum type: ' . StringUtils::strOf($enum, true),
 					previous: $e);
+		}
+	}
+
+	static function isBackedOfUnit(int|string|null $backedValue, \ReflectionEnum|string $enum): bool {
+		try {
+			self::backedToUnit($backedValue, $enum);
+			return true;
+		} catch (\InvalidArgumentException $e) {
+			return false;
 		}
 	}
 

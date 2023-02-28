@@ -185,5 +185,17 @@ class TypeConstraintsTest extends TestCase {
 
 		$this->assertTrue($typeConstraint->isValueValid(StringBackedEnumMock::VALUE1));
 		$this->assertFalse($typeConstraint->isValueValid(PureEnumMock::CASE2));
+		$this->assertFalse($typeConstraint->isValueValid(StringBackedEnumMock::VALUE1->value));
+	}
+
+	function testConvertableEnum() {
+		$typeConstraint = TypeConstraints::type(StringBackedEnumMock::class, true);
+
+		$this->assertTrue($typeConstraint->isValueValid(StringBackedEnumMock::VALUE1));
+		$this->assertFalse($typeConstraint->isValueValid(PureEnumMock::CASE2));
+		$this->assertTrue($typeConstraint->isValueValid(StringBackedEnumMock::VALUE1->value));
+
+		$this->assertEquals(StringBackedEnumMock::VALUE1,
+				$typeConstraint->validate(StringBackedEnumMock::VALUE1->value));
 	}
 }
