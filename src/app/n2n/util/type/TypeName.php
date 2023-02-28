@@ -67,13 +67,7 @@ class TypeName {
 				
 			default:
 				if (EnumUtils::isEnumType($typeName)) {
-					if ($value instanceof \UnitEnum) {
-						return $value;
-					}
-
-					if (is_string($value) || is_int($value)) {
-						return EnumUtils::backedToUnit($value, $typeName);
-					}
+					return EnumUtils::valueToUnit($value, $typeName);
 				}
 
 				throw new \InvalidArgumentException('It is not possible to convert a value to ' . $typeName);
@@ -96,16 +90,11 @@ class TypeName {
 			case self::INT:
 				return is_numeric($value) && ((int) $value == $value);
 			default:
-				if (!EnumUtils::isEnumType($typeName)) {
-					return false;
+				if (EnumUtils::isEnumType($typeName)) {
+					return EnumUtils::isValueOfEnumType($value, $typeName);
 				}
 
-				if ($value instanceof \UnitEnum) {
-					return EnumUtils::isUnitEnumOfType($value, $typeName);
-				}
-
-				return (is_string($value) || is_int($value))
-						&& EnumUtils::isBackedOfUnit($value, $typeName);
+				return false;
 		}
 	}
 	

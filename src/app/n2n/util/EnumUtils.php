@@ -2,8 +2,6 @@
 
 namespace n2n\util;
 
-use n2n\util\type\ArgUtils;
-
 enum EnumUtils {
 
 	static function isEnumType(\ReflectionEnum|\ReflectionClass|string $type): bool {
@@ -14,8 +12,33 @@ enum EnumUtils {
 		return enum_exists($type);
 	}
 
+	static function isValueOfEnumType(mixed $value, \ReflectionEnum|\ReflectionClass|string $type) : bool {
+		if ($value instanceof \UnitEnum) {
+			return self::isUnitEnumOfType($value, $type);
+		}
+
+		if (is_string($value) || is_int($value)) {
+			return self::isBackedOfUnit($value, $type);
+		}
+
+		return false;
+	}
+
+	static function valueToUnit(mixed $value, \ReflectionEnum|\ReflectionClass|string $type): \UnitEnum {
+		if ($value instanceof \UnitEnum && self::isUnitEnumOfType($value, $type)) {
+			return $value;
+		}
+
+		if (is_string($value) || is_int($value)) {
+			return self::backedToUnit($value, $type);
+		}
+
+		throw new \InvalidArgumentException('Value can not be associated with any case of enum '
+				. $type->getName() . ': ' . StringUtils::strOf($value, true));
+	}
+
 	static function isUnitEnumOfType(\UnitEnum $value, \ReflectionEnum|\ReflectionClass|string $type): bool {
-		return self::valEnumArg($type)->hasCase($value->name);
+		return self::valEnumArg($type)->isInstance($value);
 	}
 
 	private static function valEnumArg(\ReflectionEnum|\ReflectionClass|string $enum) {
