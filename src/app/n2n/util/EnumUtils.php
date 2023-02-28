@@ -19,6 +19,12 @@ enum EnumUtils {
 		}
 	}
 
+	/**
+	 * @param int|string|null $backedValue
+	 * @param \ReflectionEnum|string $enum
+	 * @return \UnitEnum|null
+	 * @throws \InvalidArgumentException if value is not associated with any case of enum
+	 */
 	static function backedToUnit(int|string|null $backedValue, \ReflectionEnum|string $enum): ?\UnitEnum {
 		if ($backedValue === null) {
 			return null;
