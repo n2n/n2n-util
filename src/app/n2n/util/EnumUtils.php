@@ -3,7 +3,6 @@
 namespace n2n\util;
 
 use n2n\util\type\ArgUtils;
-use n2n\util\type\TypeName;
 
 enum EnumUtils {
 
