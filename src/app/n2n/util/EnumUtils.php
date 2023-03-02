@@ -2,7 +2,52 @@
 
 namespace n2n\util;
 
+use n2n\util\col\ArrayUtils;
+use n2n\util\type\attrs\InvalidAttributeException;
+use n2n\util\type\TypeUtils;
+
 enum EnumUtils {
+
+	static function isValueOfPseudoUnit(mixed $value, array $allowedValues): bool {
+		try {
+			self::valueToPseudoUnit($value, $allowedValues);
+			return true;
+		} catch (\InvalidArgumentException $e) {
+			return false;
+		}
+	}
+
+	/**
+	 * @param mixed $value
+	 * @param array $allowedValues
+	 * @return mixed
+	 * @throws \InvalidArgumentException
+	 */
+	static function valueToPseudoUnit(mixed $value, array $allowedValues): mixed {
+		$valueMap = [];
+
+		foreach ($allowedValues as $key => $allowedValue) {
+			if ($value === $allowedValue) {
+				return $value;
+			}
+
+			if (!($allowedValue instanceof \UnitEnum)) {
+				continue;
+			}
+
+			$backedValue = self::unitToBacked($allowedValue);
+			$allowedValues[$key] = $backedValue;
+			$valueMap[$backedValue] = $allowedValue;
+		}
+
+		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
+			throw new InvalidAttributeException('Value must be equal to one of following values: '
+					. implode(', ', array_map(fn ($v) => StringUtils::strOf($v, true), $allowedValues))
+					. '. Given: ' . TypeUtils::buildScalar($value));
+		}
+
+		return $valueMap[$value] ?? $value;
+	}
 
 	static function isEnumType(\ReflectionEnum|\ReflectionClass|string $type): bool {
 		if ($type instanceof \ReflectionClass) {
@@ -12,7 +57,7 @@ enum EnumUtils {
 		return enum_exists($type);
 	}
 
-	static function isValueOfEnumType(mixed $value, \ReflectionEnum|\ReflectionClass|string $type) : bool {
+	static function isValueOfEnumType(mixed $value, \ReflectionEnum|\ReflectionClass|string $type): bool {
 		if ($value instanceof \UnitEnum) {
 			return self::isUnitEnumOfType($value, $type);
 		}

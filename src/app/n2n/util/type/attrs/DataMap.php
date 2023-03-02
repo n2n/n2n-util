@@ -323,25 +323,12 @@ class DataMap implements AttributeReader, AttributeWriter {
 			return $value;
 		}
 
-		$valueMap = [];
-		foreach ($allowedValues as $key => $allowedValue) {
-			if (!($allowedValue instanceof \UnitEnum)) {
-				continue;
-			}
-
-			$backedValue = EnumUtils::unitToBacked($allowedValue);
-			$allowedValues[$key] = $backedValue;
-			$valueMap[$backedValue] = $allowedValue;
-		}
-		
-		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
+		try {
+			return EnumUtils::valueToPseudoUnit($value, $allowedValues);
+		} catch (\InvalidArgumentException $e) {
 			throw new InvalidAttributeException('Property \'' . $path
-					. '\' must contain one of following values: '
-					. implode(', ', array_map(fn ($v) => StringUtils::strOf($v, true), $allowedValues))
-					. '. Given: ' . TypeUtils::buildScalar($value));
+					. '\' contains invalid value. Reason: ' . $e->getMessage(), 0, $e);
 		}
-		
-		return $valueMap[$value] ?? $value;
 	}
 	
 	public function reqArray($name, $fieldType = null, bool $nullAllowed = false) {
