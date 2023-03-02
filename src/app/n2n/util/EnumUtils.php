@@ -8,7 +8,7 @@ use n2n\util\type\TypeUtils;
 
 enum EnumUtils {
 
-	static function isValueOfPseudoUnit(mixed $value, array $allowedValues): bool {
+	static function isValueOfPseudoUnit(mixed $value, array|\ReflectionEnum|\ReflectionClass|string $allowedValues): bool {
 		try {
 			self::valueToPseudoUnit($value, $allowedValues);
 			return true;
@@ -23,7 +23,11 @@ enum EnumUtils {
 	 * @return mixed
 	 * @throws \InvalidArgumentException
 	 */
-	static function valueToPseudoUnit(mixed $value, array $allowedValues): mixed {
+	static function valueToPseudoUnit(mixed $value, array|\ReflectionEnum|\ReflectionClass|string $allowedValues): mixed {
+		if (!is_array($allowedValues)) {
+			return self::valueToUnit($value, $allowedValues);
+		}
+
 		$valueMap = [];
 
 		foreach ($allowedValues as $key => $allowedValue) {
