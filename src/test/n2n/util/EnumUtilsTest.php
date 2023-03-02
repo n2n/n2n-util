@@ -43,28 +43,35 @@ class EnumUtilsTest extends TestCase {
 	function testValueToPseudoBackedEnum() {
 		$this->assertEquals(StringBackedEnumMock::VALUE1,
 				EnumUtils::valueToPseudoUnit('value-1', StringBackedEnumMock::cases()));
+		$this->assertEquals(StringBackedEnumMock::VALUE1,
+				EnumUtils::valueToPseudoUnit(StringBackedEnumMock::VALUE1, StringBackedEnumMock::cases()));
 
 		$this->assertEquals(StringBackedEnumMock::VALUE1,
 				EnumUtils::valueToPseudoUnit('value-1', StringBackedEnumMock::class));
+		$this->assertEquals(StringBackedEnumMock::VALUE1,
+				EnumUtils::valueToPseudoUnit(StringBackedEnumMock::VALUE1, StringBackedEnumMock::class));
 
 		$this->expectException(\InvalidArgumentException::class);
 		EnumUtils::valueToPseudoUnit('VALUE1', StringBackedEnumMock::cases());
 
 	}
 	function testToPseudoEnum() {
-		$this->assertEquals(StringBackedEnumMock::VALUE1,
-				EnumUtils::valueToPseudoUnit('v1', ['v1', 'v2']));
+		$this->assertEquals('v1', EnumUtils::valueToPseudoUnit('v1', ['v1', 'v2']));
 
 		$this->expectException(\InvalidArgumentException::class);
 		EnumUtils::valueToPseudoUnit('v3', ['v1', 'v2']);
 	}
 
 	function testToPseudoPureEnum() {
-		$this->assertEquals(StringBackedEnumMock::VALUE1,
+		$this->assertEquals(PureEnumMock::CASE1,
 				EnumUtils::valueToPseudoUnit('CASE1', PureEnumMock::cases()));
+		$this->assertEquals(PureEnumMock::CASE1,
+				EnumUtils::valueToPseudoUnit(PureEnumMock::CASE1, PureEnumMock::cases()));
 
-		$this->assertEquals(StringBackedEnumMock::VALUE1,
+		$this->assertEquals(PureEnumMock::CASE1,
 				EnumUtils::valueToPseudoUnit('CASE1', PureEnumMock::class));
+		$this->assertEquals(PureEnumMock::CASE1,
+				EnumUtils::valueToPseudoUnit(PureEnumMock::CASE1, PureEnumMock::class));
 
 		$this->expectException(\InvalidArgumentException::class);
 		EnumUtils::valueToPseudoUnit('CASE3', PureEnumMock::cases());
