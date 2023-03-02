@@ -41,7 +41,7 @@ enum EnumUtils {
 		}
 
 		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
-			throw new InvalidAttributeException('Value must be equal to one of following values: '
+			throw new \InvalidArgumentException('Value must be equal to one of following values: '
 					. implode(', ', array_map(fn ($v) => StringUtils::strOf($v, true), $allowedValues))
 					. '. Given: ' . TypeUtils::buildScalar($value));
 		}
