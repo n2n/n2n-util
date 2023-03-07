@@ -70,6 +70,10 @@ class StringUtils {
 		if ($arg === null || is_scalar($arg) || (is_object($arg) && method_exists($arg, '__toString'))) {
 			return (string) $arg;
 		}
+
+		if ($arg instanceof \UnitEnum) {
+			return EnumUtils::unitToBacked($arg);
+		}
 		
 		if ($lenient) {
 			return TypeUtils::getTypeInfo($arg);
