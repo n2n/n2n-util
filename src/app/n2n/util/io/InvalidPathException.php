@@ -21,6 +21,6 @@
  */
 namespace n2n\util\io;
 
-class InvalidPathException extends IoException {
+class InvalidPathException extends \RuntimeException {
 
 }
