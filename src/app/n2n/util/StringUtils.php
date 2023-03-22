@@ -287,15 +287,15 @@ class StringUtils {
 	
 		return $part1 . (string) $insertStr . $part2;
 	}
-	
+
 	/**
-	 * @param string $str
+	 * @param string|null $str
 	 * @param int $length
 	 * @param string $suffix
-	 * @return string
+	 * @return string|null
 	 */
-	public static function reduce(string $str, int $length, string $suffix = '') {
-		if (mb_strlen($str) <= $length) {
+	public static function reduce(?string $str, int $length, string $suffix = '') {
+		if ($str === null || mb_strlen($str) <= $length) {
 			return $str;
 		}
 		
