@@ -30,10 +30,11 @@ interface MagicContext extends ContainerInterface {
 	function has(string|ReflectionClass $id): bool;
 
 	/**
-	 * @param string|ReflectionClass $id
+	 * @template T
+	 * @param class-string<T>|ReflectionClass $id
 	 * @param bool $required
 	 * @param string|null $contextNamespace
-	 * @return mixed
+	 * @return T|null
 	 * @throws MagicLookupFailedException general lookup error
 	 * @throws MagicObjectUnavailableException only if $required is true and object was not found.
 	 */
