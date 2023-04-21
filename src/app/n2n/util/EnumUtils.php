@@ -112,7 +112,13 @@ enum EnumUtils {
 		}
 	}
 
-	static function backedToUnit(int|string|null $backedValue, \ReflectionEnum|string $enum): ?\UnitEnum {
+	/**
+	 * @template T
+	 * @param int|string|null $backedValue
+	 * @param \ReflectionEnum|string $enum
+	 * @return \UnitEnum|T|null
+	 */
+	static function backedToUnit(int|string|null $backedValue, \ReflectionEnum|string $enum): mixed {
 		if ($backedValue === null) {
 			return null;
 		}
