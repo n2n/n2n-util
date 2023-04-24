@@ -31,4 +31,12 @@ class IllegalStateException extends \RuntimeException {
 			
 		throw new IllegalStateException($exMessage ?? '');
 	}
+
+	static function try(\Closure $closure): void {
+		try {
+			$closure();
+		} catch (\Throwable $t) {
+			throw new IllegalStateException($t->getMessage(), previous: $t);
+		}
+	}
 }
