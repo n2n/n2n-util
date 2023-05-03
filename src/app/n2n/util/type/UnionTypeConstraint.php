@@ -94,6 +94,21 @@ class UnionTypeConstraint extends TypeConstraint {
 	function getNamedTypeConstraints(): array {
 		return $this->namedTypeConstraints;
 	}
+
+	function isMixed(): bool {
+		$namedTypeConstraints = $this->getNamedTypeConstraints();
+		if (empty($namedTypeConstraints)) {
+			return true;
+		}
+
+		foreach ($namedTypeConstraints as $namedTypeConstraint) {
+			if ($namedTypeConstraint->isMixed()) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 	
 	function getLenientCopy() {
 		return new UnionTypeConstraint(array_map(fn ($ntc) => $ntc->getLenientCopy(), $this->namedTypeConstraints));

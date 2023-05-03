@@ -47,7 +47,7 @@ class NamedTypeConstraint extends TypeConstraint {
 		$this->whitelistTypes = $whitelistTypes;
 	}
 
-	function isMixed() {
+	function isMixed(): bool {
 		return $this->typeName === TypeName::PSEUDO_MIXED;
 	}
 	
@@ -156,6 +156,10 @@ class NamedTypeConstraint extends TypeConstraint {
 			throw new IllegalStateException('Illegal constraint ' . $this->__toString() . ' defined:'
 					. $this->typeName . ' is not array like.');
 		}
+
+		if ($this->arrayFieldTypeConstraint->isMixed()) {
+			return true;
+		}
 		
 		foreach ($value as $fieldValue) {
 			if (!$this->arrayFieldTypeConstraint->isValueValid($fieldValue)) {
@@ -203,6 +207,12 @@ class NamedTypeConstraint extends TypeConstraint {
 			
 			throw new IllegalStateException('Illegal constraint ' . $this->__toString() . ' defined:'
 					. $this->typeName . ' is no ArrayType.');
+		}
+
+		// Do not touch array if the array field constraint is mixed anyway. This way an ArrayObjectProxy will not be
+		// initialized.
+		if ($this->arrayFieldTypeConstraint->isMixed()) {
+			return $value;
 		}
 		
 		foreach ($value as $key => $fieldValue) {

@@ -46,7 +46,9 @@ abstract class TypeConstraint implements Constraint {
 	/**
 	 * @return NamedTypeConstraint[]
 	 */
-	abstract function getNamedTypeConstraints(): array;		
+	abstract function getNamedTypeConstraints(): array;
+
+	abstract function isMixed(): bool;
 	
 	/**
 	 * @param string|\ReflectionClass|\ReflectionType|TypeConstraint $type
