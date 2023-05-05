@@ -32,9 +32,9 @@ class IllegalStateException extends \RuntimeException {
 		throw new IllegalStateException($exMessage ?? '');
 	}
 
-	static function try(\Closure $closure): void {
+	static function try(\Closure $closure): mixed {
 		try {
-			$closure();
+			return $closure();
 		} catch (\Throwable $t) {
 			throw new IllegalStateException($t->getMessage(), previous: $t);
 		}
