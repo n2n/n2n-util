@@ -15,7 +15,7 @@ class TypeUtils {
 	 * @deprecated spelling error, use {@link TypeUtils::buildUsefulValueIdentifier()}.
 	 */
 	public static function buildUsefullValueIdentifier($value, int $maxChars = self::COMMON_MAX_CHARS) {
-		self::buildUsefulValueIdentifier($value, $maxChars);
+		return self::buildUsefulValueIdentifier($value, $maxChars);
 	}
 
 	/**
@@ -263,5 +263,16 @@ class TypeUtils {
 		}
 		
 		return $type == $expectedType || is_subclass_of($type, $expectedType);
+	}
+
+	static function isTypeNsFree(\ReflectionNamedType $type): bool {
+		if ($type->isBuiltin()) {
+			return true;
+		}
+
+		return match ($type->getName()) {
+			'static', 'parent' => true,
+			default => false,
+		};
 	}
 }
