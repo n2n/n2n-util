@@ -166,7 +166,7 @@ class DateUtils {
 			return self::createDateTimeFromFormat(self::SQL_DATE_TIME_FORMAT,
 					$sqlDateTimeString);
 		} catch (DateParseException $e) {
-			throw new \InvalidArgumentException(null, null, $e);
+			throw new \InvalidArgumentException($e->getMessage(), previous:  $e);
 		}
 	}
 
