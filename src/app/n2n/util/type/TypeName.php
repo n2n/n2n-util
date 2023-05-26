@@ -177,7 +177,7 @@ class TypeName {
 			case TypeName::INT:
 				return is_int($value);
 			case TypeName::FLOAT:
-				return is_float($value) || is_int($value);
+				return is_float($value);
 			case TypeName::BOOL:
 				return is_bool($value);
 			case TypeName::OBJECT:
