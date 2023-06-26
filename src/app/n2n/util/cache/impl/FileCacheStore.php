@@ -129,7 +129,7 @@ class FileCacheStore implements CacheStore {
 		return $fileName . self::CACHE_FILE_SUFFIX;
 	}
 
-	private function buildGlobPattern(array $characteristics) {
+	private function buildFileGlobPattern(array $characteristics): string {
 		ksort($characteristics);
 
 		$fileName = HashUtils::base36Md5Hash(serialize($characteristics));
@@ -218,11 +218,11 @@ class FileCacheStore implements CacheStore {
 		try {
 			$attrs = StringUtils::unserialize($contents);
 		} catch (UnserializationFailedException $e) {
-			throw new CorruptedCacheStoreException('Could not retrive file: ' . $filePath, 0, $e);
+			throw new CorruptedCacheStoreException('Could not retrieve file: ' . $filePath, 0, $e);
 		}
 
 		if (!isset($attrs['characteristics']) || !is_array($attrs['characteristics']) || !isset($attrs['data'])
-				|| !isset($attrs['data']) || !isset($attrs['lastMod']) || !is_numeric($attrs['lastMod'])) {
+				|| !isset($attrs['lastMod']) || !is_numeric($attrs['lastMod'])) {
 			throw new CorruptedCacheStoreException('Corrupted cache file: ' . $filePath);
 		}
 
@@ -235,7 +235,7 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::get()
 	 */
-	public function get(string $name, array $characteristics) {
+	public function get(string $name, array $characteristics): ?CacheItem {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->exists()) return null;
 		return $this->read($name, $nameDirPath->ext($this->buildFileName($characteristics)));
@@ -250,10 +250,11 @@ class FileCacheStore implements CacheStore {
 		$filePath = $nameDirPath->ext($this->buildFileName($characteristics));
 		$this->unlink($filePath);
 	}
+
 	/**
 	 * @param FsPath $filePath
 	 */
-	private function unlink(FsPath $filePath) {
+	private function unlink(FsPath $filePath): void {
 		if (!$filePath->exists()) return;
 
 		$lock = $this->createWriteLock($filePath);
@@ -269,11 +270,13 @@ class FileCacheStore implements CacheStore {
 
 		$lock->release(true);
 	}
+
 	/**
+	 * @param array $characteristicNeedles
 	 * @param array $characteristics
 	 * @return boolean
 	 */
-	private function inCharacteristics(array $characteristicNeedles, array $characteristics) {
+	private function inCharacteristics(array $characteristicNeedles, array $characteristics): bool {
 		foreach ($characteristicNeedles as $key => $value) {
 			if (!array_key_exists($key, $characteristics)
 					|| $value !== $characteristics[$key]) return false;
@@ -281,26 +284,29 @@ class FileCacheStore implements CacheStore {
 
 		return true;
 	}
+
 	/**
-	 * @param string $name
-	 * @param array $characteristicNeedles
+	 * @param string|null $name
+	 * @param array|null $characteristicNeedles
 	 * @return FsPath[]
 	 */
-	private function findFilePaths($name, array $characteristicNeedles = null) {
-		$filePaths = array();
+	private function findFilePaths(?string $name, array $characteristicNeedles = null): array {
+		$fileGlobPattern = $this->buildFileGlobPattern((array) $characteristicNeedles);
+
+		if ($name === null) {
+			return $this->dirPath->getChildren('*' . DIRECTORY_SEPARATOR . $fileGlobPattern);
+		}
 
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->exists()) {
-			return $filePaths;
+			return [];
 		}
 
-		return $nameDirPath->getChildren($this->buildGlobPattern((array) $characteristicNeedles));
+		return $nameDirPath->getChildren($fileGlobPattern);
 
 	}
-	/* (non-PHPdoc)
-	 * @see \n2n\util\cache\CacheStore::findAll()
-	 */
-	public function findAll(string $name, array $characteristicNeedles = null) {
+
+	public function findAll(string $name, array $characteristicNeedles = null): array {
 		$cacheItems = array();
 
 		foreach ($this->findFilePaths($name, $characteristicNeedles) as $filePath) {
@@ -308,6 +314,7 @@ class FileCacheStore implements CacheStore {
 			if ($cacheItem === null) continue;
 
 			if ($characteristicNeedles === null
+					// hash collision detection
 					|| $this->inCharacteristics($characteristicNeedles, $cacheItem->getCharacteristics())) {
 				$cacheItems[] = $cacheItem;
 			}
@@ -318,26 +325,15 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::removeAll()
 	 */
-	public function removeAll(string $name, array $characteristicNeedles = null) {
+	public function removeAll(?string $name, array $characteristicNeedles = null): void {
 		foreach ($this->findFilePaths($name, $characteristicNeedles) as $filePath) {
-			if (empty($characteristicNeedles)) {
-				$this->unlink($filePath);
-				continue;
-			}
-
-			$cacheItem = $this->read($name, $filePath);
-			if ($cacheItem === null) continue;
-
-			if ($characteristicNeedles === null
-					|| $this->inCharacteristics($characteristicNeedles, $cacheItem->getCharacteristics())) {
-				$this->unlink($filePath);
-			}
+			$this->unlink($filePath);
 		}
 	}
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::clear()
 	 */
-	public function clear() {
+	public function clear(): void {
 		foreach ($this->dirPath->getChildDirectories() as $nameDirPath) {
 			$this->removeAll($nameDirPath->getName());
 		}

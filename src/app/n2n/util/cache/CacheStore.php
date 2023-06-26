@@ -37,7 +37,7 @@ interface CacheStore {
 	 * @return CacheItem|null null if item does not exist
 	 * @throws CorruptedCacheStoreException
 	 */
-	public function get(string $name, array $characteristics);
+	public function get(string $name, array $characteristics): ?CacheItem;
 
 	/**
 	 * Remove the data which has been stored with exactly these params (name and characteristics).
@@ -57,15 +57,15 @@ interface CacheStore {
 	 * @param string[] $characteristicNeedles
 	 * @return CacheItem[]
 	 */
-	public function findAll(string $name, array $characteristicNeedles = null);
+	public function findAll(string $name, array $characteristicNeedles = null): array;
 
 	/**
-	 * Returns the CacheItems which has been stored with exactly this name and contains all the passed characteristicNeedles
-	 * (see {@link CacheStore::findAll()} to understand the concept of characteristicNeedles).
-	 * @param string $name
+	 * Returns the CacheItems which has been stored with exactly this name (if provided) and contains all the passed
+	 * characteristicNeedles (see {@link CacheStore::findAll()} to understand the concept of characteristicNeedles).
+	 * @param string|null $name
 	 * @param string[] $characteristicNeedles
 	 */
-	public function removeAll(string $name, array $characteristicNeedles = null);
+	public function removeAll(?string $name, array $characteristicNeedles = null);
 
 	/**
 	 * Removes all stored CacheItems.

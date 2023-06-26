@@ -61,7 +61,7 @@ class EphemeralCacheStore implements CacheStore {
 		return $found;
     }
 
-    public function removeAll(string $name, array $characteristicNeedles = null): void {
+    public function removeAll(?string $name, array $characteristicNeedles = null): void {
 		if ($characteristicNeedles === null) {
 			unset($this->cacheItems[$name]);
 			return;
