@@ -38,7 +38,11 @@ class IoUtils {
 	 * @param string $string string to be cleaned
 	 * @return string
 	 */
-	public static function stripSpecialChars($string, $pretty = true) {
+	public static function stripSpecialChars(?string $string, bool $pretty = true): ?string {
+		if (null === $string) {
+			return null;
+		}
+
 		$string = trim($string);
 
 		$unwanted = array('ä', 'à', 'â', 'ç', 'é', 'è', 'ê', 'î', 'ö', 'ß', 'ü',

@@ -21,8 +21,7 @@
  */
 namespace n2n\util\io\ob;
 
-use n2n\util\io\IoException;
 
-class OutputBufferDisturbedException extends IoException {
+class OutputBufferDisturbedException extends \RuntimeException {
 
 }
