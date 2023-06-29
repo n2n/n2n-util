@@ -128,7 +128,7 @@ class TypeName {
 	 * @param string $typeName
 	 * @return boolean
 	 */
-	static function isA(string $testingTypeName, string $typeName) {
+	static function isA(string $testingTypeName, string $typeName): bool {
 		if ($testingTypeName == $typeName || $typeName == self::PSEUDO_MIXED) {
 			return true;
 		}
@@ -152,6 +152,10 @@ class TypeName {
 		
 		if ($typeName == self::PSEUDO_ARRAYLIKE) {
 			return self::isArrayLike($testingTypeName);
+		}
+
+		if ($typeName === self::OBJECT) {
+			return class_exists($testingTypeName);
 		}
 		
 		return is_subclass_of($testingTypeName, $typeName);

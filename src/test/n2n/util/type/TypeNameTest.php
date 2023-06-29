@@ -2,6 +2,7 @@
 namespace n2n\util\type;
 
 use PHPUnit\Framework\TestCase;
+use n2n\util\type\mock\TypedMethodsMock;
 
 class TypeNameTest extends TestCase {
 	
@@ -42,5 +43,13 @@ class TypeNameTest extends TestCase {
 		} catch (\InvalidArgumentException $e) {
 			$this->assertTrue(true);
 		}
+	}
+
+	function testObject(): void {
+		$this->assertTrue(TypeName::isA(TypedMethodsMock::class, 'object'));
+		$this->assertTrue(TypeName::isA(\ArrayObject::class, 'object'));
+		$this->assertTrue(TypeName::isA('object', 'object'));
+		$this->assertFalse(TypeName::isA('string', 'object'));
+		$this->assertFalse(TypeName::isA('does\not\Exist', 'object'));
 	}
 }
