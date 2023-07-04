@@ -19,6 +19,13 @@ class EphemeralCacheStore implements CacheStore {
 		$this->nsStore($name)[] = new CacheItem($name, $characteristics, $data);
     }
 
+	/**
+	 * Gets a CacheItem with matching characteristics.
+	 * Returns null if none is found.
+	 * @param string $name
+	 * @param array $characteristics
+	 * @return CacheItem|null
+	 */
     public function get(string $name, array $characteristics): ?CacheItem {
 		foreach ($this->nsStore($name) as $cacheItem) {
 			if ($cacheItem->matchesCharacteristics($characteristics)) {
@@ -29,10 +36,17 @@ class EphemeralCacheStore implements CacheStore {
 		return null;
     }
 
+	/**
+	 * Removes a CacheItem with matching characteristics if it exists.
+	 * @param string $name
+	 * @param array $characteristics
+	 * @return void
+	 */
     public function remove(string $name, array $characteristics): void {
         foreach ($this->nsStore($name) as $i => $cacheItem) {
 			if ($cacheItem->matchesCharacteristics($characteristics)) {
 				unset($this->cacheItems[$name][$i]);
+				return;
 			}
 		}
     }
@@ -62,24 +76,39 @@ class EphemeralCacheStore implements CacheStore {
     }
 
     public function removeAll(?string $name, array $characteristicNeedles = null): void {
+		if ($name === null && $characteristicNeedles === null) {
+			$this->clear();
+			return;
+		}
+
 		if ($characteristicNeedles === null) {
 			unset($this->cacheItems[$name]);
 			return;
 		}
 
-		foreach ($this->nsStore($name) as $i => $cacheItem) {
-			if ($cacheItem->containsCharacteristics($characteristicNeedles)) {
-				unset($this->cacheItems[$name][$i]);
+		if ($name === null) {
+			foreach ($this->cacheItems as $namespace => $cacheItems) {
+				$this->removeAllContainingCharacteristics($namespace, $characteristicNeedles);
 			}
+		} else {
+			$this->removeAllContainingCharacteristics($name, $characteristicNeedles);
 		}
     }
+
+	public function removeAllContainingCharacteristics(string $namespace, array $characteristicNeedles): void {
+		foreach ($this->nsStore($namespace) as $i => $cacheItem) {
+			if ($cacheItem->containsCharacteristics($characteristicNeedles)) {
+				unset($this->cacheItems[$namespace][$i]);
+			}
+		}
+	}
 
     public function clear(): void {
         $this->cacheItems = [];
     }
 
 	private function &nsStore(string $namespace): array {
-		if (!isset($this->cacheItems[$namespace])) {
+		if (!array_key_exists($namespace, $this->cacheItems)) {
 			$this->cacheItems[$namespace] = [];
 		}
 

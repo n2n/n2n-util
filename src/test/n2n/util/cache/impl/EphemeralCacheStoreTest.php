@@ -90,4 +90,34 @@ class EphemeralCacheStoreTest extends TestCase {
 		$this->assertEmpty($this->ephemeralCacheStore->findAll('test'));
 		$this->assertEmpty($this->ephemeralCacheStore->findAll('asdf'));
 	}
+
+	function testRemoveAllNullName() {
+		$this->ephemeralCacheStore->store('test', ['characteristic1' => '1', 'characteristic2' => 'two', 'characteristic3' => 'asdf'], true);
+		$this->ephemeralCacheStore->store('test2', ['characteristic1' => '2', 'characteristic2' => 'two', 'characteristic3' => 'asdf'], true);
+		$this->ephemeralCacheStore->store('asdf', ['characteristic1' => '3', 'characteristic2' => 'three', 'characteristic3' => 'yxcv'], true);
+
+		$this->ephemeralCacheStore->removeAll(null, ['characteristic1' => '3']);
+
+		$this->assertNotEmpty($this->ephemeralCacheStore->findAll('test'));
+		$this->assertNotEmpty($this->ephemeralCacheStore->findAll('test2'));
+		$this->assertEmpty($this->ephemeralCacheStore->findAll('asdf'));
+	}
+
+	function testEmptyCharacteristics() {
+		$this->ephemeralCacheStore->store('test', [], 'data');
+
+		$this->assertNotNull($this->ephemeralCacheStore->get('test', []));
+	}
+
+	function testMultipleItemsSameNamespace() {
+		$this->ephemeralCacheStore->store('test', ['char1' => '1', 'char2' => 'two'], 'data1');
+		$this->ephemeralCacheStore->store('test', ['char1' => '1', 'char3' => 'three'], 'data2');
+
+		$found = $this->ephemeralCacheStore->findAll('test', ['char1' => '1']);
+		$this->assertCount(2, $found);
+
+		$found = $this->ephemeralCacheStore->findAll('test', ['char2' => 'two']);
+		$this->assertCount(1, $found);
+		$this->assertEquals('data1', $found[0]->getData());
+	}
 }
