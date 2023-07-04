@@ -129,11 +129,11 @@ class FileCacheStore implements CacheStore {
 		return $fileName . self::CACHE_FILE_SUFFIX;
 	}
 
-	private function buildFileGlobPattern(array $characteristics): string {
-		ksort($characteristics);
+	private function buildFileGlobPattern(array $characteristicNeedles): string {
+		ksort($characteristicNeedles);
 
 		$fileName = '';
-		foreach ($characteristics as $key => $value) {
+		foreach ($characteristicNeedles as $key => $value) {
 			$fileName .= '*' . self::CHARACTERISTIC_DELIMITER . HashUtils::base36Md5Hash(
 							serialize(array($key, $value)), self::CHARACTERISTIC_HASH_LENGTH);
 		}
