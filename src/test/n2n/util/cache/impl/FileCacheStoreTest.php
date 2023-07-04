@@ -48,4 +48,24 @@ class FileCacheStoreTest extends TestCase {
 
 		$store->remove('test.test', ['k1' => 'v1']);
 	}
+
+	function testFindAllAndRemoveAll() {
+		$store = new FileCacheStore($this->tempDirFsPath, 0777, 0777);
+
+		$store->store('test.test', ['k1' => 'v1', 'k2' => 'v2'], 'dato1');
+		$store->store('test.test', ['k1' => 'v1', 'k3' => 'v3'], 'dato2');
+		$store->store('test.test', ['k1' => 'v2', 'k4' => 'v4'], 'dato3');
+
+		$foundItems = $store->findAll('test.test', ['k1' => 'v1']);
+
+		$this->assertCount(2, $foundItems);
+
+		$this->assertEquals('dato2', $foundItems[0]->getData());
+		$this->assertEquals('dato1', $foundItems[1]->getData());
+
+		$store->removeAll('test.test', ['k1' => 'v1']);
+
+		$foundItemsAfterRemoval = $store->findAll('test.test', ['k1' => 'v2']);
+		$this->assertCount(1, $foundItemsAfterRemoval);
+	}
 }

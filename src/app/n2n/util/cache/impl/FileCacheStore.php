@@ -132,13 +132,13 @@ class FileCacheStore implements CacheStore {
 	private function buildFileGlobPattern(array $characteristics): string {
 		ksort($characteristics);
 
-		$fileName = HashUtils::base36Md5Hash(serialize($characteristics));
+		$fileName = '';
 		foreach ($characteristics as $key => $value) {
 			$fileName .= '*' . self::CHARACTERISTIC_DELIMITER . HashUtils::base36Md5Hash(
 							serialize(array($key, $value)), self::CHARACTERISTIC_HASH_LENGTH);
 		}
 
-		return '*' . self::CACHE_FILE_SUFFIX;
+		return $fileName . '*' . self::CACHE_FILE_SUFFIX;
 	}
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::store()
