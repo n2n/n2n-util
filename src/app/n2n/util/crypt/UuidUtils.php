@@ -2,6 +2,8 @@
 
 namespace n2n\util\crypt;
 
+use n2n\util\ex\IllegalStateException;
+
 class UuidUtils {
 
 
@@ -10,11 +12,10 @@ class UuidUtils {
 	 *
 	 * @param string|null $data
 	 * @return string
-	 * @throws \Exception
 	 */
 	static function uuidv4(string $data = null): string {
 		// Generate 16 bytes (128 bits) of random data or use the data passed into the function.
-		$data = $data ?? random_bytes(16);
+		$data = $data ?? IllegalStateException::try(fn () => random_bytes(16));
 
 		if (strlen($data) !== 16) {
 			throw new \InvalidArgumentException('Random data must have length 16.');
