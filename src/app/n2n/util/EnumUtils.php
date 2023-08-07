@@ -151,4 +151,8 @@ enum EnumUtils {
 
 		return $unitEnum->value ?? $unitEnum->name;
 	}
+
+	static function units(\ReflectionEnum $enum): array {
+		return array_map(fn($c) => $c->getValue(),  $enum->getCases());
+	}
 }

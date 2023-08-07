@@ -48,13 +48,13 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 		if ($line !== null) {
 			$this->line = $line;
 		}
-		$this->errStartLineNo = $startLine;
+		$this->startLine = $startLine;
 		$this->endLine = $endLine;
 		$this->documentId = $documentId;
 	}
 
 	public function getStartLine() {
-		return $this->errStartLineNo;
+		return $this->startLine;
 	}
 
 	public function getEndLine() {
