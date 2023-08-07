@@ -148,10 +148,8 @@ class DateUtils {
 	 * @param \DateTime|null $dateTime
 	 * @return null|string
 	 */
-	static function dateTimeToSql(?\DateTime $dateTime) {
-		if (null === $dateTime) return null;
-		
-		return $dateTime->format(self::SQL_DATE_TIME_FORMAT);
+	static function dateTimeToSql(?\DateTimeInterface $dateTime): ?string {
+		return $dateTime?->format(self::SQL_DATE_TIME_FORMAT);
 	}
 	
 	/**
