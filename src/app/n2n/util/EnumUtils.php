@@ -159,4 +159,16 @@ enum EnumUtils {
 	static function units(\ReflectionEnum $enum): array {
 		return array_map(fn($c) => $c->getValue(),  $enum->getCases());
 	}
+
+	static function unitToName(\UnitEnum $unitEnum): string {
+		return $unitEnum->name;
+	}
+
+	static function nameToUnit(string $name, \ReflectionEnum $enum): \UnitEnum {
+		try {
+			return $enum->getCase($name)->getValue();
+		} catch (\ReflectionException $e) {
+			throw new \InvalidArgumentException('Name not part of enum: ' . $name, previous: $e);
+		}
+	}
 }

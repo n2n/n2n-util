@@ -84,4 +84,13 @@ class EnumUtilsTest extends TestCase {
 		$this->assertEquals(PureEnumMock::cases(),
 				EnumUtils::units(new \ReflectionEnum(PureEnumMock::class)));
 	}
+
+	function testNameToUnit(): void {
+		$this->assertEquals(StringBackedEnumMock::VALUE1, EnumUtils::nameToUnit('VALUE1',
+				new \ReflectionEnum(StringBackedEnumMock::class)));
+	}
+
+	function testUnitToName(): void {
+		$this->assertEquals('VALUE1', EnumUtils::unitToName(StringBackedEnumMock::VALUE1));
+	}
 }
