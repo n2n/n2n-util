@@ -171,4 +171,22 @@ enum EnumUtils {
 			throw new \InvalidArgumentException('Name not part of enum: ' . $name, previous: $e);
 		}
 	}
+
+	static function extractEnumTypeName(\ReflectionUnionType|\ReflectionNamedType $type): ?string {
+		if ($type instanceof \ReflectionUnionType) {
+			$namedTypes = $type->getTypes();
+		} else {
+			$namedTypes = [$type];
+		}
+
+		foreach ($namedTypes as $namedType) {
+			if ($namedType->isBuiltin() || !self::isEnumType($namedType)) {
+				continue;
+			}
+
+			return $namedType->getName();
+		}
+
+		return null;
+	}
 }
