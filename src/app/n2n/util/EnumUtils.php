@@ -172,7 +172,11 @@ enum EnumUtils {
 		}
 	}
 
-	static function extractEnumTypeName(\ReflectionUnionType|\ReflectionNamedType $type): ?string {
+	static function extractEnumTypeName(\ReflectionUnionType|\ReflectionNamedType|null $type): ?string {
+		if ($type === null) {
+			return null;
+		}
+
 		if ($type instanceof \ReflectionUnionType) {
 			$namedTypes = $type->getTypes();
 		} else {
