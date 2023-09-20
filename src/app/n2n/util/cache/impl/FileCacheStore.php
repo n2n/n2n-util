@@ -33,6 +33,7 @@ use n2n\util\cache\CorruptedCacheStoreException;
 use n2n\util\io\IoException;
 use n2n\util\DateUtils;
 use n2n\util\io\stream\impl\FileResourceStream;
+use n2n\util\io\fs\FileOperationException;
 
 class FileCacheStore implements CacheStore {
 	const CHARACTERISTIC_DELIMITER = '.';
@@ -243,7 +244,7 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::remove()
 	 */
-	public function remove(string $name, array $characteristics) {
+	public function remove(string $name, array $characteristics): void {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->exists()) return;
 
@@ -257,18 +258,27 @@ class FileCacheStore implements CacheStore {
 	private function unlink(FsPath $filePath): void {
 		if (!$filePath->exists()) return;
 
-		$lock = $this->createWriteLock($filePath);
-
-		if ($filePath->exists())  {
-			try {
-				IoUtils::unlink($filePath->__toString());
-			} catch (IoException $e) {
-				$lock->release(true);
+		try {
+			IoUtils::unlink($filePath->__toString());
+		} catch (FileOperationException $e) {
+			if ($filePath->exists()) {
 				throw $e;
 			}
 		}
 
-		$lock->release(true);
+		// these kind of locks do not work on distributed systems etc.
+//		$lock = $this->createWriteLock($filePath);
+
+//		if ($filePath->exists())  {
+//			try {
+//				IoUtils::unlink($filePath->__toString());
+//			} catch (IoException $e) {
+//				$lock->release(true);
+//				throw $e;
+//			}
+//		}
+//
+//		$lock->release(true);
 	}
 
 	/**

@@ -491,7 +491,7 @@ class IoUtils {
 	 *
 	 * @param string $path
 	 * @return string
-	 * @throws IoException
+	 * @throws FileOperationException
 	 */
 	public static function filemtime($path) {
 		try {
@@ -504,7 +504,7 @@ class IoUtils {
 	/**
 	 *
 	 * @param string $path
-	 * @throws IoException
+	 * @throws FileOperationException
 	 */
 	public static function unlink($path) {
 		try {
