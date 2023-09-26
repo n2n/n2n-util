@@ -84,15 +84,11 @@ class IoUtils {
 		}
 	}
 
-	/**
-	 * @param string $string
-	 * @return boolean
-	 */
-	public static function hasStrictSpecialChars($string) {
+	public static function hasStrictSpecialChars(string $string): bool {
 		try {
-			$has = self::valReturn(@preg_match('/\W/', $string));
+			return 1 === self::valReturn(@preg_match('/\W/', $string));
 		} catch (\Throwable $e) {
-			throw new IoException('Error occured during preg_match', null, $e);
+			throw new IoException('Error occurred during preg_match', null, $e);
 		}
 	}
 
@@ -100,7 +96,7 @@ class IoUtils {
 	 * @param string $string
 	 * @return string
 	 */
-	public static function replaceStrictSpecialChars($string) {
+	public static function replaceStrictSpecialChars(string $string): string {
 		try {
 			return self::valReturn(@preg_replace('/\W/', '_', $string));
 		} catch (\Throwable $e) {
@@ -372,10 +368,10 @@ class IoUtils {
 
 	/**
 	 * @param string $path
-	 * @return false|int
+	 * @return int
 	 * @throws FileOperationException
 	 */
-	public static function readfile(string $path) {
+	public static function readfile(string $path): int {
 		try {
 			return self::valReturn(@readfile($path));
 		} catch (\Throwable $e) {
@@ -420,10 +416,8 @@ class IoUtils {
 	 * @return string
 	 * @throws IoResourceException
 	 */
-	public static function fgets($handle, int $length = null) {
-		$str = self::valReturn(@fgets($handle, $length));
-
-		return $str;
+	public static function fgets($handle, int $length = null): string {
+		return self::valReturn(@fgets($handle, $length));
 	}
 
 	/**
@@ -761,7 +755,7 @@ class IoUtils {
 	 * @return int
 	 * @throws IoResourceException
 	 */
-	public static function ftell($handle, $offset, $whence = SEEK_SET) {
+	public static function ftell($handle): int {
 		try {
 			$offset = self::valReturn(@ftell($handle));
 		} catch (\Throwable $e) {
