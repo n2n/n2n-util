@@ -293,6 +293,14 @@ class TypeName {
 		return ($type instanceof \ReflectionUnionType);
 	}
 
+	static function isIntersectionType(string|\ReflectionType $type): bool {
+		if (is_string($type)) {
+			return str_contains($type, self::INTERSECTION_TYPE_SEPARATOR);
+		}
+
+		return ($type instanceof \ReflectionUnionType);
+	}
+
 	static function isNamedType(string|\ReflectionType $type) {
 		if (is_string($type)) {
 			return !StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type)
