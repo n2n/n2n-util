@@ -24,6 +24,7 @@ namespace n2n\util\io;
 use n2n\util\io\fs\CouldNotAchieveFlockException;
 use n2n\util\io\fs\FileOperationException;
 use n2n\util\io\stream\impl\FileResourceStream;
+use http\Exception\InvalidArgumentException;
 
 class IoUtils {
 
@@ -76,20 +77,13 @@ class IoUtils {
 	 * @return bool
 	 */
 	public static function hasSpecialChars($string) {
-		try {
-			return (boolean) self::valReturn(@preg_match('/[^0-9A-Za-z\\._-]/', $string))
+		return ((bool) @preg_match('/[^0-9A-Za-z\\._-]/', $string))
 					|| $string == '.' || $string == '..';
-		} catch (\Throwable $e) {
-			throw new IoException('Error occured during preg_match', null, $e);
-		}
+
 	}
 
 	public static function hasStrictSpecialChars(string $string): bool {
-		try {
-			return 1 === self::valReturn(@preg_match('/\W/', $string));
-		} catch (\Throwable $e) {
-			throw new IoException('Error occurred during preg_match', null, $e);
-		}
+		return preg_match('/\W/', $string);
 	}
 
 	/**
@@ -97,11 +91,7 @@ class IoUtils {
 	 * @return string
 	 */
 	public static function replaceStrictSpecialChars(string $string): string {
-		try {
-			return self::valReturn(@preg_replace('/\W/', '_', $string));
-		} catch (\Throwable $e) {
-			throw new IoException('Error during preg_replace', null, $e);
-		}
+		return preg_replace('/\W/', '_', $string);
 
 	}
 	/**

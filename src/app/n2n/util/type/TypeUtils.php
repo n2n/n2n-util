@@ -164,28 +164,29 @@ class TypeUtils {
 	
 	/**
 	 * @param string $namespace
-	 * @param string $namespaceLevelSepartor
-	 * @throws \InvalidArgumentException
+	 * @param string $namespaceLevelSeparator
 	 * @return string
+	 * @throws \InvalidArgumentException
 	 */
 	public static function encodeNamespace(string $namespace, 
-			string $namespaceLevelSepartor = self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR) {
+			string $namespaceLevelSeparator = self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR): string {
 		if (self::hasSpecialChars($namespace, false)) {
 			throw new \InvalidArgumentException('Invalid namespace: ' . $namespace);
 		}
 		
-		return str_replace('\\', $namespaceLevelSepartor, trim((string) $namespace, '\\'));
+		return str_replace('\\', $namespaceLevelSeparator, trim((string) $namespace, '\\'));
 	}
 	
 	/**
 	 * @param string $encodedNamespace
-	 * @param string $namespaceLevelSepartor
-	 * @throws \InvalidArgumentException
+	 * @param string $namespaceLevelSeparator
 	 * @return string
+	 * @throws \InvalidArgumentException
 	 */
 	public static function decodeNamespace(string $encodedNamespace, 
-			string $namespaceLevelSepartor = self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR) {
-		$namespace = str_replace($namespaceLevelSepartor, '\\', trim((string) $encodedNamespace, self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR));
+			string $namespaceLevelSeparator = self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR): string {
+		$namespace = str_replace($namespaceLevelSeparator, '\\', trim((string) $encodedNamespace,
+				self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR));
 		
 		if (self::hasSpecialChars($namespace, false)) {
 			throw new \InvalidArgumentException('Invalid namespace: ' . $namespace);
@@ -198,7 +199,7 @@ class TypeUtils {
 	 * @param string $string
 	 * @return bool
 	 */
-	public static function hasSpecialChars(string $string, bool $treatSeparatorAsSpecial = true) {
+	public static function hasSpecialChars(string $string, bool $treatSeparatorAsSpecial = true): bool {
 		return preg_match('/[^0-9a-zA-Z_' . ($treatSeparatorAsSpecial ? '' : '\\\\') . ']/', $string);
 	}
 	
@@ -206,29 +207,14 @@ class TypeUtils {
 	 * @param string $namespace
 	 * @return string
 	 */
-	public static function purifyNamespace(string $namespace) {
+	public static function purifyNamespace(string $namespace): string {
 		return trim(str_replace('/', '\\', $namespace), '\\');
 	}
 	
-	public static function isValueA($value, $expectedType, bool $nullAllowed): bool {
+	public static function isValueA($value, $expectedType, bool $nullAllowed = false): bool {
 		if ($expectedType === null || ($nullAllowed && $value === null)) return true;
 		
-		if (is_array($expectedType)) {
-			foreach ($expectedType as $type) {
-				if (self::isValueA($value, $type, false)) return true;
-			}
-			return false;
-		}
-		
-		if ($expectedType instanceof TypeConstraint) {
-			return $expectedType->isValueValid($value);
-		}
-		
-		if ($expectedType instanceof \ReflectionClass) {
-			$expectedType = $expectedType->getName();
-		}
-		
-		return TypeName::isValueA($value, $expectedType);
+		return TypeConstraints::type($expectedType)->isValueValid($value);
 	}
 		
 	/**

@@ -142,7 +142,7 @@ class NamedTypeConstraint extends TypeConstraint {
 			return $this->allowsNull();
 		}
 		
-		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
+		if (!TypeName::isValueA($value, $this->typeName, false)) {
 			if (!$this->convertable) {
 				return false;
 			}
@@ -357,14 +357,10 @@ class NamedTypeConstraint extends TypeConstraint {
 
 		return new NamedTypeConstraint($typeName, $allowsNull, $arrayFieldTypeConstraint, [], $convertable);
 	}
-	
-	/**
-	 * @param string|\ReflectionClass|TypeConstraint $type
-	 * @return \n2n\util\type\TypeConstraint
-	 */
-	static function from(string|\ReflectionNamedType $type, bool $convertable = false) {
-		if ($type instanceof NamedTypeConstraint) {
-			return $type;
+
+	static function from(string|\ReflectionNamedType|\ReflectionClass $type, bool $convertable = false): NamedTypeConstraint {
+		if ($type instanceof ReflectionClass) {
+			return self::createSimple($type, false, false);
 		}
 		
 		if ($type instanceof \ReflectionNamedType) {
@@ -373,7 +369,4 @@ class NamedTypeConstraint extends TypeConstraint {
 		
 		return self::createFromExpresion($type, $convertable);
 	}
-	
-	
-	
 }

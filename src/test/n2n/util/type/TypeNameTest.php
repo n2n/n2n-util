@@ -52,4 +52,17 @@ class TypeNameTest extends TestCase {
 		$this->assertFalse(TypeName::isA('string', 'object'));
 		$this->assertFalse(TypeName::isA('does\not\Exist', 'object'));
 	}
+
+	function testIsIntersectionType() {
+		$this->assertTrue(TypeName::isIntersectionType('huii&hoi'));
+		$this->assertTrue(TypeName::isIntersectionType('huii & hoi '));
+		$this->assertTrue(TypeName::isIntersectionType('(huii&hoi)'));
+		$this->assertFalse(TypeName::isIntersectionType('holeardio|(huii&hoi)'));
+	}
+
+	function testExtractIntersectionTypes() {
+		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames('huii&hoi'));
+		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames('huii & hoi '));
+		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames(' (huii&hoi)'));
+	}
 }

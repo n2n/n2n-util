@@ -160,13 +160,8 @@ class TypeName {
 		
 		return is_subclass_of($testingTypeName, $typeName);
 	}
-	
-	/**
-	 * @param mixed $value
-	 * @param string $typeName
-	 * @return boolean
-	 */
-	static function isValueA($value, string $typeName) {
+
+	static function isValueA(mixed $value, string $typeName): bool {
 		switch ($typeName) {
 			case TypeName::PSEUDO_MIXED:
 				return true;
@@ -294,11 +289,16 @@ class TypeName {
 	}
 
 	static function isIntersectionType(string|\ReflectionType $type): bool {
-		if (is_string($type)) {
-			return str_contains($type, self::INTERSECTION_TYPE_SEPARATOR);
+		if (!is_string($type)) {
+			return ($type instanceof \ReflectionUnionType);
 		}
 
-		return ($type instanceof \ReflectionUnionType);
+		if (!str_contains($type, self::INTERSECTION_TYPE_SEPARATOR)) {
+			return false;
+		}
+
+		$trimedType = trim(trim($type), '()');
+		return !str_contains($trimedType, '(') && !str_contains($trimedType, ')');
 	}
 
 	static function isNamedType(string|\ReflectionType $type) {
@@ -330,5 +330,22 @@ class TypeName {
 	static function concatUnionTypeNames(array $typeNames) {
 		ArgUtils::valArray($typeNames, 'string');
 		return implode(self::UNION_TYPE_SEPARATOR, $typeNames);
+	}
+
+	static function extractIntersectionTypeNames(string|\ReflectionIntersectionType $type) {
+		if ($type instanceof \ReflectionIntersectionType) {
+			return array_map(function ($namedType) { return $namedType->getName(); }, $type->getTypes());
+		}
+
+		return array_map(
+				function ($typeName) use ($type) {
+					$typeName = trim($typeName);
+
+					if (empty($typeName) || IoUtils::hasSpecialChars($typeName)) {
+						throw new \InvalidArgumentException('Invalid union type: ' . $type);
+					}
+
+					return $typeName;
+				}, explode(self::INTERSECTION_TYPE_SEPARATOR, trim(trim($type), '()')));
 	}
 }

@@ -29,7 +29,7 @@ abstract class TypeConstraint implements Constraint {
 	 * @param mixed $value
 	 * @return boolean
 	 */
-	abstract function isValueValid($value): bool;
+	abstract function isValueValid(mixed $value): bool;
 
 	/**
 	 * @return bool
@@ -59,7 +59,7 @@ abstract class TypeConstraint implements Constraint {
 			return $type;
 		}
 		
-		if ($type instanceof \ReflectionClass || TypeName::isUnionType($type)) {
+		if (TypeName::isUnionType($type)) {
 			return UnionTypeConstraint::from($type);
 		}
 		

@@ -82,7 +82,7 @@ class TypeConstraints {
 	 * @param bool $nullable
 	 * @return TypeConstraint
 	 */
-	static function type(string|\ReflectionType|\ReflectionParameter|array|null $type, bool $convertable = false) {
+	static function type(string|\ReflectionType|\ReflectionParameter|\ReflectionClass|array|null $type, bool $convertable = false) {
 		if ($type instanceof \ReflectionParameter) {
 			$type = $type->getType();
 		}
