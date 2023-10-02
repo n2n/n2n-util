@@ -184,7 +184,7 @@ class NamedTypeConstraint extends TypeConstraint {
 					'Null not allowed with constraints.');
 		}
 		
-		if (!TypeUtils::isValueA($value, $this->typeName, false)) {
+		if (!TypeName::isValueA($value, $this->typeName, false)) {
 			if (!$this->convertable) {
 				throw $this->createIncompatbleValueException($value);
 			}
