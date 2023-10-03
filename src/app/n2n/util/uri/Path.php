@@ -219,10 +219,10 @@ final class Path {
 	 * @param mixed ...$parts Use string, Path or array with string and Path fields.
 	 * @return \n2n\util\uri\Path
 	 */
-	public function ext(...$pathPartExts): Path {
+	public function ext(mixed ...$pathPartExts): Path {
 		if (empty($pathPartExts)) return $this;
 		
-		ArgUtils::valArray($pathPartExts, ['scalar', Path::class, 'array', null]);
+//		ArgUtils::valArray($pathPartExts, ['scalar', Path::class, 'array', null]);
 		
 		$leadingDelimiter = false;
 		$endingDelimiter = false;
@@ -289,7 +289,7 @@ final class Path {
 		return $this->ext(...$paths);
 	}
 	
-	public function getParent(): Path {
+	public function getParent(): ?Path {
 		$pathParts = $this->getPathParts();
 		if (null == array_pop($pathParts)) {
 			return null;
