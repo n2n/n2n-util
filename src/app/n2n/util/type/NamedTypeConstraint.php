@@ -38,7 +38,7 @@ class NamedTypeConstraint extends TypeConstraint {
 	 * @param array $whitelistTypes
 	 * @throws \InvalidArgumentException
 	 */
-	protected function __construct(string $typeName, bool $allowsNull, 
+	protected function __construct(string $typeName, bool $allowsNull,
 			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false) {
 		$this->typeName = $typeName;
 		$this->allowsNull = $allowsNull || TypeName::isNullable($typeName);
@@ -323,7 +323,11 @@ class NamedTypeConstraint extends TypeConstraint {
 	}
 	
 	
-	private static function createFromExpresion(string $type, bool $convertable) {
+	private static function createFromExpresion(?string $type, bool $convertable) {
+		if ($type === null) {
+			return new NamedTypeConstraint('null', true);
+		}
+
 		ArgUtils::assertTrue(!TypeName::isUnionType($type));
 		
 		$matches = null;
@@ -358,7 +362,7 @@ class NamedTypeConstraint extends TypeConstraint {
 		return new NamedTypeConstraint($typeName, $allowsNull, $arrayFieldTypeConstraint, [], $convertable);
 	}
 
-	static function from(string|\ReflectionNamedType|\ReflectionClass $type, bool $convertable = false): NamedTypeConstraint {
+	static function from(string|\ReflectionNamedType|\ReflectionClass|null $type, bool $convertable = false): NamedTypeConstraint {
 		if ($type instanceof ReflectionClass) {
 			return self::createSimple($type, false, false);
 		}

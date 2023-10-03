@@ -130,7 +130,7 @@ class UnionTypeConstraint extends TypeConstraint {
 		}
 
 		if (is_array($type)) {
-			ArgUtils::valArray($type, 'string');
+			ArgUtils::valArray($type, 'string|null');
 			return new UnionTypeConstraint(array_map(
 					fn ($iType) => NamedTypeConstraint::from($iType, $convertable),
 					$type));

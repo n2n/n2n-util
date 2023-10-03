@@ -87,8 +87,8 @@ class TypeConstraints {
 			$type = $type->getType();
 		}
 
-		if ($type === null) {
-			return NamedTypeConstraint::createSimple(null, true, $convertable);
+		if ($type === null || $type instanceof ReflectionClass) {
+			return NamedTypeConstraint::createSimple($type, true, $convertable);
 		}
 
 		if (is_array($type) || TypeName::isUnionType($type)) {
