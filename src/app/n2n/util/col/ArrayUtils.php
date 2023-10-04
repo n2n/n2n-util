@@ -24,6 +24,7 @@ namespace n2n\util\col;
 use n2n\util\type\ArgUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeName;
+use n2n\util\ex\DuplicateElementException;
 
 class ArrayUtils {
 
@@ -77,8 +78,17 @@ class ArrayUtils {
 		return null;
 	}
 
-	static function unsetByValue(array &$array, $needle, bool $strict = true) {
-		foreach (array_keys($array, $needle, $strict) as $key) {
+	/**
+	 * Add the value to the collection if it does not yet exist.
+	 *
+	 * @param array|\ArrayObject $collection
+	 * @param mixed $value
+	 * @param bool $strict if true an {@link \InvalidArgumentException} will be thrown if value does not exist.
+	 * @return bool whether the value could have been removed or not. false if strict is false and the value does not
+	 *    exists in the collection.
+	 */
+	static function unsetByValue(array &$array, mixed $value, bool $strict = true) {
+		foreach (array_keys($array, $value, $strict) as $key) {
 			unset($array[$key]);
 		}
 	}
@@ -127,5 +137,18 @@ class ArrayUtils {
 		}
 
 		$arr = array_merge($newArr, $values);
+	}
+
+	/**
+	 * Add the value to the collection if it does not yet exist.
+	 *
+	 * @param array|\ArrayObject $collection
+	 * @param mixed $value
+	 * @param bool $strict if true an {@link DuplicateElementException} will be thrown if value already exists.
+	 * @return bool whether the value could have been added or not. false if strict is false and the value already
+	 *    exists in the collection.
+	 */
+	static function uniqueAdd(array|\ArrayObject $collection, mixed $value, bool $strict = true): bool {
+
 	}
 }
