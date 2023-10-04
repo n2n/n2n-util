@@ -148,7 +148,11 @@ class ArrayUtils {
 	 * @return bool whether the value could have been added or not. false if strict is false and the value already
 	 *    exists in the collection.
 	 */
-	static function uniqueAdd(array|\ArrayObject $collection, mixed $value, bool $strict = true): bool {
+	static function uniqueAdd(array|\ArrayObject &$collection, mixed $value, bool $strict = true): bool {
+
+	}
+
+	static function contains(array|\ArrayObject &$collection, mixed $value): bool {
 
 	}
 }
