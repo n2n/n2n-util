@@ -27,7 +27,12 @@ use n2n\util\type\TypeName;
 
 class ArrayUtils {
 
-	public static function shift(array|(\IteratorAggregate&\ArrayAccess&\Countable) &$arrayLike, bool $required = false) {
+	/**
+	 * @param array|\ArrayObject $arrayLike TODO: (\IteratorAggregate&\ArrayAccess&\Countable) when php 8.2
+	 * @param bool $required
+	 * @return mixed|null
+	 */
+	public static function shift(array|\ArrayObject &$arrayLike, bool $required = false) {
 		if ($required && (!count($arrayLike))) {
 			throw new \OutOfRangeException('Array empty.');
 		}
@@ -98,13 +103,13 @@ class ArrayUtils {
 	/**
 	 * Add the value to the collection if it does not yet exist.
 	 *
-	 * @param array|\ArrayObject $collection
+	 * @param array|\ArrayObject $collection TODO: ArrayObject to (\IteratorAggregate&\ArrayAccess&\Countable) when php 8.2
 	 * @param mixed $needle
 	 * @param bool $strict determines if strict comparison (===) should be used during the search.
 	 * @return bool whether the value could have been removed or not. false if the value does not
-	 *    exists in the collection.
+	 *
 	 */
-	static function unsetByValue(array|(\IteratorAggregate&\ArrayAccess&\Countable) &$arrayLike, mixed $needle, bool $strict = true): bool {
+	static function unsetByValue(array|\ArrayObject &$arrayLike, mixed $needle, bool $strict = true): bool {
 		if (is_array($arrayLike)) {
 			$removableKeys = array_keys($arrayLike, $needle, $strict);
 			foreach ($removableKeys as $key) {
