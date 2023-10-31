@@ -24,37 +24,55 @@ namespace n2n\util\col;
 use n2n\util\type\ArgUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeName;
-use n2n\util\ex\DuplicateElementException;
 
 class ArrayUtils {
 
-	public static function shift(array &$array, bool $required = false) {
-		if ($required && empty($array)) {
+	public static function shift(array|(\IteratorAggregate&\ArrayAccess&\Countable) &$arrayLike, bool $required = false) {
+		if ($required && (!count($arrayLike))) {
 			throw new \OutOfRangeException('Array empty.');
 		}
-		
-		return array_shift($array);
-	}
-	
-	public static function first($arrayLike) {
+
 		if (is_array($arrayLike)) {
-			return self::reset($arrayLike);
+			return array_shift($arrayLike);
 		}
-		
-		ArgUtils::valArrayLike($arrayLike);
-		$arr = $arrayLike->getArrayCopy();
-		return self::reset($arr);
+
+		$array = (array) $arrayLike;
+		$firstKey = array_key_first($array);
+
+		if ($firstKey === null) {
+			return null;
+		}
+
+		$get = $array[$firstKey];
+		$arrayLike->offsetUnset($firstKey);
+		return $get;
+
 	}
-	
-	public static function last(array $array) {
-		return self::end($array);
+
+	public static function first(iterable $arrayLike): mixed {
+		foreach ($arrayLike as $value) {
+			return $value;
+		}
+		return null;
 	}
-	
+
+	public static function last(iterable $arrayLike): mixed {
+		if (is_array($arrayLike) && !empty($arrayLike)) {
+			return end($arrayLike);
+		}
+
+		$last = null;
+		foreach ($arrayLike as $value) {
+			$last = $value;
+		}
+		return $last;
+	}
+
 	public static function reset(array &$array) {
 		if (false !== ($result = reset($array))) {
 			return $result;
 		}
-	
+
 		return null;
 	}
 
@@ -62,64 +80,77 @@ class ArrayUtils {
 	 * @param array $array
 	 * @return mixed|null
 	 */
-	public static function current(array &$array) {
+	public static function current(array $array): mixed {
 		if (false !== ($result = current($array))) {
 			return $result;
 		}
-		
+
 		return null;
 	}
-	
+
 	public static function end(array &$array) {
 		if (false !== ($result = end($array))) {
 			return $result;
 		}
-		
+
 		return null;
 	}
-
 	/**
 	 * Add the value to the collection if it does not yet exist.
 	 *
 	 * @param array|\ArrayObject $collection
-	 * @param mixed $value
-	 * @param bool $strict if true an {@link \InvalidArgumentException} will be thrown if value does not exist.
-	 * @return bool whether the value could have been removed or not. false if strict is false and the value does not
+	 * @param mixed $needle
+	 * @param bool $strict determines if strict comparison (===) should be used during the search.
+	 * @return bool whether the value could have been removed or not. false if the value does not
 	 *    exists in the collection.
 	 */
-	static function unsetByValue(array &$array, mixed $value, bool $strict = true) {
-		foreach (array_keys($array, $value, $strict) as $key) {
-			unset($array[$key]);
+	static function unsetByValue(array|(\IteratorAggregate&\ArrayAccess&\Countable) &$arrayLike, mixed $needle, bool $strict = true): bool {
+		if (is_array($arrayLike)) {
+			$removableKeys = array_keys($arrayLike, $needle, $strict);
+			foreach ($removableKeys as $key) {
+				unset($arrayLike[$key]);
+			}
+			return !empty($removableKeys);
 		}
+
+		$found = false;
+		foreach ($arrayLike as $key => $object) {
+			if (($strict && $needle === $object)
+					|| (!$strict && $needle == $object)) {
+				unset($arrayLike[$key]);
+				$found = true;
+			}
+		}
+		return $found;
 	}
-	
-	public static function isArrayLike($value) {
+
+	public static function isArrayLike($value): bool {
 		return TypeName::isValueArrayLike($value);
 	}
-	
-	public static function isClassArrayLike(\ReflectionClass $class) {
+
+	public static function isClassArrayLike(\ReflectionClass $class): bool {
 		return TypeName::isClassArrayLike($class);
 	}
-	
-	public static function isTypeNameArrayLike(string $typeName) {
+
+	public static function isTypeNameArrayLike(string $typeName): bool {
 		return TypeName::isArrayLike($typeName);
 	}
-	
-	public static function inArrayLike($needle, $arrayLike) {
+
+	public static function inArrayLike($needle, $arrayLike): bool {
 		ArgUtils::valArrayLike($arrayLike);
-		
+
 		foreach ($arrayLike as $value) {
 // 			if ($value === $needle) return true;
-			
+
 			if ($value === null || $needle === null || is_object($needle) || is_object($value)
 					|| is_array($needle) || is_array($value)) {
 				if ($value === $needle) return true;
-				continue; 
+				continue;
 			}
-			
+
 			if (StringUtils::doEqual($value, $needle)) return true;
 		}
-		
+
 		return false;
 	}
 
@@ -144,15 +175,36 @@ class ArrayUtils {
 	 *
 	 * @param array|\ArrayObject $collection
 	 * @param mixed $value
-	 * @param bool $strict if true an {@link DuplicateElementException} will be thrown if value already exists.
-	 * @return bool whether the value could have been added or not. false if strict is false and the value already
+	 * @param bool $strict determines if strict comparison (===) should be used during the search.
+	 * @return bool whether the value could have been added or not. false if the value already
 	 *    exists in the collection.
 	 */
 	static function uniqueAdd(array|\ArrayObject &$collection, mixed $value, bool $strict = true): bool {
+		if (self::contains($collection, $value, $strict)) {
+			return false;
+		}
 
+		if (is_array($collection)){
+			$collection[] = $value;
+			return true;
+		}
+
+		$collection->append($value);
+		return true;
 	}
 
-	static function contains(array|\ArrayObject &$collection, mixed $value): bool {
+	static function contains(array|\ArrayObject &$collection, mixed $value, bool $strict = true): bool {
+		 if (is_array($collection)) {
+			 return in_array($value, $collection, $strict);
+		 }
 
+		foreach ($collection as $key => $object) {
+			if (($strict && $value === $object)
+					|| (!$strict && $value == $object)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
