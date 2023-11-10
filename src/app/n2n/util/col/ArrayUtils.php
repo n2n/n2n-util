@@ -198,6 +198,21 @@ class ArrayUtils {
 		return true;
 	}
 
+	/**
+	 * Adds the newValues to the collection which do not yet exist and removes the old ones.
+	 *
+	 * @param array|\ArrayObject $collection
+	 * @param array|\ArrayObject $newValues
+	 * @param \Closure|null $addedCallback will be called for every newly added value if provided.
+	 * @param \Closure|null $removedCallback will be called for every removed value if provided.
+	 * @param bool $strict determines if strict comparison (===) should be used during the search.
+	 * @return void
+	 */
+	static function uniqueExchange(array|\ArrayObject &$collection, array|\ArrayObject $newValues,
+			\Closure|null $addedCallback, \Closure|null $removedCallback, bool $strict = true): void {
+
+	}
+
 	static function contains(array|\ArrayObject &$collection, mixed $value, bool $strict = true): bool {
 		 if (is_array($collection)) {
 			 return in_array($value, $collection, $strict);
