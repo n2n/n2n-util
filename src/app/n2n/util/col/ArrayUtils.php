@@ -199,17 +199,35 @@ class ArrayUtils {
 	}
 
 	/**
-	 * Adds the newValues to the collection which do not yet exist and removes the old ones.
+	 * Overwrites passed collection with newCollection by reference, makes it unique and triggers necessary callbacks
+	 * at the end.
 	 *
 	 * @param array|\ArrayObject $collection
-	 * @param array|\ArrayObject $newValues
-	 * @param \Closure|null $addedCallback will be called for every newly added value if provided.
-	 * @param \Closure|null $removedCallback will be called for every removed value if provided.
+	 * @param array|\ArrayObject $newCollection
+	 * @param \Closure|null $addedCallback will be called for every value present in newCollection but not
+	 *        in collection.
+	 * @param \Closure|null $removedCallback will be called for every value present in collection but not in
+	 *        newCollection.
 	 * @param bool $strict determines if strict comparison (===) should be used during the search.
 	 * @return void
 	 */
-	static function uniqueExchange(array|\ArrayObject &$collection, array|\ArrayObject $newValues,
+	static function uniqueExchange(array|\ArrayObject &$collection, array|\ArrayObject $newCollection,
 			\Closure|null $addedCallback, \Closure|null $removedCallback, bool $strict = true): void {
+
+	}
+
+	/**
+	 * @param array|\ArrayObject $collection
+	 * @param array|\ArrayObject $newCollection
+	 * @param \Closure|null $addedCallback will be called for every value present in newCollection but not
+	 * 		in collection.
+	 * @param \Closure|null $removedCallback will be called for every value present in collection but not in
+	 * 		newCollection.
+	 * @param bool $strict determines if strict comparison (===) should be used during the search.
+	 * @return void
+	 */
+	static function diffWalk(array|\ArrayObject $collection, array|\ArrayObject $newCollection,
+			\Closure|null $addedCallback, \Closure|null $removedCallback, bool $strict = true) {
 
 	}
 
