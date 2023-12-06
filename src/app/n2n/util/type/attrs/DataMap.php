@@ -267,7 +267,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optString($path, $defaultValue = null, $nullAllowed = true, bool $lenient = true) {
 		if (!$lenient) {
@@ -299,7 +298,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optBool($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
 		if (!$lenient) {
@@ -323,7 +321,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optNumeric($path, $defaultValue = null, bool $nullAllowed = true) {
 		return $this->opt($path, TypeConstraint::createSimple('numeric', $nullAllowed), $defaultValue);
@@ -347,7 +344,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optInt($path, $defaultValue = null, bool $nullAllowed = true, $lenient = true) {
 		if (!$lenient) {
@@ -380,7 +376,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 	 * @param bool $nullAllowed
 	 * @return mixed
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optEnum(mixed $path, array $allowedValues, mixed $defaultValue = null, bool $nullAllowed = true): mixed {
 		return $this->getEnum($path, $allowedValues, false, $defaultValue, $nullAllowed);
@@ -424,7 +419,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optArray($name, $fieldType = null, $defaultValue = [], bool $nullAllowed = false) {
 		return $this->opt($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType), $defaultValue);
@@ -440,7 +434,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function optScalarArray($name, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
 		return $this->optArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $defaultValue, $nullAllowed);
@@ -464,7 +457,6 @@ class DataMap implements AttributeReader, AttributeWriter {
 	 * @param string|AttributePath|string[] $path
 	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
-	 * @return \n2n\util\type\attrs\Attributes|null
 	 */
 	public function optDataSet($path, $defaultValue = null, bool $nullAllowed = true) {
 		if (null !== ($array = $this->optArray($path, null, $defaultValue, $nullAllowed))) {
