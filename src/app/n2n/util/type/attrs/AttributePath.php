@@ -82,8 +82,12 @@ class AttributePath {
 		$size = count($names);
 		return  $size <= $this->size() && $names === array_slice($this->names, 0, $size);
 	}
-	function ext(AttributePath $attributePath): AttributePath {
-		return new AttributePath([...$this->names, ...$attributePath->toArray()]);
+	function ext(mixed $attributePath): AttributePath {
+		if ($attributePath === null) {
+			return $this;
+		}
+
+		return new AttributePath([...$this->names, ...AttributePath::create($attributePath)->toArray()]);
 	}
 
 	function getLast(): ?string {
