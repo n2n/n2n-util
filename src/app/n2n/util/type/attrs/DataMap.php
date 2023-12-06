@@ -29,6 +29,7 @@ use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeConstraints;
 use n2n\util\ex\NotYetImplementedException;
 use n2n\util\EnumUtils;
+use n2n\util\ex\IllegalStateException;
 
 class DataMap implements AttributeReader, AttributeWriter {
 
@@ -215,10 +216,13 @@ class DataMap implements AttributeReader, AttributeWriter {
 
 	/**
 	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
 	 */
 	public function opt($path, $type = null, $defaultValue = null) {
-		return $this->retrieve($path, $type, false, $defaultValue);
+		try {
+			return $this->retrieve($path, $type, false, $defaultValue);
+		} catch (MissingAttributeFieldException $e) {
+			throw new IllegalStateException('opt() must ignore missing attributes.', previous: $e);
+		}
 	}
 
 	/**
