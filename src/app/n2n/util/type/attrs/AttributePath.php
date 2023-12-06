@@ -22,32 +22,79 @@
 namespace n2n\util\type\attrs;
 
 use n2n\util\type\TypeUtils;
+use n2n\util\type\ArgUtils;
+use n2n\util\StringUtils;
+use InvalidArgumentException;
+use n2n\util\col\ArrayUtils;
 
 class AttributePath {
 	const SEPARATOR = '/';
-	const WILDHARD = '*';
-	
-	private $names = [];
+//	const WILDHARD = '*';
+
+	/**
+	 * @var string[]
+	 */
+	private array $names = [];
 	
 	public function __construct(array $names) {
+		ArgUtils::valArray($names, 'scalar');
+
 		foreach ($names as $name) {
-			if (empty($name) && $name !== 0) {
+			$name = (string) $name;
+
+			if ($name === '') {
 				continue;
 			}
-			
-			array_push($this->names, $name);
+
+			if (StringUtils::contains(self::SEPARATOR, $name)) {
+				throw new InvalidArgumentException('Part of path contains invalid char ' . self::SEPARATOR
+						. ': ' . $name);
+			}
+
+			$this->names[] = $name;
 		}
 	}
-	
-	public function size() {
+
+	function isEmpty(): bool {
+		return empty($this->names);
+	}
+
+	public function size(): int {
 		return count($this->names);
 	}
-	
-	public function slices(int $offset, int $length = null) {
+
+	/**
+	 * @deprecated use {@link self::slice()}
+	 */
+	public function slices(int $offset, int $length = null): AttributePath {
 		return new AttributePath(array_slice($this->names, $offset, $length));
 	}
-	
-	public function toArray() {
+
+	public function slice(int $offset, int $length = null): AttributePath {
+		return new AttributePath(array_slice($this->names, $offset, $length));
+	}
+
+	function startsWith(AttributePath|array $names): bool {
+		if ($names instanceof AttributePath) {
+			$names = $names->toArray();
+		}
+
+		$size = count($names);
+		return  $size <= $this->size() && $names === array_slice($this->names, 0, $size);
+	}
+	function ext(AttributePath $attributePath): AttributePath {
+		return new AttributePath([...$this->names, ...$attributePath->toArray()]);
+	}
+
+	function getLast(): ?string {
+		return ArrayUtils::end($this->names);
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	public function toArray(): array {
 		return $this->names;
 	}
 	
@@ -55,7 +102,7 @@ class AttributePath {
 	 * @param string|string[]|AttributePath $expression
 	 * @return NULL|\n2n\util\type\attrs\AttributePath
 	 */
-	public static function build($expression) { 
+	public static function build(mixed $expression): ?AttributePath {
 		if ($expression === null) {
 			return null;
 		}
@@ -68,7 +115,7 @@ class AttributePath {
 	 * @throws \InvalidArgumentException
 	 * @return \n2n\util\type\attrs\AttributePath
 	 */
-	public static function create($expression) {
+	public static function create(mixed $expression): AttributePath {
 		if ($expression instanceof AttributePath) {
 			return $expression;
 		}
@@ -100,21 +147,31 @@ class AttributePath {
 	public function __toString(): string {
 		return implode(self::SEPARATOR, $this->names);
 	}
-	
-	/**
-	 * @param string $pathPart
-	 * @param string $name
-	 * @return boolean
-	 */
-	public static function match(string $pathPart, string $name) {
-		return self::matchesWildcard($pathPart) || $pathPart == $name; 
+
+	function toAbsoluteString(): string {
+		return self::SEPARATOR . $this->__toString();
 	}
-	
-	/**
-	 * @param string $pathPart
-	 * @return boolean
-	 */
-	public static function matchesWildcard(string $pathPart) {
-		return self::WILDHARD == $pathPart; 
+
+	function equals(mixed $arg): bool {
+		return $arg instanceof AttributePath && $arg->names === $this->names;
 	}
+
+
+	
+//	/**
+//	 * @param string $pathPart
+//	 * @param string $name
+//	 * @return boolean
+//	 */
+//	public static function match(string $pathPart, string $name) {
+//		return self::matchesWildcard($pathPart) || $pathPart == $name;
+//	}
+//
+//	/**
+//	 * @param string $pathPart
+//	 * @return boolean
+//	 */
+//	public static function matchesWildcard(string $pathPart) {
+//		return self::WILDHARD == $pathPart;
+//	}
 }

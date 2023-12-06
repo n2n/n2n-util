@@ -21,5 +21,5 @@
  */
 namespace n2n\util\type\attrs;
 
-class AttributesException extends \RuntimeException {
+class AttributesException extends \Exception {
 }
