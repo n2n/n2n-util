@@ -23,6 +23,9 @@ namespace n2n\util\magic;
 
 use n2n\util\ex\IllegalStateException;
 
+/**
+ * @template T
+ */
 interface TaskResult {
 
 	/**
@@ -35,4 +38,11 @@ interface TaskResult {
 	 * @throws IllegalStateException if {@self::hasErrors()} returns true
 	 */
 	function getErrorMap(): MagicArray;
+
+	/**
+	 * Returns the value representing the result on success. This method may throw an IllegalStateException if
+	 * the result has errors and should not be called in such a case.
+	 * @return T
+	 */
+	function get(): mixed;
 }

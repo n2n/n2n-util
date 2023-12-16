@@ -21,11 +21,14 @@
  */
 namespace n2n\util\magic;
 
+/**
+ * @template T
+ */
 interface MagicTask {
 
 	/**
 	 * @param MagicContext
-	 * @return TaskResult
+	 * @return TaskResult<T>
 	 * @throws MagicTaskExecutionException
 	 */
 	function exec(MagicContext $magicContext): TaskResult;
