@@ -279,7 +279,9 @@ class TypeName {
 	
 	const UNION_TYPE_SEPARATOR = '|';
 	const INTERSECTION_TYPE_SEPARATOR = '&';
-	
+
+	const NULLABLE_PREFIX = '?';
+
 	static function isUnionType(string|\ReflectionType $type) {
 		if (is_string($type)) {
 			return StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type);
@@ -309,7 +311,27 @@ class TypeName {
 
 		return $type instanceof \ReflectionNamedType;
 	}
-	
+
+	/**
+	 * @param string|\ReflectionNamedType $type
+	 * @return string[]
+	 */
+	static function extractNamedTypeNames(string|\ReflectionNamedType $type): array {
+		if ($type instanceof \ReflectionNamedType) {
+			if ($type->allowsNull()) {
+				return [$type->getName(), self::NULL];
+			}
+
+			return [$type->getName()];
+		}
+
+		if (StringUtils::startsWith(self::NULLABLE_PREFIX, $type)) {
+			return [mb_substr($type, 0, mb_strlen(self::NULLABLE_PREFIX), $type), self::NULL];
+		}
+
+		return [$type];
+	}
+
 	static function extractUnionTypeNames(string|\ReflectionUnionType $type) {
 		if ($type instanceof \ReflectionUnionType) {
 			return array_map(function ($namedType) { return $namedType->getName(); }, $type->getTypes());
