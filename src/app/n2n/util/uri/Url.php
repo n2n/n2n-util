@@ -37,6 +37,13 @@ class Url {
 	protected $authority;
 	protected $path;
 	protected $query;
+
+	/**
+	 * According to RFC 2396, RFC 3986, and RFC 7320, the format of fragment identifiers depends on the media type.
+	 * Therefore, this class leaves the fragment as it is and does not perform any encoding
+	 *
+	 * @var string|null
+	 */
 	protected $fragment;
 
 	public function __construct(string $scheme = null, Authority $authority = null, Path $path = null,
@@ -295,7 +302,8 @@ class Url {
 			$uri->query = Query::create($uriMap['query']);
 		}
 		if (isset($uriMap['fragment'])) {
-			$uri->fragment = rawurldecode($uriMap['fragment']);
+			// no rawurldecode(), see property docs
+			$uri->fragment = $uriMap['fragment'];
 		}
 		return $uri;
 	}
@@ -342,7 +350,8 @@ class Url {
 		}
 
 		if ($this->fragment !== null) {
-			$str .= self::FRAGMENT_PREFIX . rawurlencode($this->fragment);
+			// no rawurlencode(), see property docs.
+			$str .= self::FRAGMENT_PREFIX . $this->fragment;
 		}
 
 		return $str;
