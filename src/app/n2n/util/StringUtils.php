@@ -291,7 +291,7 @@ class StringUtils {
 	/**
 	 * @param string|null $str
 	 * @param int $length
-	 * @param string $suffix
+	 * @param string $suffix will be added as delimiter, but only if string is cropped
 	 * @return string|null
 	 */
 	public static function reduce(?string $str, int $length, string $suffix = '') {
@@ -305,21 +305,21 @@ class StringUtils {
 	/**
 	 * @param string $str
 	 * @param int $length
-	 * @param string $suffix
+	 * @param string $prefix will be added as delimiter, but only if string is cropped
 	 * @return string
 	 */
-	public static function reduceFront(string $str, int $length, string $suffix = '') {
+	public static function reduceFront(string $str, int $length, string $prefix = '') {
 		if (mb_strlen($str) <= $length) {
 			return $str;
 		}
 		
-		return $suffix . mb_substr($str, -$length);
+		return $prefix . mb_substr($str, -$length);
 	}
 	
 	/**
 	 * @param string $str
 	 * @param int $length
-	 * @param string $suffix
+	 * @param string $suffix will be added as delimiter, but only if string is cropped
 	 * @throws \InvalidArgumentException
 	 * @return string
 	 */
