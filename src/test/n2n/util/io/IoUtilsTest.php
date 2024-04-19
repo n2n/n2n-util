@@ -3,6 +3,7 @@ namespace n2n\util\io;
 
 use n2n\util\io\fs\FileOperationException;
 use PHPUnit\Framework\TestCase;
+use n2n\util\ex\err\impl\WarningError;
 
 class IoUtilsTest extends TestCase {
 	const TEST_DIR = __DIR__ . '/testFiles';
@@ -76,6 +77,9 @@ class IoUtilsTest extends TestCase {
 		IoUtils::opendir('asdfyxv');
 	}
 
+	/**
+	 * @throws IoException
+	 */
 	public function testPutContents() {
 		$testData = 'testData';
 		$testFile = self::TEST_DIR . '/testFileForPutContents';
@@ -84,14 +88,27 @@ class IoUtilsTest extends TestCase {
 		$this->assertEquals($testData, file_get_contents($testFile));
 	}
 
+	/**
+	 * @throws IoException
+	 */
 	public function testFileGetContents() {
 		$contents =  IoUtils::getContents(self::TEST_FILE);
 		$this->assertEquals(self::TEST_FILE_DATA, $contents);
 	}
 
+	/**
+	 * @throws IoException
+	 */
 	public function testFileGetContentsNotFound() {
 		$this->expectException(FileOperationException::class);
-		IoUtils::getContents('asdf');
+		try {
+			IoUtils::getContents('asdf');
+		} catch (FileOperationException $e) {
+			$this->assertInstanceOf(WarningError::class, $e->getPrevious());
+			$this->assertStringContainsString('No such file or directory', $e->getPrevious()->getMessage());
+			throw $e;
+		}
+
 	}
 
 	public function testFile() {
