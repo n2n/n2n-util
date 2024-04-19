@@ -28,7 +28,7 @@ class ExUtils {
 
 		$triggeredError = TriggeredError::last();
 		if ($triggeredError !== null && 0 !== ($triggeredError->getCode() & $convertableErrorLevel)) {
-			throw new $triggeredError;
+			throw $triggeredError;
 		}
 
 		return $return;
