@@ -257,23 +257,18 @@ class TypeName {
 	 * @param string $typeName
 	 * @return boolean
 	 */
-	static function isSafe(string $typeName) {
-		switch ($typeName) {
-			case self::PSEUDO_MIXED:
-			case self::PSEUDO_SCALAR:
-			case self::PSEUDO_NUMERIC:
-			case self::PSEUDO_ARRAYLIKE:
-				return false;
-			default:
-				return true;
-		}
+	static function isSafe(string $typeName): bool {
+		return match ($typeName) {
+			self::PSEUDO_MIXED, self::PSEUDO_SCALAR, self::PSEUDO_NUMERIC, self::PSEUDO_ARRAYLIKE => false,
+			default => true,
+		};
 	}
 	
 	/**
 	 * @param string $typeName
 	 * @return bool
 	 */
-	static function isValid(string $typeName) {
+	static function isValid(string $typeName): bool {
 		return (bool) preg_match('/[0-9a-zA-Z_\\\\]/', $typeName);
 	}
 	

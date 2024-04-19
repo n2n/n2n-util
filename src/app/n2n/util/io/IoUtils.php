@@ -24,7 +24,7 @@ namespace n2n\util\io;
 use n2n\util\io\fs\CouldNotAchieveFlockException;
 use n2n\util\io\fs\FileOperationException;
 use n2n\util\io\stream\impl\FileResourceStream;
-use http\Exception\InvalidArgumentException;
+use n2n\util\ex\ExUtils;
 
 class IoUtils {
 
@@ -242,7 +242,7 @@ class IoUtils {
 	 */
 	public static function getContents(string $path) {
 		try {
-			return file_get_contents($path);
+			return ExUtils::convertTriggeredErrors(fn () => file_get_contents($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('GetContents of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -256,7 +256,7 @@ class IoUtils {
 	 */
 	public static function file(string $path) {
 		try {
-			return file($path);
+			return ExUtils::convertTriggeredErrors(fn () => file($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('File of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
@@ -272,9 +272,9 @@ class IoUtils {
 	public static function copy($path, $targetPath, $context = null) {
 		try {
 			if ($context === null) {
-				return copy($path, $targetPath);
+				return ExUtils::convertTriggeredErrors(fn () => copy($path, $targetPath));
 			} else {
-				return copy($path, $targetPath, $context);
+				return ExUtils::convertTriggeredErrors(fn () => copy($path, $targetPath, $context));
 			}
 		} catch (\Throwable $e) {
 			throw new FileOperationException('Copy of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),

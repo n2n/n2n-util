@@ -2,6 +2,8 @@
 
 namespace n2n\util\ex;
 
+use n2n\util\ex\err\TriggeredError;
+
 class ExUtils {
 
 	/**
@@ -12,5 +14,23 @@ class ExUtils {
 	 */
 	static function try(\Closure $closure): mixed {
 		return IllegalStateException::try($closure);
+	}
+
+	static function convertTriggeredErrors(\Closure $closure, int $convertableErrorLevel = E_ALL): mixed {
+		$errorLevel = error_reporting();
+		error_reporting(0);
+		error_clear_last();
+		try {
+			$return = $closure();
+		} finally {
+			error_reporting($errorLevel);
+		}
+
+		$triggeredError = TriggeredError::last();
+		if ($triggeredError !== null && 0 !== ($triggeredError->getCode() & $convertableErrorLevel)) {
+			throw new $triggeredError;
+		}
+
+		return $return;
 	}
 }
