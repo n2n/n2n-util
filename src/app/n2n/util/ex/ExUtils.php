@@ -18,7 +18,7 @@ class ExUtils {
 
 	static function convertTriggeredErrors(\Closure $closure, int $convertableErrorLevel = E_ALL): mixed {
 		$errorLevel = error_reporting();
-		error_reporting(0);
+		error_reporting($convertableErrorLevel ^ E_ALL);
 		error_clear_last();
 		try {
 			$return = $closure();
