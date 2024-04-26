@@ -116,9 +116,11 @@ class IoUtils {
 	 * @throws FileOperationException
 	 * @return bool
 	 */
-	public static function mkdirs(string $path, int|string $permission = 0777): bool {
+	public static function mkdirs(string $path, int|string $permission = null): bool {
 		if (is_string($permission)) {
 			$permission = octdec($permission);
+		} else if ($permission === null) {
+			$permission = 0777;
 		}
 
 		try {

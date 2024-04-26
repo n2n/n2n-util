@@ -6,7 +6,7 @@ interface IntValueObject {
 
 	/**
 	 * @param int $value
-	 * @throws IncompatibleValueException if passed value is invalid.
+	 * @throws IllegalValueException if passed value is invalid.
 	 */
 	function __construct(int $value);
 

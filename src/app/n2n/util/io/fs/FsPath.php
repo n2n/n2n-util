@@ -23,6 +23,7 @@ namespace n2n\util\io\fs;
 
 use n2n\util\io\IoUtils;
 use n2n\util\ex\IllegalStateException;
+use n2n\util\io\IoException;
 
 class FsPath {
 	private $path;
@@ -137,7 +138,7 @@ class FsPath {
 	 * 
 	 * @param string $perm
 	 */
-	public function mkdirs(int|string $perm = 0777) {
+	public function mkdirs(int|string $perm = null): void {
 		if ($this->isDir()) return;
 
 		try {
@@ -173,13 +174,15 @@ class FsPath {
 
 		return true;
 	}
+
 	/**
-	 * 
-	 * @param string $filePerm
-	 * @param string $dirPerm
+	 *
+	 * @param int|string|null $dirPerm
+	 * @param int|string|null $filePerm
 	 * @return boolean
+	 * @throws FileOperationException
 	 */
-	public function mkdirsAndCreateFile($dirPerm, $filePerm) {
+	public function mkdirsAndCreateFile(int|string|null $dirPerm, int|string|null $filePerm) {
 		if ($this->isFile()) return false;
 		$parentDir = $this->getParent();
 		
@@ -190,7 +193,7 @@ class FsPath {
 		return $this->createFile($filePerm);
 	}
 	
-	public function isEmpty() {
+	public function isEmpty(): bool {
 		if ($this->isFile()) {
 			return $this->getSize() == 0;
 		}
@@ -308,22 +311,27 @@ class FsPath {
 		
 		return $fsPath;
 	}
+
 	/**
-	 * 
+	 *
 	 * @param string $fsPath
-	 * @param string $filePerm
+	 * @param int|string|null $filePerm
 	 * @param bool $overwrite
-	 * @throws \n2n\util\io\IoException
-	 * @return \n2n\util\io\fs\FsPath
+	 * @return FsPath
+	 * @throws FileAlreadyExistsException
+	 * @throws FileOperationException
+	 * @throws IoException
 	 */
-	public function moveFile($fsPath, $filePerm, $overwrite = false) {
+	public function moveFile($fsPath, int|string|null $filePerm, bool $overwrite = false): FsPath {
 		$fsPath = $this->prepareFileFsPath($fsPath, $overwrite);
 		if (is_file($fsPath)) {
 			IoUtils::unlink($fsPath);
 		}
 		
 		IoUtils::rename($this->path, $fsPath);
-		IoUtils::chmod($fsPath, $filePerm);
+		if ($filePerm !== null) {
+			IoUtils::chmod($fsPath, $filePerm);
+		}
 		return new FsPath(IoUtils::realpath($fsPath));
 	}
 	/**
@@ -334,7 +342,7 @@ class FsPath {
 	 * @throws \n2n\util\io\IoException
 	 * @return \n2n\util\io\fs\FsPath
 	 */
-	public function copyFile($fsPath, $filePerm, $overwrite = false) {
+	public function copyFile(FsPath $fsPath, int|string|null $filePerm, bool $overwrite = false) {
 		if (!$this->isFile()) {
 			throw new IllegalStateException('This is no file: ' . $this->path);
 		}
@@ -350,12 +358,18 @@ class FsPath {
 		}
 		
 		IoUtils::copy($this->path, $fsPath);
-		IoUtils::chmod($fsPath, $filePerm);
+		if ($filePerm !== null) {
+			IoUtils::chmod($fsPath, $filePerm);
+		}
 		
 		return new FsPath(IoUtils::realpath($fsPath));
 	}
-	
-	public function copy($fsPath, $dirPerm, $filePerm, $overwrite = false) {
+
+	/**
+	 * @throws IoException
+	 * @throws FileOperationException
+	 */
+	public function copy($fsPath, int|string|null $dirPerm, int|string|null $filePerm, $overwrite = false) {
 		$fsPath = FsPath::create($fsPath);
 		
 		if ($this->isFile()) {
@@ -374,6 +388,8 @@ class FsPath {
 		foreach ($this->getChildren() as $childPath) {
 			$childPath->copy($fsPath->ext($childPath->getName()), $dirPerm, $filePerm, $overwrite);
 		}
+
+		return $fsPath;
 	}
 	
 	public function getMTime() {

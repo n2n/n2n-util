@@ -6,7 +6,7 @@ interface StringValueObject {
 
 	/**
 	 * @param string $value
-	 * @throws IncompatibleValueException if passed value is invalid.
+	 * @throws IllegalValueException if passed value is invalid.
 	 */
 	function __construct(string $value);
 
