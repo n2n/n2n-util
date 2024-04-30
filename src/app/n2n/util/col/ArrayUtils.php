@@ -245,4 +245,8 @@ class ArrayUtils {
 
 		return false;
 	}
+
+	static function filterNotNull(array $arr): array {
+		return array_filter($arr, fn ($v) => $v !== null);
+	}
 }
