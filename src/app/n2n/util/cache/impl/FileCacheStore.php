@@ -147,20 +147,20 @@ class FileCacheStore implements CacheStore {
 	public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null) {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->isDir()) {
-			if ($this->dirPerm === null) {
-				throw new IllegalStateException('No directory permission set for FileCacheStore.');
-			}
-
-			$parentDirPath = $nameDirPath->getParent();
+				$parentDirPath = $nameDirPath->getParent();
 			if (!$parentDirPath->isDir()) {
 				$parentDirPath->mkdirs($this->dirPerm);
-				// chmod after mkdirs because of possible umask restrictions.
-				$parentDirPath->chmod($this->dirPerm);
+				if ($this->dirPerm !== null) {
+					// chmod after mkdirs because of possible umask restrictions.
+					$parentDirPath->chmod($this->dirPerm);
+				}
 			}
 
 			$nameDirPath->mkdirs($this->dirPerm);
-			// chmod after mkdirs because of possible umask restrictions.
-			$nameDirPath->chmod($this->dirPerm);
+			if ($this->dirPerm !== null) {
+				// chmod after mkdirs because of possible umask restrictions.
+				$nameDirPath->chmod($this->dirPerm);
+			}
 		}
 
 		if ($this->filePerm === null) {
@@ -177,8 +177,9 @@ class FileCacheStore implements CacheStore {
 		IoUtils::putContentsSafe($filePath->__toString(), serialize(array('characteristics' => $characteristics,
 				'data' => $data, 'lastMod' => $lastMod->getTimestamp())));
 
-
-		$filePath->chmod($this->filePerm);
+		if ($this->filePerm !== null) {
+			$filePath->chmod($this->filePerm);
+		}
 		$lock->release();
 	}
 	/**
