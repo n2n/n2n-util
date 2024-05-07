@@ -101,12 +101,11 @@ class FileCacheStore implements CacheStore {
 	 * @return \n2n\util\cache\impl\CacheFileLock
 	 */
 	private function createWriteLock(string $filePath) {
-		IllegalStateException::assertTrue($this->filePerm !== null,
-				'Can not create write lock if no file permission is defined for FileCacheStore.');
-
 		$lockFilePath = new FsPath($filePath . self::LOCK_FILE_SUFFIX);
 		$lock = new CacheFileLock(new FileResourceStream($lockFilePath, 'w', LOCK_EX));
-		$lockFilePath->chmod($this->filePerm);
+		if ($this->filePerm !== null) {
+			$lockFilePath->chmod($this->filePerm);
+		}
 		return $lock;
 	}
 
