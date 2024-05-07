@@ -290,7 +290,7 @@ class IoUtils {
 	 * @throws IoException
 	 * @return bool
 	 */
-	public static function chmod($path, int|string $filePermission = 077) {
+	public static function chmod($path, int|string $filePermission = 0777) {
 		if (is_string($filePermission)) {
 			$filePermission = octdec($filePermission);
 		}
