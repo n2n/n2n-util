@@ -166,11 +166,14 @@ class FsPath {
 	 *
 	 * @return bool true if the named file does not exist and was successfully created; false if the named file already exists
 	 */
-	public function createFile($perm) {
+	public function createFile(int|string|null $perm = null) {
 		if ($this->isFile()) return false;
 		
 		IoUtils::touch($this->path);
-		IoUtils::chmod($this->path, $perm);
+
+		if ($perm !== null) {
+			IoUtils::chmod($this->path, $perm);
+		}
 
 		return true;
 	}
