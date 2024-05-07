@@ -423,7 +423,7 @@ class FsPath {
 		return $this->createExtended($pathExt);
 	}
 	
-	public function chmod($perm) {
+	public function chmod(string|int $perm) {
 		IoUtils::chmod($this->path, $perm);
 	}
 	
