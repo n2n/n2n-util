@@ -163,10 +163,6 @@ class FileCacheStore implements CacheStore {
 			}
 		}
 
-		if ($this->filePerm === null) {
-			throw new IllegalStateException('No file permission set for FileCacheStore.');
-		}
-
 		if ($lastMod === null) {
 			$lastMod = new \DateTime();
 		}
