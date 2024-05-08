@@ -88,7 +88,7 @@ class FileCacheStore implements CacheStore {
 	 * @param string $filePath
 	 * @return \n2n\util\cache\impl\CacheFileLock|null
 	 */
-	private function buildReadLock(FsPath $filePath) {
+	private function buildReadLock(FsPath $filePath): ?CacheFileLock {
 		$lockFilePath = new FsPath($filePath . self::LOCK_FILE_SUFFIX);
 		if (!$lockFilePath->exists()) {
 			return null;
@@ -143,7 +143,8 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::store()
 	 */
-	public function store(string $name, array $characteristics, mixed $data, \DateTime $created = null, \DateInterval $ttl = null): void {
+	public function store(string $name, array $characteristics, mixed $data, \DateInterval $ttl = null,
+			\DateTimeInterface $now = null): void {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->isDir()) {
 				$parentDirPath = $nameDirPath->getParent();
@@ -162,15 +163,15 @@ class FileCacheStore implements CacheStore {
 			}
 		}
 
-		if ($created === null) {
-			$created = new \DateTime();
+		if ($now === null) {
+			$now = new \DateTime();
 		}
 
 		$filePath = $nameDirPath->ext($this->buildFileName($characteristics));
 
 		$lock = $this->createWriteLock((string) $filePath);
 		IoUtils::putContentsSafe($filePath->__toString(), serialize(array('characteristics' => $characteristics,
-				'data' => $data, 'lastMod' => $created->getTimestamp())));
+				'data' => $data, 'lastMod' => $now->getTimestamp())));
 
 		if ($this->filePerm !== null) {
 			$filePath->chmod($this->filePerm);
@@ -183,7 +184,7 @@ class FileCacheStore implements CacheStore {
 	 * @return CacheItem null, if filePath no longer available.
 	 * @throws CorruptedCacheStoreException
 	 */
-	private function read($name, FsPath $filePath) {
+	private function read($name, FsPath $filePath): ?CacheItem {
 		if (!$filePath->exists()) return null;
 
 		$lock = $this->buildReadLock($filePath);
@@ -232,7 +233,7 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::get()
 	 */
-	public function get(string $name, array $characteristics): ?CacheItem {
+	public function get(string $name, array $characteristics, \DateTimeInterface $now = null): ?CacheItem {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->exists()) return null;
 		return $this->read($name, $nameDirPath->ext($this->buildFileName($characteristics)));
@@ -312,7 +313,7 @@ class FileCacheStore implements CacheStore {
 
 	}
 
-	public function findAll(string $name, array $characteristicNeedles = null): array {
+	public function findAll(string $name, array $characteristicNeedles = null, \DateTimeInterface $now = null): array {
 		$cacheItems = array();
 
 		foreach ($this->findFilePaths($name, $characteristicNeedles) as $filePath) {
@@ -345,6 +346,6 @@ class FileCacheStore implements CacheStore {
 		}
 	}
 
-	public function garbageCollect(\DateInterval $ttl = null): void {
+	public function garbageCollect(\DateInterval $maxLifetime = null, \DateTimeInterface $now = null): void {
 	}
 }
