@@ -143,7 +143,7 @@ class FileCacheStore implements CacheStore {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\cache\CacheStore::store()
 	 */
-	public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null) {
+	public function store(string $name, array $characteristics, mixed $data, \DateTime $created = null, \DateInterval $ttl = null): void {
 		$nameDirPath = $this->buildNameDirPath($name);
 		if (!$nameDirPath->isDir()) {
 				$parentDirPath = $nameDirPath->getParent();
@@ -162,15 +162,15 @@ class FileCacheStore implements CacheStore {
 			}
 		}
 
-		if ($lastMod === null) {
-			$lastMod = new \DateTime();
+		if ($created === null) {
+			$created = new \DateTime();
 		}
 
 		$filePath = $nameDirPath->ext($this->buildFileName($characteristics));
 
 		$lock = $this->createWriteLock((string) $filePath);
 		IoUtils::putContentsSafe($filePath->__toString(), serialize(array('characteristics' => $characteristics,
-				'data' => $data, 'lastMod' => $lastMod->getTimestamp())));
+				'data' => $data, 'lastMod' => $created->getTimestamp())));
 
 		if ($this->filePerm !== null) {
 			$filePath->chmod($this->filePerm);
@@ -343,5 +343,8 @@ class FileCacheStore implements CacheStore {
 		foreach ($this->dirPath->getChildDirectories() as $nameDirPath) {
 			$this->removeAll($nameDirPath->getName());
 		}
+	}
+
+	public function garbageCollect(\DateInterval $ttl = null): void {
 	}
 }

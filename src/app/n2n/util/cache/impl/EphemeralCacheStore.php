@@ -14,7 +14,7 @@ class EphemeralCacheStore implements CacheStore {
 	 */
     private $cacheItems = [];
 
-    public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null): void {
+    public function store(string $name, array $characteristics, mixed $data, \DateTime $created = null, \DateInterval $ttl = null): void {
 		$this->remove($name, $characteristics);
 		$this->nsStore($name)[] = new CacheItem($name, $characteristics, $data);
     }
@@ -113,5 +113,8 @@ class EphemeralCacheStore implements CacheStore {
 		}
 
 		return $this->cacheItems[$namespace];
+	}
+
+	public function garbageCollect(\DateInterval $ttl = null): void {
 	}
 }

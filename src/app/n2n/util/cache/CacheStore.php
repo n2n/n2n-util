@@ -26,8 +26,10 @@ interface CacheStore {
 	 * @param string $name
 	 * @param string[] $characteristics e. g. <code>['category' => 'news', 'mode' => 'some-mode']</code>
 	 * @param mixed $data
+	 * @param \DateTime|null $created
+	 * @param \DateInterval|null $ttl
 	 */
-	public function store(string $name, array $characteristics, mixed $data, \DateTime $lastMod = null);
+	public function store(string $name, array $characteristics, mixed $data, \DateTime $created = null, \DateInterval $ttl = null): void;
 
 	/**
 	 * Returns the CacheItem which has been stored with exactly these params (name and characteristics).
@@ -66,6 +68,18 @@ interface CacheStore {
 	 * @param string[] $characteristicNeedles
 	 */
 	public function removeAll(?string $name, array $characteristicNeedles = null);
+
+	/**
+	 * Remove all CacheItems that are considered old by the ttl parameter provided when stored (see {@link self::store()})
+	 * or by the individual specification of the given CacheStore.
+	 *
+	 * If the ttl parameter is not null, it removes all CacheItems older than this ttl regardless of the ttl parameter
+	 * specified when stored ({@link self::store()}).
+	 *
+	 * @param \DateInterval|null $ttl
+	 * @return void
+	 */
+	public function garbageCollect(\DateInterval $ttl = null): void;
 
 	/**
 	 * Removes all stored CacheItems.
