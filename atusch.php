@@ -1,1 +1,0 @@
-<input type="text" value="<?php igbinary_serialize(false) ?>" />
