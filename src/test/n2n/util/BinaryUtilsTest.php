@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
 class BinaryUtilsTest extends TestCase {
 
 	function testIgbinaryUnserialize() {
+		$this->markTestSkipped('ci bob does not support igbinary yet.');
+
 		$this->assertTrue(['hoi' => 1] === BinaryUtils::igbinaryUnserialize(igbinary_serialize(['hoi' => 1])));
 	}
 
