@@ -21,8 +21,14 @@
  */
 namespace n2n\util\cache;
 
+/**
+ * If any operation failed due to CacheStore related errors, a CacheStoreOperationFailedException should be thrown.
+ */
 interface CacheStore {
 	/**
+	 * Note: If tll was provided but is not supported by the given CacheStore, a
+	 * {@link UnsupportedCacheStoreOperationException} must be thrown.
+	 *
 	 * @param string $name
 	 * @param string[] $characteristics e. g. <code>['category' => 'news', 'mode' => 'some-mode']</code>
 	 * @param mixed $data
@@ -78,6 +84,9 @@ interface CacheStore {
 	 *
 	 * If the ttl parameter is not null, it removes all CacheItems older than this ttl regardless of the ttl parameter
 	 * specified when stored ({@link self::store()}).
+	 *
+	 * Note: If maxLifetime was provided but is not supported by the given CacheStore, a
+	 * {@link UnsupportedCacheStoreOperationException} must be thrown.
 	 *
 	 * @param \DateInterval|null $maxLifetime
 	 * @param \DateTimeInterface|null $now
