@@ -213,21 +213,7 @@ class StringUtils {
 	 * @param string $serializedStr
 	 * @throws UnserializationFailedException
 	 */
-	public static function unserialize($serializedStr) {
-// 		if (class_exists('n2n\core\N2N') && N2N::isInitialized()) {
-// 			N2N::getExceptionHandler()->ignoreNextTriggeredErrNo(E_NOTICE);
-			
-// 			$obj = unserialize($serializedStr);
-			
-// 			if ($obj === false && $errMsg = N2N::getExceptionHandler()->getIgnoredErrorMessage()) {
-// 				throw new UnserializationFailedException($errMsg);
-// 			}
-			
-// 			N2N::getExceptionHandler()->ignoreNextTriggeredErrNo(0);
-			
-// 			return $obj;
-// 		}
-		
+	public static function unserialize($serializedStr): string {
 		if ($serializedStr == self::SER_FALSE) {
 			return false;
 		}
