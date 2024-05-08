@@ -213,7 +213,7 @@ class StringUtils {
 	 * @param string $serializedStr
 	 * @throws UnserializationFailedException
 	 */
-	public static function unserialize($serializedStr): string {
+	public static function unserialize($serializedStr): mixed {
 		if ($serializedStr == self::SER_FALSE) {
 			return false;
 		}
