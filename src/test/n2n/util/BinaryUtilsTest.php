@@ -11,6 +11,8 @@ class BinaryUtilsTest extends TestCase {
 	}
 
 	function testIgbinaryUnserializeNullCase()  {
+		$this->markTestSkipped('ci bob does not support igbinary yet.');
+
 		trigger_error('populate error_get_last()', E_USER_WARNING);
 		$this->assertNotNull(error_get_last());
 
@@ -19,6 +21,8 @@ class BinaryUtilsTest extends TestCase {
 	}
 
 	function testIgbinaryUnserializeException() {
+		$this->markTestSkipped('ci bob does not support igbinary yet.');
+
 		$this->expectException(UnserializationFailedException::class);
 		$this->expectExceptionMessage('igbinary_unserialize_header');
 
