@@ -76,10 +76,10 @@ class TypeConstraints {
 	static function mixed(bool $nullable = false) {
 		return NamedTypeConstraint::createSimple(TypeName::PSEUDO_MIXED, $nullable);
 	}
-	
+
 	/**
-	 * @param string|\ReflectionType|\ReflectionParameter|array $type
-	 * @param bool $nullable
+	 * @param string|\ReflectionType|\ReflectionParameter|ReflectionClass|array|null $type
+	 * @param bool $convertable
 	 * @return TypeConstraint
 	 */
 	static function type(string|\ReflectionType|\ReflectionParameter|\ReflectionClass|array|null $type, bool $convertable = false) {
