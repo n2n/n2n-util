@@ -21,6 +21,6 @@
  */
 namespace n2n\util\type;
 
-class ValueIncompatibleWithConstraintsException extends \RuntimeException {
+class ValueIncompatibleWithConstraintsException extends \Exception {
 
 }
