@@ -82,8 +82,8 @@ interface CacheStore {
 	 * Remove all CacheItems that are considered old by the ttl parameter provided when stored (see {@link self::store()})
 	 * or by the individual specification of the given CacheStore.
 	 *
-	 * If the ttl parameter is not null, it removes all CacheItems older than this ttl regardless of the ttl parameter
-	 * specified when stored ({@link self::store()}).
+	 * If the maxLifetime parameter is not null, it also removes all CacheItems older than this maxLifetime regardless
+	 * of the ttl parameter specified when stored ({@link self::store()}).
 	 *
 	 * Note: If maxLifetime was provided but is not supported by the given CacheStore, a
 	 * {@link UnsupportedCacheStoreOperationException} must be thrown.
