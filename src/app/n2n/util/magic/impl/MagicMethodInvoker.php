@@ -21,11 +21,8 @@
  */
 namespace n2n\util\magic\impl;
 
-use n2n\core\N2N;
-use n2n\core\module\Module;
 use n2n\reflection\ReflectionUtils;
 use n2n\util\ex\IllegalStateException;
-use n2n\core\TypeNotFoundException;
 use n2n\util\magic\MagicContext;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeConstraint;
