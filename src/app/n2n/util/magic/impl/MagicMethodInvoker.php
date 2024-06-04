@@ -19,7 +19,7 @@
  * Bert Hofmänner.......: Idea, Frontend UI, Community Leader, Marketing
  * Thomas Günther.......: Developer, Hangar
  */
-namespace n2n\reflection\magic;
+namespace n2n\util\magic\impl;
 
 use n2n\core\N2N;
 use n2n\core\module\Module;
