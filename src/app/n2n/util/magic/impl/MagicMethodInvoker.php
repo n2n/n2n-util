@@ -28,6 +28,7 @@ use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeConstraint;
 use n2n\reflection\ReflectionError;
 use n2n\util\magic\MagicLookupFailedException;
+use n2n\util\ex\ExUtils;
 
 class MagicMethodInvoker {
 	private \ReflectionFunctionAbstract $method;
@@ -47,7 +48,7 @@ class MagicMethodInvoker {
 	}
 
 	function setClosure(\Closure $closure): void {
-		$this->method = new \ReflectionFunction($closure);
+		$this->method = ExUtils::try(fn () => new \ReflectionFunction($closure));
 	}
 
 	/**
