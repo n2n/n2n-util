@@ -31,7 +31,7 @@ interface TaskResult {
 	/**
 	 * @return bool
 	 */
-	function hasErrors(): bool;
+	function isValid(): bool;
 
 	/**
 	 * @return MagicArray

@@ -32,8 +32,8 @@ class TaskResults {
 			function __construct(private mixed $value) {
 			}
 
-			function hasErrors(): bool {
-				return false;
+			function isValid(): bool {
+				return true;
 			}
 
 			function getErrorMap(): MagicArray {
@@ -42,6 +42,25 @@ class TaskResults {
 
 			function get(): mixed {
 				return $this->value;
+			}
+		};
+	}
+
+	static function invalid(MagicArray $errorMap): TaskResult {
+		return new class($errorMap) implements TaskResult {
+			function __construct(private MagicArray $errorMap) {
+			}
+
+			function isValid(): bool {
+				return false;
+			}
+
+			function getErrorMap(): MagicArray {
+				return $this->errorMap;
+			}
+
+			function get(): mixed {
+				throw new IllegalStateException('TaskResult is invalid.');
 			}
 		};
 	}
