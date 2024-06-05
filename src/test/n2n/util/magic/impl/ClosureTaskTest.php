@@ -11,8 +11,6 @@ use n2n\util\magic\TaskResult;
 
 class ClosureTaskTest extends TestCase {
 
-
-
 	/**
 	 * @throws MagicTaskExecutionException
 	 */
