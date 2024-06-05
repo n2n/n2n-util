@@ -27,10 +27,11 @@ use n2n\util\ex\IllegalStateException;
 
 class TaskResults {
 
-	static function success(mixed $value = null): TaskResult {
+	static function valid(mixed $value = null): TaskResult {
 		return new class($value) implements TaskResult {
 			function __construct(private mixed $value) {
 			}
+
 			function hasErrors(): bool {
 				return false;
 			}
