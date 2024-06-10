@@ -28,7 +28,7 @@ use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeName;
 
-class DataSet {
+class DataSet implements AttributeReader, AttributeWriter {
 	private $attrs;
 	private $interceptor;
 	/**
@@ -533,5 +533,26 @@ class DataSet {
 		$attrs = StringUtils::unserialize($serialized);
 		if (!is_array($attrs)) $attrs = array();
 		return new Attributes($attrs);
+	}
+
+	function containsAttribute(AttributePath $path): bool {
+		return $this->contains((string) $path);
+	}
+
+	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, mixed $defaultValue = null): mixed {
+		return $this->retrieve((string) $path, $typeConstraint, $mandatory, $defaultValue);
+	}
+
+	function writeAttribute(AttributePath $path, mixed $value): void {
+		$this->set((string) $path, $value);
+	}
+
+	function removeAttribute(AttributePath $path): bool {
+		if (!$this->contains((string) $path)) {
+			return false;
+		}
+
+		$this->remove((string) $path);
+		return true;
 	}
 }
