@@ -38,6 +38,10 @@ abstract class TriggeredError extends \Error {
 		$this->line = $line;
 	}
 
+	function getType(): int {
+		return $this->getCode();
+	}
+
 	static function create(int $type, string $errstr, string $errfile, int $errline): TriggeredError {
 		return match ($type) {
 //			E_ERROR, E_USER_ERROR, E_COMPILE_ERROR, E_CORE_ERROR => new FatalError($errstr, $type, $errfile, $errline),
