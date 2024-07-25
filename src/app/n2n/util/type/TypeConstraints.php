@@ -113,8 +113,10 @@ class TypeConstraints {
 	 * @param TypeConstraint|string $fieldTypeConstraint
 	 * @return TypeConstraint
 	 */
-	static function array(bool $nullable = false, $fieldTypeConstraint = null) {
-		return TypeConstraint::createArrayLike('array', $nullable, TypeConstraint::build($fieldTypeConstraint));
+	static function array(bool $nullable = false, $fieldTypeConstraint = null,
+			string|\ReflectionClass|TypeConstraint|null $keyTypeConstraint = null) {
+		return TypeConstraint::createArrayLike('array', $nullable, TypeConstraint::build($fieldTypeConstraint),
+				arrayKeyType: TypeConstraint::build($keyTypeConstraint));
 	}
 	
 	/**

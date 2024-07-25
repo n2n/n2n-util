@@ -198,4 +198,34 @@ class TypeConstraintsTest extends TestCase {
 		$this->assertEquals(StringBackedEnumMock::VALUE1,
 				$typeConstraint->validate(StringBackedEnumMock::VALUE1->value));
 	}
+
+	/**
+	 * @throws ValueIncompatibleWithConstraintsException
+	 */
+	function testArrayKeysValid() {
+		$typeConstraint = TypeConstraints::array(false, 'string', 'int');
+		$arr = [2 => 'atusch', 3 => 'btusch'];
+
+		$this->assertTrue($typeConstraint->isValueValid($arr));
+		$this->assertTrue($arr === $typeConstraint->validate($arr));
+	}
+
+	function testArrayKeysInvalid() {
+		$typeConstraint = TypeConstraints::array(false, 'string', 'int');
+		$arr = [2 => 'atusch', 'holeradio' => 'btusch'];
+
+		$this->assertFalse($typeConstraint->isValueValid($arr));
+		$this->expectException(ValueIncompatibleWithConstraintsException::class);
+		$typeConstraint->validate($arr);
+	}
+
+	function testArrayKeysConvertable() {
+		$tcMock = $this->createMock(TypeConstraint::class);
+		$tcMock->expects($this->exactly(2))->method('validate')->willReturnCallback(fn ($v) => $v . '-converted');
+
+		$typeConstraint = TypeConstraints::array(false, 'string', $tcMock);
+
+		$this->assertEquals(['2-converted' => 'atusch', '3-converted' => 'btusch'],
+				$typeConstraint->validate(['2' => 'atusch', '3' => 'btusch']));
+	}
 }

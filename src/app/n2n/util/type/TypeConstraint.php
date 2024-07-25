@@ -70,7 +70,7 @@ abstract class TypeConstraint implements Constraint {
 	 * @param string|\ReflectionClass|null $type
 	 * @param bool $allowsNull
 	 * @param array $whitelistTypes
-	 * @return \n2n\util\type\NamedTypeConstraint
+	 * @return NamedTypeConstraint
 	 */
 	static function createSimple(string|\ReflectionClass|null $type, bool $allowsNull = true,
 			bool $convertable = false, array $whitelistTypes = array()) {
@@ -83,18 +83,20 @@ abstract class TypeConstraint implements Constraint {
 		
 		return new NamedTypeConstraint($typeName, $allowsNull, null, $whitelistTypes, $convertable);
 	}
-	
+
 	/**
 	 * @param string|\ReflectionClass|null $type
 	 * @param bool $allowsNull
 	 * @param string|\ReflectionClass|TypeConstraint|null $arrayFieldType
 	 * @param array $whitelistTypes
-	 * @return \n2n\util\type\NamedTypeConstraint
+	 * @param string|\ReflectionClass|TypeConstraint|null $arrayKeyType
+	 * @return NamedTypeConstraint
 	 */
 	static function createArrayLike(
 			string|\ReflectionClass|null $type, bool $allowsNull = true,
 			string|\ReflectionClass|TypeConstraint|null $arrayFieldType = null,
-			array $whitelistTypes = array()) {
+			array $whitelistTypes = array(),
+			string|\ReflectionClass|TypeConstraint|null $arrayKeyType = null): NamedTypeConstraint {
 		$typeName = null;
 		if ($type === null) {
 			$typeName = TypeName::PSEUDO_ARRAYLIKE;
@@ -108,7 +110,7 @@ abstract class TypeConstraint implements Constraint {
 		
 		return new NamedTypeConstraint($typeName, $allowsNull,
 				($arrayFieldType === null ? TypeConstraints::mixed(true) : TypeConstraint::create($arrayFieldType)),
-				$whitelistTypes);
+				$whitelistTypes, arrayKeyTypeConstraint: TypeConstraint::build($arrayKeyType));
 	}
 	
 	

@@ -31,15 +31,18 @@ class NamedTypeConstraint extends TypeConstraint {
 	private $arrayFieldTypeConstraint;
 	private $whitelistTypes;
 	private $convertable = false;
+
 	/**
 	 * @param string $typeName
-	 * @param string $allowsNull
-	 * @param TypeConstraint $arrayFieldTypeConstraint
+	 * @param bool $allowsNull
+	 * @param TypeConstraint|null $arrayFieldTypeConstraint
 	 * @param array $whitelistTypes
-	 * @throws \InvalidArgumentException
+	 * @param bool $convertable
+	 * @param TypeConstraint|null $arrayKeyTypeConstraint
 	 */
 	protected function __construct(string $typeName, bool $allowsNull,
-			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false) {
+			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false,
+			private ?TypeConstraint $arrayKeyTypeConstraint = null) {
 		$this->typeName = $typeName;
 		$this->allowsNull = $allowsNull || TypeName::isNullable($typeName);
 		$this->convertable = $convertable && TypeName::isConvertable($typeName);
@@ -161,8 +164,9 @@ class NamedTypeConstraint extends TypeConstraint {
 			return true;
 		}
 		
-		foreach ($value as $fieldValue) {
-			if (!$this->arrayFieldTypeConstraint->isValueValid($fieldValue)) {
+		foreach ($value as $fieldKey => $fieldValue) {
+			if (!$this->arrayFieldTypeConstraint->isValueValid($fieldValue)
+					|| ($this->arrayKeyTypeConstraint !== null && !$this->arrayKeyTypeConstraint->isValueValid($fieldKey))) {
 				return false;
 			}
 		}
@@ -224,8 +228,29 @@ class NamedTypeConstraint extends TypeConstraint {
 						. $this->__toString() . '. Array field (key: \'' . $key . '\') contains invalid value.', 0, $e);
 			}
 		}
-		
-		return $value;
+
+		if ($this->arrayKeyTypeConstraint === null) {
+			return $value;
+		}
+
+		$copiedArray = [];
+		foreach ($value as $key => $fieldValue) {
+			try {
+				$newKey = $this->arrayKeyTypeConstraint->validate($key);
+			} catch (ValueIncompatibleWithConstraintsException $e) {
+				throw new ValueIncompatibleWithConstraintsException(
+						'Value type not allowed with constraints '
+						. $this->__toString() . '. Array field contains invalid key: ' . $key, 0, $e);
+			}
+
+			if (!is_scalar($newKey)) {
+				throw new IllegalStateException('Array key TypeConstraint is not scalar: ' .
+						$this->arrayKeyTypeConstraint);
+			}
+
+			$copiedArray[$newKey] = $fieldValue;
+		}
+		return $copiedArray;
 	}
 	
 	/**
