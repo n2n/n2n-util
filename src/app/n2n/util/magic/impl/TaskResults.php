@@ -36,6 +36,13 @@ class TaskResults {
 				return true;
 			}
 
+			/**
+			 * @deprecated legacy usage only
+			 */
+			function hasErrors(): bool {
+				return false;
+			}
+
 			function getErrorMap(): MagicArray {
 				throw new IllegalStateException('TaskResult is valid.');
 			}
@@ -53,6 +60,13 @@ class TaskResults {
 
 			function isValid(): bool {
 				return false;
+			}
+
+			/**
+			 * @deprecated legacy usage only
+			 */
+			function hasErrors(): bool {
+				return true;
 			}
 
 			function getErrorMap(): MagicArray {
