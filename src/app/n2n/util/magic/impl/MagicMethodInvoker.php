@@ -226,7 +226,7 @@ class MagicMethodInvoker {
 					\Closure::bind(
 							$method->getClosure(),
 							$method->getClosureThis(),
-							$method->getClosureScopeClass()->name),
+							$method->getClosureScopeClass()?->name ?? 'static'),
 					...$this->buildArgs($method, $firstArgs));
 		} else {
 			$returnValue = $method->invokeArgs($this->buildArgs($method, $firstArgs));
