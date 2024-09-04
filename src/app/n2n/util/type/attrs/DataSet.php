@@ -27,6 +27,7 @@ use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeName;
+use n2n\util\EnumUtils;
 
 class DataSet implements AttributeReader, AttributeWriter {
 	private $attrs;
@@ -298,7 +299,11 @@ class DataSet implements AttributeReader, AttributeWriter {
 	public function optEnum(string $name, array $allowedValues, $defaultValue = null, bool $nullAllowed = true) {
 		return $this->getEnum($name, $allowedValues, false, $defaultValue, $nullAllowed);
 	}
-	
+
+	/**
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
+	 */
 	private function getEnum(string $name, array $allowedValues, $mandatory = true, $defaultValue = null, $nullAllowed = false) {
 		$found = null;
 		$value = $this->retrieve($name, null, $mandatory, $defaultValue, $found);
@@ -308,14 +313,13 @@ class DataSet implements AttributeReader, AttributeWriter {
 		if ($nullAllowed && $value === null) {
 			return $value;
 		}
-		
-		if (!ArrayUtils::inArrayLike($value, $allowedValues)) {
+
+		try {
+			return EnumUtils::valueToPseudoUnit($value, $allowedValues);
+		} catch (\InvalidArgumentException $e) {
 			throw new InvalidAttributeException('Property \'' . $name
-				. '\' must contain one of following values: ' . implode(', ', $allowedValues) 
-				. '. Given: ' . TypeUtils::buildScalar($value));
+					. '\' contains invalid value. Reason: ' . $e->getMessage(), 0, $e);
 		}
-	
-		return $value;
 	}
 	
 	/**
