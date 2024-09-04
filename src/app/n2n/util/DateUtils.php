@@ -206,7 +206,7 @@ class DateUtils {
 	}
 
 	static function dateInterval(int $y = 0, int $m = 0, int $d = 0, int $h = 0, int $i = 0, int $s = 0, float $f = 0): \DateInterval {
-		$dateInterval = new \DateInterval('');
+		$dateInterval = new \DateInterval('POY');
 		$dateInterval->y = $y;
 		$dateInterval->m = $m;
 		$dateInterval->d = $d;
