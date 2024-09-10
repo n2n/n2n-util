@@ -394,11 +394,17 @@ class FsPath {
 
 		return $fsPath;
 	}
-	
-	public function getMTime() {
+
+	/**
+	 * @throws FileOperationException
+	 */
+	public function getMTime(): string {
 	    return IoUtils::filemtime($this->path);
 	}
-	
+
+	/**
+	 * @throws FileOperationException
+	 */
 	public function getLastMod(): \DateTime {
 		$mDateTime = new \DateTime();
 		$mDateTime->setTimestamp(IoUtils::filemtime($this->path));
