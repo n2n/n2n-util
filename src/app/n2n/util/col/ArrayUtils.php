@@ -85,7 +85,7 @@ class ArrayUtils {
 	 * @param array $array
 	 * @return mixed|null
 	 */
-	public static function current(array &$array): mixed {
+	public static function current(array $array): mixed {
 		if (false !== ($result = current($array))) {
 			return $result;
 		}
