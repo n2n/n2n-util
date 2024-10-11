@@ -86,6 +86,7 @@ class ArrayUtils {
 	 * @return mixed|null
 	 */
 	public static function current(array $array): mixed {
+		$refArr = $array;
 		if (false !== ($result = current($array))) {
 			return $result;
 		}
