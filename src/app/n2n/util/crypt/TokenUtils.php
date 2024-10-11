@@ -29,7 +29,7 @@ class TokenUtils {
 	*
 	* @throws IllegalStateException if the `random_bytes()` function fails.
 	 */
-	public static function uuid4(): string {
+	public static function uuidv4(): string {
 		$data = IllegalStateException::try(fn() => random_bytes(16));
 
 		$data[6] = chr(ord($data[6]) & 0x0f | 0x40);
