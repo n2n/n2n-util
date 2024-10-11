@@ -6,6 +6,15 @@ use n2n\util\ex\IllegalStateException;
 
 class TokenUtils {
 
+	/**
+	 * Creates cryptographically secure random code
+	 *
+	 * @return string
+	 */
+	static function createRandom(): string {
+		return bin2hex(IllegalStateException::try(fn() => random_bytes(16)));
+	}
+
 
 	/**
 	* The UUID is generated using random bytes, with specific bits modified
