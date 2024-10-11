@@ -20,7 +20,7 @@ class TokenUtilsTest extends TestCase {
 	 * Test that UUIDv4 matches the correct format.
 	 */
 	public function testUuid4Format() {
-		$uuid = TokenUtils::uuid4();
+		$uuid = TokenUtils::uuidv4();
 
 		// UUIDv4 format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
 		$this->assertMatchesRegularExpression(
@@ -32,7 +32,7 @@ class TokenUtilsTest extends TestCase {
 	 * Test that the version character of UUIDv4 is '4'.
 	 */
 	public function testUuid4Version() {
-		$uuid = TokenUtils::uuid4();
+		$uuid = TokenUtils::uuidv4();
 		$versionChar = $uuid[14]; // 15th character (0-based index)
 		$this->assertEquals('4', $versionChar, 'UUIDv4 version character is not "4".');
 	}
@@ -41,7 +41,7 @@ class TokenUtilsTest extends TestCase {
 	 * Test that the variant character of UUIDv4 is one of '8', '9', 'A', or 'B'.
 	 */
 	public function testUuid4Variant() {
-		$uuid = TokenUtils::uuid4();
+		$uuid = TokenUtils::uuidv4();
 		$variantChar = strtolower($uuid[19]); // 20th character (0-based index)
 
 		$this->assertContains($variantChar, ['8', '9', 'a', 'b'], 'UUIDv4 variant character is not valid.');
@@ -51,7 +51,7 @@ class TokenUtilsTest extends TestCase {
 	 * Test that UUIDv4 returns a string.
 	 */
 	public function testUuid4ReturnsString() {
-		$uuid = TokenUtils::uuid4();
+		$uuid = TokenUtils::uuidv4();
 		$this->assertIsString($uuid, 'UUIDv4 does not return a string.');
 	}
 
