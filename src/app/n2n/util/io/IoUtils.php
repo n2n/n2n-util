@@ -769,7 +769,7 @@ class IoUtils {
 	 * @throws IoException
 	 * @return array
 	 */
-	public static function getimagesize($filename) {
+	public static function getimagesize(string $filename) {
 		$size = null;
 		try {
 			$size = self::valReturn(@getimagesize($filename));
