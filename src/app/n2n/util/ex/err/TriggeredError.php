@@ -42,6 +42,10 @@ abstract class TriggeredError extends \Error {
 		return $this->getCode();
 	}
 
+	function isBadRequest(): bool {
+		return self::isPrevBadRequestMessage($this->message);
+	}
+
 	static function create(int $type, string $errstr, string $errfile, int $errline): TriggeredError {
 		return match ($type) {
 //			E_ERROR, E_USER_ERROR, E_COMPILE_ERROR, E_CORE_ERROR => new FatalError($errstr, $type, $errfile, $errline),
@@ -64,5 +68,18 @@ abstract class TriggeredError extends \Error {
 
 		return self::create($lastErrData['type'], $lastErrData['message'],
 				$lastErrData['file'], $lastErrData['line']);
+	}
+
+	// 	Warning: POST Content-Length of 60582676 bytes exceeds the limit of 8388608 bytes in Unknown on line 0
+	const POST_LENGTH_ERROR_MSG_PREFIX = 'POST Content-Length';
+	// 	Warning: Maximum number of allowable file uploads has been exceeded in Unknown on line 0
+	const UPLOAD_NUM_ERROR_MSG_PREFIX = 'Maximum number';
+	// Warning: Unknown: Input variables exceeded 2. To increase the limit change max_input_vars in php.ini. in Unknown on line 0
+	const INPUT_VARS_NUM_ERROR_MSG_PREFIX = 'Unknown: Input variables exceeded';
+
+	private static function isPrevBadRequestMessage($message): bool {
+		return str_starts_with($message, self::POST_LENGTH_ERROR_MSG_PREFIX)
+				|| str_starts_with($message, self::UPLOAD_NUM_ERROR_MSG_PREFIX)
+				|| str_starts_with($message, self::INPUT_VARS_NUM_ERROR_MSG_PREFIX);
 	}
 }
