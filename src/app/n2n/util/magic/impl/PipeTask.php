@@ -22,13 +22,15 @@ class PipeTask implements MagicTask {
 		return $this;
 	}
 
-	function exec(MagicContext $magicContext): TaskResult {
+	function exec(MagicContext $magicContext = null, mixed $input = null): TaskResult {
+		$magicContext ??= MagicContexts::simple([]);
+
 		$lastTaskResult = null;
 		foreach ($this->steps as $step) {
 			if ($step instanceof MagicTask) {
-				$lastTaskResult = $step->exec($magicContext);
+				$lastTaskResult = $step->exec($magicContext, $input);
 			} else if ($step instanceof \Closure) {
-				$lastTaskResult = $this->invokeClosure($step, $magicContext, $lastTaskResult);
+				$lastTaskResult = $this->invokeClosure($step, $magicContext, $lastTaskResult, $input);
 			} else {
 				throw new IllegalStateException('Invalid step type: ' . get_class($step));
 			}
@@ -36,11 +38,14 @@ class PipeTask implements MagicTask {
 			if (!$lastTaskResult->isValid()) {
 				return $lastTaskResult;
 			}
+
+			$input = $lastTaskResult->get();
 		}
 		return $lastTaskResult ?? TaskResults::valid();
 	}
 
-	private function invokeClosure(\Closure $closure, MagicContext $magicContext, ?TaskResult $lastTaskResult): TaskResult {
+	private function invokeClosure(\Closure $closure, MagicContext $magicContext, ?TaskResult $lastTaskResult,
+			mixed $input): TaskResult {
 		$invoker = new MagicMethodInvoker($magicContext);
 		$invoker->setClosure($closure);
 		$invoker->setReturnTypeConstraint(TypeConstraints::type([TaskResult::class, MagicTask::class]));
@@ -55,6 +60,6 @@ class PipeTask implements MagicTask {
 			return $result;
 		}
 
-		return $result->exec($magicContext);
+		return $result->exec($magicContext, $input);
 	}
 }

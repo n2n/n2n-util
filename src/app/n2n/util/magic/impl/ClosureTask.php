@@ -14,7 +14,9 @@ class ClosureTask implements MagicTask {
 
 	}
 
-	function exec(MagicContext $magicContext): TaskResult {
+	function exec(MagicContext $magicContext = null, mixed $input = null): TaskResult {
+		$magicContext ??= MagicContexts::simple([]);
+
 		$invoker = new MagicMethodInvoker($magicContext);
 		$invoker->setClosure($this->closure);
 		$invoker->setReturnTypeConstraint(TypeConstraints::type([TaskResult::class, MagicTask::class]));
@@ -25,6 +27,6 @@ class ClosureTask implements MagicTask {
 		}
 
 		IllegalStateException::assertTrue($result instanceof MagicTask);
-		return $result->exec($magicContext);
+		return $result->exec($magicContext, $input);
 	}
 }

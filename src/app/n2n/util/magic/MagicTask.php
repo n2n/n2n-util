@@ -27,9 +27,10 @@ namespace n2n\util\magic;
 interface MagicTask {
 
 	/**
-	 * @param MagicContext
+	 * @param MagicContext|null $magicContext
+	 * @param mixed|null $input
 	 * @return TaskResult<T>
 	 * @throws MagicTaskExecutionException
 	 */
-	function exec(MagicContext $magicContext): TaskResult;
+	function exec(MagicContext $magicContext = null, mixed $input = null): TaskResult;
 }
