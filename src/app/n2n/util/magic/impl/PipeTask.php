@@ -44,17 +44,12 @@ class PipeTask implements MagicTask {
 		return $lastTaskResult ?? TaskResults::valid();
 	}
 
-	private function invokeClosure(\Closure $closure, MagicContext $magicContext, ?TaskResult $lastTaskResult,
-			mixed $input): TaskResult {
+	private function invokeClosure(\Closure $closure, MagicContext $magicContext, mixed $input): TaskResult {
 		$invoker = new MagicMethodInvoker($magicContext);
 		$invoker->setClosure($closure);
 		$invoker->setReturnTypeConstraint(TypeConstraints::type([TaskResult::class, MagicTask::class]));
 
-		$firstArgs = [];
-		if ($lastTaskResult !== null) {
-			$firstArgs[] = $lastTaskResult;
-		}
-		$result = $invoker->invoke(firstArgs: $firstArgs);
+		$result = $invoker->invoke(firstArgs: [$input]);
 
 		if ($result instanceof TaskResult) {
 			return $result;
