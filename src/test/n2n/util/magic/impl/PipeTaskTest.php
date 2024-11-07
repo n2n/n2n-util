@@ -43,7 +43,7 @@ class PipeTaskTest extends TestCase {
 	 */
 	function testPipeWithClosuredMagicTasks(): void {
 		$magicTask1 = $this->createMock(MagicTask::class);
-		$magicTask1->expects($this->once())->method('exec')->willReturn(TaskResults::valid('holeradio'));
+		$magicTask1->expects($this->once())->method('exec')->willReturn(TaskResults::valid('initial-holeradio'));
 
 		$magicTask2 = $this->createMock(MagicTask::class);
 		$magicTask2->expects($this->once())
@@ -57,6 +57,10 @@ class PipeTaskTest extends TestCase {
 		$this->assertFalse(
 				MagicTasks::pipe(
 						fn () => $magicTask1,
+						function (string $arg) {
+							$this->assertEquals('initial-holeradio', $arg);
+							return 'holeradio';
+						},
 						function (string $arg) use ($magicTask2) {
 							$this->assertEquals('holeradio', $arg);
 							return $magicTask2;
