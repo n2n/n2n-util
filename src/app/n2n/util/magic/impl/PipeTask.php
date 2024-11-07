@@ -7,6 +7,7 @@ use n2n\util\magic\TaskResult;
 use n2n\util\magic\MagicContext;
 use n2n\util\type\TypeConstraints;
 use n2n\util\ex\IllegalStateException;
+use n2n\util\magic\MagicTaskExecutionException;
 
 class PipeTask implements MagicTask {
 
@@ -44,10 +45,12 @@ class PipeTask implements MagicTask {
 		return $lastTaskResult ?? TaskResults::valid();
 	}
 
+	/**
+	 * @throws MagicTaskExecutionException
+	 */
 	private function invokeClosure(\Closure $closure, MagicContext $magicContext, mixed $input): TaskResult {
 		$invoker = new MagicMethodInvoker($magicContext);
 		$invoker->setClosure($closure);
-		$invoker->setReturnTypeConstraint(TypeConstraints::type([TaskResult::class, MagicTask::class]));
 
 		$result = $invoker->invoke(firstArgs: [$input]);
 
@@ -55,6 +58,10 @@ class PipeTask implements MagicTask {
 			return $result;
 		}
 
-		return $result->exec($magicContext, $input);
+		if ($result instanceof MagicTask) {
+			return $result->exec($magicContext, $input);
+		}
+
+		return TaskResults::valid($result);
 	}
 }

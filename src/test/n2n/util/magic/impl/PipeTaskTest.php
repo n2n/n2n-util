@@ -57,8 +57,8 @@ class PipeTaskTest extends TestCase {
 		$this->assertFalse(
 				MagicTasks::pipe(
 						fn () => $magicTask1,
-						function (TaskResult $tr) use ($magicTask2) {
-							$this->assertEquals('holeradio', $tr->get());
+						function (string $arg) use ($magicTask2) {
+							$this->assertEquals('holeradio', $arg);
 							return $magicTask2;
 						},
 						fn () => $magicTask3)
