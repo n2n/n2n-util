@@ -30,7 +30,7 @@ class PipeTask implements MagicTask {
 			if ($step instanceof MagicTask) {
 				$lastTaskResult = $step->exec($magicContext, $input);
 			} else if ($step instanceof \Closure) {
-				$lastTaskResult = $this->invokeClosure($step, $magicContext, $lastTaskResult, $input);
+				$lastTaskResult = $this->invokeClosure($step, $magicContext, $input);
 			} else {
 				throw new IllegalStateException('Invalid step type: ' . get_class($step));
 			}
