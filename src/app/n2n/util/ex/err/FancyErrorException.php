@@ -39,9 +39,9 @@ class FancyErrorException extends \ErrorException implements Documentable, Enhan
 	 * @param int $endLine
 	 * @param \Exception $previous
 	 */
-	public function __construct(string $message = null, string $file = null, int $line = null, 
-			int $startLine = null, int $endLine = null, \Exception $previous = null, 
-			string $documentId = null, int $code = null, int $severity = E_USER_ERROR) {
+	public function __construct(?string $message = null, ?string $file = null, ?int $line = null,
+			?int $startLine = null, ?int $endLine = null, ?\Exception $previous = null,
+			?string $documentId = null, ?int $code = null, int $severity = E_USER_ERROR) {
 		parent::__construct((string) $message, (int) $code, $severity, $file, $line, $previous);
 		 
 		$this->startLine = $startLine;
@@ -63,8 +63,8 @@ class FancyErrorException extends \ErrorException implements Documentable, Enhan
 		return $this->documentId;
 	}
 	
-	public function addAdditionalError(string $fileFsPath, int $line = null, int $startLine = null, 
-			int $endLine = null, string $description = null) {
+	public function addAdditionalError(string $fileFsPath, ?int $line = null, ?int $startLine = null,
+			?int $endLine = null, ?string $description = null) {
 		$this->additionalErrors[] = new AdditionalError($description, $fileFsPath, $line, $startLine, $endLine);
 	}
 	

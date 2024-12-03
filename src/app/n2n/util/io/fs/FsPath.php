@@ -138,7 +138,7 @@ class FsPath {
 	 * 
 	 * @param string $perm
 	 */
-	public function mkdirs(int|string $perm = null): void {
+	public function mkdirs(int|string|null $perm = null): void {
 		if ($this->isDir()) return;
 
 		try {

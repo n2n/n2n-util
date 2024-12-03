@@ -393,7 +393,7 @@ class IoUtils {
 	 * @return string
 	 * @throws IoResourceException
 	 */
-	public static function fread($handle, int $length = null) {
+	public static function fread($handle, ?int $length = null) {
 		$str = self::valReturn(@fread($handle, $length));
 		if (false === $str) {
 			throw new IoResourceException('Could not read from file');
@@ -408,7 +408,7 @@ class IoUtils {
 	 * @return string
 	 * @throws IoResourceException
 	 */
-	public static function fgets($handle, int $length = null): string {
+	public static function fgets($handle, ?int $length = null): string {
 		return self::valReturn(@fgets($handle, $length));
 	}
 

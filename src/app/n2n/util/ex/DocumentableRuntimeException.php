@@ -24,7 +24,7 @@ namespace n2n\util\ex;
 class DocumentableRuntimeException extends \RuntimeException implements Documentable {
 	private $documentId;
 
-	public function __construct(string $message = null, int $code = null, \Throwable $previous = null, $documentId = null) {
+	public function __construct(?string $message = null, ?int $code = null, ?\Throwable $previous = null, $documentId = null) {
 		parent::__construct($message ?? '', $code ?? 0, $previous);
 		$this->documentId = $documentId;
 	}

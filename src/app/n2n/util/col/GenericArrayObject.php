@@ -26,7 +26,7 @@ use n2n\util\type\ArgUtils;
 class GenericArrayObject extends \ArrayObject implements Collection {
 	private $genericType;
 	
-	public function __construct(array $array = null, $genericType = null) {
+	public function __construct(?array $array = null, $genericType = null) {
 		ArgUtils::valArray($array, $genericType, true);
 
 		parent::__construct((array) $array);

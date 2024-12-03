@@ -39,8 +39,8 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 	 * @param mixed $documentId
 	 * @param mixed $code
 	 */
-	public function __construct(string $message = null, string $file = null, int $line = null, 
-			int $startLine = null, int $endLine = null, \Throwable $previous = null, 
+	public function __construct(?string $message = null, ?string $file = null, ?int $line = null,
+			?int $startLine = null, ?int $endLine = null, ?\Throwable $previous = null,
 			$documentId = null, $code = null) {
 		parent::__construct((string) $message, $code ?? 0, $previous);
 		 
@@ -67,8 +67,8 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 		return $this->documentId;
 	}
 	
-	public function addAdditionalError(string $file, int $line = null, int $startLine = null, 
-		int $endLine = null, string $description = null) {
+	public function addAdditionalError(string $file, ?int $line = null, ?int $startLine = null,
+		?int $endLine = null, ?string $description = null) {
 		$this->additionalErrors[] = new AdditionalError($description, $file, $line, $startLine, $endLine);
 	}
 	

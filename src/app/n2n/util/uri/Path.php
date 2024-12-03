@@ -174,7 +174,7 @@ final class Path {
 		return $this->toRealString($this->leadingDelimiter, $this->endingDelimiter);
 	}
 	
-	public function toRealString(bool $leadingDelimiter = null, bool $endingDelimiter = null) {
+	public function toRealString(?bool $leadingDelimiter = null, ?bool $endingDelimiter = null) {
 		if ($leadingDelimiter === null) $leadingDelimiter = $this->leadingDelimiter;
 		if ($endingDelimiter === null) $endingDelimiter = $this->endingDelimiter;
 		
@@ -313,7 +313,7 @@ final class Path {
 	 * @return \n2n\util\uri\Path
 	 * @todo make new
 	 */
-	public function sub(int $start, int $num = null) {
+	public function sub(int $start, ?int $num = null) {
 		$pathParts = $this->getPathParts();
 		$numPathParts = count($pathParts);
 		if ($start < 0) {

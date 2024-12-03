@@ -14,7 +14,7 @@ class ClosureTask implements MagicTask {
 
 	}
 
-	function exec(MagicContext $magicContext = null, mixed $input = null): TaskResult {
+	function exec(?MagicContext $magicContext = null, mixed $input = null): TaskResult {
 		$magicContext ??= MagicContexts::simple([]);
 
 		$invoker = new MagicMethodInvoker($magicContext);

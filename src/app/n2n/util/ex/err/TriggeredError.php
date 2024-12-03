@@ -22,7 +22,6 @@
 namespace n2n\util\ex\err;
 
 use n2n\util\ex\err\impl\WarningError;
-use n2n\util\ex\err\impl\StrictError;
 use n2n\util\ex\err\impl\NoticeError;
 use n2n\util\ex\err\impl\RecoverableError;
 use n2n\util\ex\err\impl\ParseError;
@@ -30,8 +29,8 @@ use n2n\util\ex\err\impl\FatalError;
 use n2n\util\ex\err\impl\DeprecatedError;
 
 abstract class TriggeredError extends \Error {
-	public function __construct(string $message, int $code = null, string $fileFsPath = null,
-			int $line = null, \Throwable $previous = null) {
+	public function __construct(string $message, ?int $code = null, ?string $fileFsPath = null,
+			?int $line = null, ?\Throwable $previous = null) {
 		parent::__construct($message, $code ?? 0, $previous);
 
 		$this->file = $fileFsPath;
@@ -52,7 +51,7 @@ abstract class TriggeredError extends \Error {
 			E_WARNING, E_USER_WARNING, E_COMPILE_WARNING, E_CORE_WARNING => new WarningError($errstr, $type, $errfile, $errline),
 			E_NOTICE, E_USER_NOTICE => new NoticeError($errstr, $type, $errfile, $errline),
 			E_RECOVERABLE_ERROR => new RecoverableError($errstr, $type, $errfile, $errline),
-			E_STRICT => new StrictError($errstr, $type, $errfile, $errline),
+//			E_STRICT => new StrictError($errstr, $type, $errfile, $errline),
 			E_PARSE => new ParseError($errstr, $type, $errfile, $errline),
 			E_DEPRECATED, E_USER_DEPRECATED => new DeprecatedError($errstr, $type, $errfile, $errline),
 			default => new FatalError($errstr, $type, $errfile, $errline),

@@ -53,7 +53,7 @@ class SimpleMagicContext implements MagicContext {
 		return isset($this->objs[$id]);
 	}
 
-	public function lookup(string|\ReflectionClass $id, bool $required = true, string $contextNamespace = null): mixed {
+	public function lookup(string|\ReflectionClass $id, bool $required = true, ?string $contextNamespace = null): mixed {
 		if ($id instanceof \ReflectionClass) {
 			$id = $id->getName();
 		}

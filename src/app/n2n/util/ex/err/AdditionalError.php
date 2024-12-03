@@ -28,7 +28,7 @@ class AdditionalError {
 	private $startLineNo;
 	private $endLineNo;
 	
-	public function __construct(string $description = null, string $fileFsPath, $line = null, $startLine = null, $endLine = null) {
+	public function __construct(?string $description = null, string $fileFsPath, $line = null, $startLine = null, $endLine = null) {
 		$this->description = $description;
 		$this->filePath = $fileFsPath;
 		$this->lineNo = $line;

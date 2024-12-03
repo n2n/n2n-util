@@ -20,7 +20,7 @@ class Version {
 	 * @param string $stage
 	 * @param array $stageNums
 	 */
-	function __construct(array $nums, string $stage = null, array $stageNums = array()) {
+	function __construct(array $nums, ?string $stage = null, array $stageNums = array()) {
 		ArgUtils::valArray($nums, 'int');
 		$this->nums = $nums;
 		ArgUtils::valArray($stageNums, 'int');

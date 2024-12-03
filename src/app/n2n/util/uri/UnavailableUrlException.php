@@ -24,7 +24,7 @@ namespace n2n\util\uri;
 class UnavailableUrlException extends \RuntimeException {
 	private $critical;
 
-	public function __construct(bool $critical, string $message = null, int $code = null, \Throwable $previous = null) {
+	public function __construct(bool $critical, ?string $message = null, ?int $code = null, ?\Throwable $previous = null) {
 		parent::__construct((string) $message, (int) $code, $previous);
 
 		$this->critical = $critical;

@@ -37,7 +37,7 @@ class ArgUtils {
 // 						'paramNo' => $paramNo + 1, 'allowedValues' => implode(', ', $options))));
 // 	}
 
-	private static function buildExMsgStart(string $parameterName = null) {
+	private static function buildExMsgStart(?string $parameterName = null) {
 		if ($parameterName === null) {
 			return 'Passed parameter';
 		}
@@ -86,7 +86,7 @@ class ArgUtils {
 		return new \InvalidArgumentException('Invalid arguments passed to argument validation api. Nice job!');
 	}
 	
-	public static function valType($param, $expectedType, bool $nullAllowed = false, string $parameterName = null) {
+	public static function valType($param, $expectedType, bool $nullAllowed = false, ?string $parameterName = null) {
 		if (TypeUtils::isValueA($param, $expectedType, $nullAllowed)) return;
 	
 		throw new \InvalidArgumentException(self::buildExMsgStart($parameterName)
@@ -102,7 +102,7 @@ class ArgUtils {
 				. TypeUtils::getTypeInfo($returnedValue) . ' given.');
 	}
 
-	public static function valObject($param, bool $nullAllowed = false, string $parameterName = null) {
+	public static function valObject($param, bool $nullAllowed = false, ?string $parameterName = null) {
 		self::valType($param, 'object', $nullAllowed, $parameterName);
 	}
 	
@@ -110,7 +110,7 @@ class ArgUtils {
 		self::valTypeReturn($returnedValue, 'object', $object, $method, $nullAllowed);
 	}
 	
-	public static function valScalar($param, bool $nullAllowed = false, string $parameterName = null) {
+	public static function valScalar($param, bool $nullAllowed = false, ?string $parameterName = null) {
 		self::valType($param, 'scalar', $nullAllowed, $parameterName);
 	}
 	
@@ -118,7 +118,7 @@ class ArgUtils {
 		self::valTypeReturn($returnedValue, 'scalar', $object, $method, $nullAllowed);
 	}
 	
-	public static function valEnum($value, array $allowedValues, array $valueLables = null, $nullAllowed = false, 
+	public static function valEnum($value, array $allowedValues, ?array $valueLables = null, $nullAllowed = false,
 			$parameterName = null) {
 		if (($value === null && $nullAllowed) || in_array($value, $allowedValues, true)) return;
 		
@@ -127,7 +127,7 @@ class ArgUtils {
 				. implode(', ', ($valueLables !== null ? $valueLables : $allowedValues)));
 	}
 	
-	public static function valEnumReturn($returnedValue, array $allowedValues, $object, $method, array $valueLables = null, 
+	public static function valEnumReturn($returnedValue, array $allowedValues, $object, $method, ?array $valueLables = null,
 			bool $nullAllowed = false) {
 		if (($returnedValue === null && $nullAllowed) || ArrayUtils::inArrayLike($returnedValue, $allowedValues)) return;
 
@@ -137,7 +137,7 @@ class ArgUtils {
 	}
 	
 	public static function valArray($value, $expectedFieldType, bool $nullAllowed = false, 
-			string $parameterName = null) {
+			?string $parameterName = null) {
 		if ($value === null && $nullAllowed) return;
 		
 		if (!is_array($value)) {
@@ -172,7 +172,7 @@ class ArgUtils {
 	}
 	
 	public static function valArrayLike($value, $expectedFieldType = null, bool $nullAllowed = false, 
-			string $parameterName = null) {
+			?string $parameterName = null) {
 		if ($value === null && $nullAllowed) return;
 		
 		if (!ArrayUtils::isArrayLike($value)) {
@@ -237,7 +237,7 @@ class ArgUtils {
 		}
 	}
 	
-	public static function assertTrueReturn($arg, $object, $method, string $exMessage = null) {
+	public static function assertTrueReturn($arg, $object, $method, ?string $exMessage = null) {
 		if ($arg === true) return;
 		
 		throw new \InvalidArgumentException(self::buildFunctionName($object, $method)

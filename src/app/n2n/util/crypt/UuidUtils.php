@@ -10,7 +10,7 @@ class UuidUtils {
 	 * @param string|null $data
 	 * @return string
 	 */
-	static function uuidv4(string $data = null): string {
+	static function uuidv4(?string $data = null): string {
 		return TokenUtils::uuidv4($data);
 	}
 

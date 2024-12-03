@@ -27,5 +27,5 @@ interface Linkable {
 	 * @throws UnavailableUrlException 
 	 * @return \n2n\util\uri\Url
 	 */
-	public function toUrl(string &$suggestedLabel = null): Url;
+	public function toUrl(?string &$suggestedLabel = null): Url;
 }

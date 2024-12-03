@@ -26,7 +26,7 @@ namespace n2n\util\ex;
  * is not in an appropriate state for the requested operation.
  */
 class IllegalStateException extends \RuntimeException {
-	public static function assertTrue($arg, string $exMessage = null) {
+	public static function assertTrue($arg, ?string $exMessage = null) {
 		if ($arg === true) return;
 			
 		throw new IllegalStateException($exMessage ?? '');

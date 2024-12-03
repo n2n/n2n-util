@@ -70,7 +70,7 @@ class DateUtils {
 	 * @throws \n2n\util\DateParseException
 	 * @return \DateTime
 	 */
-	public static function createDateTimeFromFormat($format, $dateTimeString, \DateTimeZone $timeZone = null) {
+	public static function createDateTimeFromFormat($format, $dateTimeString, ?\DateTimeZone $timeZone = null) {
 		if (null === $timeZone) {
 			$dateTime = @\DateTime::createFromFormat($format, $dateTimeString);
 		} else {

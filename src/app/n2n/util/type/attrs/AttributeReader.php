@@ -40,7 +40,7 @@ interface AttributeReader {
 	 * @throws InvalidAttributeException
 	 * @throws MissingAttributeFieldException
 	 */
-	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true,
+	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true,
 			mixed $defaultValue = null): mixed;
 }
 

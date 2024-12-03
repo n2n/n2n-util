@@ -39,7 +39,7 @@ class DataMap implements AttributeReader, AttributeWriter {
 	 *
 	 * @param array $attrs
 	 */
-	public function __construct(array $data = null) {
+	public function __construct(?array $data = null) {
 		$this->data = (array) $data;
 	}
 
@@ -118,7 +118,7 @@ class DataMap implements AttributeReader, AttributeWriter {
 	 * {@inheritDoc}
 	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
 	 */
-	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, 
+	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true, 
 			mixed $defaultValue = null): mixed {
 		if ($mandatory) {
 			return $this->req($path, $typeConstraint);

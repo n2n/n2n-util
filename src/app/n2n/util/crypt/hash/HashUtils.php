@@ -26,7 +26,7 @@ use n2n\util\crypt\hash\algorithm\BlowfishAlgorithm;
 
 class HashUtils {
 	
-	public static function buildHash(string $str, HashAlgorithm $hashAlgorithm = null): string {
+	public static function buildHash(string $str, ?HashAlgorithm $hashAlgorithm = null): string {
 		if ($hashAlgorithm === null) {
 			$hashAlgorithm = new BlowfishAlgorithm();
 		}

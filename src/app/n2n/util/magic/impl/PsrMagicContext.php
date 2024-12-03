@@ -47,7 +47,7 @@ class PsrMagicContext implements MagicContext {
 		return $this->container->has($id);
 	}
 
-	public function lookup(string|\ReflectionClass $id, bool $required = true, string $contextNamespace = null): mixed {
+	public function lookup(string|\ReflectionClass $id, bool $required = true, ?string $contextNamespace = null): mixed {
 		if (!$required && !$this->container->has($id)) {
 			return null;
 		}

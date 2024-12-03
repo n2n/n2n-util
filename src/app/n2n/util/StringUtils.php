@@ -438,7 +438,7 @@ class StringUtils {
 	 * @throws RegexSyntaxException
 	 * @return number
 	 */
-	public static function pregMatch($pattern, $subject, array &$matches = null, $flags = 0, $offset = 0) {
+	public static function pregMatch($pattern, $subject, ?array &$matches = null, $flags = 0, $offset = 0) {
 		if (false !== ($result = @preg_match($pattern, $subject, $matches, $flags, $offset))) {
 			return $result;
 		}

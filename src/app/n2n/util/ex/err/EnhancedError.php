@@ -26,8 +26,8 @@ interface EnhancedError {
 	
 	public function getEndLine();
 	
-	public function addAdditionalError(string $filePath, int $line = null, int $startLine = null, int $endLine = null, 
-		string $label = null);
+	public function addAdditionalError(string $filePath, ?int $line = null, ?int $startLine = null, ?int $endLine = null,
+		?string $label = null);
 	
 	/**
 	 * @return AdditionalError[]

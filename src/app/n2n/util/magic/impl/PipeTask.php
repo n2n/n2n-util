@@ -23,7 +23,7 @@ class PipeTask implements MagicTask {
 		return $this;
 	}
 
-	function exec(MagicContext $magicContext = null, mixed $input = null): TaskResult {
+	function exec(?MagicContext $magicContext = null, mixed $input = null): TaskResult {
 		$magicContext ??= MagicContexts::simple([]);
 
 		$lastTaskResult = null;

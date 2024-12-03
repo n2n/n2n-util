@@ -22,7 +22,7 @@
 namespace n2n\util\ex;
 
 class UnsupportedOperationException extends \RuntimeException {
-	public static function assertTrue($arg, string $exMessage = null) {
+	public static function assertTrue($arg, ?string $exMessage = null) {
 		if ($arg === true) return;
 		
 		throw new UnsupportedOperationException($exMessage);

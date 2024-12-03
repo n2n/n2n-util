@@ -36,7 +36,7 @@ class DataSet implements AttributeReader, AttributeWriter {
 	 * 
 	 * @param array $attrs
 	 */
-	public function __construct(array $attrs = null) {
+	public function __construct(?array $attrs = null) {
 		$this->attrs = (array) $attrs;
 	}
 	
@@ -132,7 +132,7 @@ class DataSet implements AttributeReader, AttributeWriter {
 	 * @return mixed|null
 	 * @deprecated use {@see self::req()} or {@see self::opt()}
 	 */
-	public function get($name, bool $mandatory = true, $defaultValue = null, TypeConstraint $typeConstraint = null) {
+	public function get($name, bool $mandatory = true, $defaultValue = null, ?TypeConstraint $typeConstraint = null) {
 		if ($mandatory) {
 			return $this->req($name, $typeConstraint);
 		}
@@ -543,7 +543,7 @@ class DataSet implements AttributeReader, AttributeWriter {
 		return $this->contains((string) $path);
 	}
 
-	function readAttribute(AttributePath $path, TypeConstraint $typeConstraint = null, bool $mandatory = true, mixed $defaultValue = null): mixed {
+	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true, mixed $defaultValue = null): mixed {
 		return $this->retrieve((string) $path, $typeConstraint, $mandatory, $defaultValue);
 	}
 

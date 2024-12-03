@@ -38,6 +38,6 @@ interface MagicContext extends ContainerInterface {
 	 * @throws MagicLookupFailedException general lookup error
 	 * @throws MagicObjectUnavailableException only if $required is true and object was not found.
 	 */
-	function lookup(string|ReflectionClass $id, bool $required = true, string $contextNamespace = null): mixed;
+	function lookup(string|ReflectionClass $id, bool $required = true, ?string $contextNamespace = null): mixed;
 
 }

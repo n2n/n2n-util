@@ -262,7 +262,7 @@ class CanNotFillParameterException extends \ReflectionException {
 	 * @param string $code
 	 * @param \Exception $previous
 	 */
-	public function __construct(\ReflectionParameter $parameter, $message, $code = 0, \Exception $previous = null) {
+	public function __construct(\ReflectionParameter $parameter, $message, $code = 0, ?\Exception $previous = null) {
 		parent::__construct($message, $code, $previous);
 		
 		$this->parameter = $parameter;

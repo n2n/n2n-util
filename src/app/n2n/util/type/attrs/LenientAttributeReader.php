@@ -59,7 +59,7 @@ class LenientAttributeReader {
 	 * @param string $name
 	 * @return mixed
 	 */
-	public function get($name, $fallbackValue = null, TypeConstraint $typeConstraint = null) {
+	public function get($name, $fallbackValue = null, ?TypeConstraint $typeConstraint = null) {
 		try {
 			return $this->attributes->get($name, false, $fallbackValue, $typeConstraint);
 		} catch (AttributesException $e) {

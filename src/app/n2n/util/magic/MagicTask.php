@@ -32,5 +32,5 @@ interface MagicTask {
 	 * @return TaskResult<T>
 	 * @throws MagicTaskExecutionException
 	 */
-	function exec(MagicContext $magicContext = null, mixed $input = null): TaskResult;
+	function exec(?MagicContext $magicContext = null, mixed $input = null): TaskResult;
 }

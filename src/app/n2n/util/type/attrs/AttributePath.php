@@ -66,11 +66,11 @@ class AttributePath {
 	/**
 	 * @deprecated use {@link self::slice()}
 	 */
-	public function slices(int $offset, int $length = null): AttributePath {
+	public function slices(int $offset, ?int $length = null): AttributePath {
 		return new AttributePath(array_slice($this->names, $offset, $length));
 	}
 
-	public function slice(int $offset, int $length = null): AttributePath {
+	public function slice(int $offset, ?int $length = null): AttributePath {
 		return new AttributePath(array_slice($this->names, $offset, $length));
 	}
 

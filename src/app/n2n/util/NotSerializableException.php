@@ -25,7 +25,7 @@ use n2n\util\type\TypeUtils;
 
 class NotSerializableException extends \RuntimeException {
 	
-	public static function createFromObject($obj, \Exception $previous = null) {
+	public static function createFromObject($obj, ?\Exception $previous = null) {
 		return new NotSerializableException('Type not serializable: ' . TypeUtils::getTypeInfo($obj), 0, 
 				$previous);
 	}

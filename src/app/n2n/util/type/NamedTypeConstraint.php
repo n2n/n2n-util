@@ -41,7 +41,7 @@ class NamedTypeConstraint extends TypeConstraint {
 	 * @param TypeConstraint|null $arrayKeyTypeConstraint
 	 */
 	protected function __construct(string $typeName, bool $allowsNull,
-			TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false,
+			?TypeConstraint $arrayFieldTypeConstraint = null, array $whitelistTypes = array(), bool $convertable = false,
 			private ?TypeConstraint $arrayKeyTypeConstraint = null) {
 		$this->typeName = $typeName;
 		$this->allowsNull = $allowsNull || TypeName::isNullable($typeName);
