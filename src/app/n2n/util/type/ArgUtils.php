@@ -71,6 +71,10 @@ class ArgUtils {
 	}
 	
 	private static function prettyExpectedType($expectedType): string {
+		if ($expectedType instanceof TypeConstraint) {
+			return (string) $expectedType;
+		}
+
 		if (!is_array($expectedType)) {
 			return (string) TypeUtils::prettyValue($expectedType);
 		} 
