@@ -247,11 +247,11 @@ class ArrayUtils {
 			$removedValues = array_diff($old, $new);
 		}
 
-		if ($addedCallback) {
+		if ($addedCallback !== null) {
 			array_walk($addedValues, $addedCallback);
 		}
 
-		if ($removedCallback) {
+		if ($removedCallback !== null) {
 			array_walk($removedValues, $removedCallback);
 		}
 	}
