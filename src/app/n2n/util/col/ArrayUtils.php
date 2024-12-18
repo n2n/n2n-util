@@ -228,7 +228,7 @@ class ArrayUtils {
 	 * @return void
 	 */
 	static function diffWalk(array|\ArrayObject $collection, array|\ArrayObject $newCollection,
-			\Closure|null $addedCallback, \Closure|null $removedCallback, bool $strict = true) {
+			\Closure|null $addedCallback, \Closure|null $removedCallback, bool $strict = true): void {
 
 		$old = is_array($collection) ? $collection : $collection->getArrayCopy();
 		$new = is_array($newCollection) ? $newCollection : $newCollection->getArrayCopy();
