@@ -229,44 +229,30 @@ class ArrayUtils {
 	 */
 	static function diffWalk(array|\ArrayObject $collection, array|\ArrayObject $newCollection,
 			\Closure|null $addedCallback, \Closure|null $removedCallback, bool $strict = true): void {
-
 		$old = is_array($collection) ? $collection : $collection->getArrayCopy();
 		$new = is_array($newCollection) ? $newCollection : $newCollection->getArrayCopy();
 
 		if ($strict) {
-			// Create hash maps using serialized values for accurate strict comparison
-			$oldMap = array_flip(array_map('serialize', $old));
-			$newMap = array_flip(array_map('serialize', $new));
-
-			if ($addedCallback) {
-				foreach ($new as $item) {
-					$key = serialize($item);
-					if (!isset($oldMap[$key])) {
-						$addedCallback($item);
-					}
+			$compare = function($a, $b) {
+				if ($a === $b) {
+					return 0;
 				}
-			}
+				return ($a < $b) ? -1 : 1;
+			};
 
-			if ($removedCallback) {
-				foreach ($old as $item) {
-					$key = serialize($item);
-					if (!isset($newMap[$key])) {
-						$removedCallback($item);
-					}
-				}
-			}
+			$addedValues = array_udiff($new, $old, $compare);
+			$removedValues = array_udiff($old, $new, $compare);
 		} else {
-			// Non-strict comparison using array_diff for better performance
-			$added = array_diff($new, $old);
-			$removed = array_diff($old, $new);
+			$addedValues = array_diff($new, $old);
+			$removedValues = array_diff($old, $new);
+		}
 
-			if ($addedCallback) {
-				array_walk($added, $addedCallback);
-			}
+		if ($addedCallback) {
+			array_walk($addedValues, $addedCallback);
+		}
 
-			if ($removedCallback) {
-				array_walk($removed, $removedCallback);
-			}
+		if ($removedCallback) {
+			array_walk($removedValues, $removedCallback);
 		}
 	}
 
