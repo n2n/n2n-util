@@ -25,7 +25,7 @@ use n2n\util\type\ArgUtils;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\UriFactoryInterface;
 
-class Url {
+class Url implements \JsonSerializable {
 	const SCHEME_SEPARATOR = ':';
 	const AUTHORITY_PREFIX = '//';
 	const PATH_PREFIX = Path::DELIMITER;
@@ -367,5 +367,9 @@ class Url {
 
 	public function toPsr(UriFactoryInterface $uriFactory): UriInterface {
 		return $uriFactory->createUri((string) $this);
+	}
+
+	function jsonSerialize(): string {
+		return $this->__toString();
 	}
 }
