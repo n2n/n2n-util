@@ -867,4 +867,22 @@ class IoUtils {
 		}
 		throw new IoException('method returns false');
 	}
+
+	/**
+	 * @param \GdImage $image
+	 * @param int $angle
+	 * @param int $backgroundColor
+	 * @return \GdImage
+	 * @throws IoException
+	 */
+	public static function imageRotate(\GdImage $image, int $angle, int $backgroundColor = 0): \GdImage {
+		try {
+			$result = self::valReturn(imagerotate($image, $angle, $backgroundColor));
+		} catch (\Throwable $e) {
+			throw new IoException('Imagerotate failed. Reason: ' . $e->getMessage(),
+					null, $e);
+		}
+
+		return $result;
+	}
 }

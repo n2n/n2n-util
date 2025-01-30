@@ -13,6 +13,7 @@ class IoUtilsTest extends TestCase {
 	const TEST_PNG = self::TEST_IMAGE_DIR . '/img.png';
 	const TEST_PDF = self::TEST_IMAGE_DIR . '/doc.pdf';
 	const TEST_JPEG = self::TEST_IMAGE_DIR . '/img.jpg';
+	const TEST_JPEG_24 = self::TEST_IMAGE_DIR . '/2x4.jpg';
 	const TEST_WEBP = self::TEST_IMAGE_DIR . '/img.webp';
 	const TEST_GIF = self::TEST_IMAGE_DIR . '/img.gif';
 
@@ -292,6 +293,26 @@ class IoUtilsTest extends TestCase {
 		$sizeArr = IoUtils::getimagesize(self::TEST_PNG);
 		$this->assertIsArray($sizeArr);
 	}
+
+	/**
+	 * @throws IoException
+	 */
+	public function testImageRotate() {
+		$image = IoUtils::imageCreateFromJpeg(self::TEST_JPEG_24);
+		$this->assertEquals(4, imagesx($image));
+		$this->assertEquals(2, imagesy($image));
+		$image = IoUtils::imageRotate($image, 90);
+		$this->assertEquals(2, imagesx($image));
+		$this->assertEquals(4, imagesy($image));
+	}
+
+	/**
+	 * @throws IoException
+	 */
+	function testImageRotateErr() {
+		$this->markTestSkipped('Find out how to cause a error in imagerotate');
+	}
+
 
 	public function testGetImageSizePdf() {
 		$this->expectException(IoException::class);
