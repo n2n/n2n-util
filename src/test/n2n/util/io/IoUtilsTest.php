@@ -310,7 +310,9 @@ class IoUtilsTest extends TestCase {
 	 * @throws IoException
 	 */
 	function testImageRotateErr() {
-		$this->markTestSkipped('Find out how to cause a error in imagerotate');
+		$this->expectException(IoException::class);
+		$image = IoUtils::imageCreateFromJpeg(self::TEST_JPEG_24);
+		IoUtils::imageRotate($image, 90, -1);
 	}
 
 
