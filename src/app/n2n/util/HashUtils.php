@@ -82,4 +82,16 @@ class HashUtils {
 	
 		throw new \InvalidArgumentException();
 	}
+
+	public static function hashPassword(?string $rawPassword): ?string {
+		if ($rawPassword === null) {
+			return null;
+		}
+
+		return password_hash($rawPassword, PASSWORD_DEFAULT);
+	}
+
+	public static function verifyPassword(string $rawPassword, string $hashedPassword): bool {
+		return password_verify($rawPassword, $hashedPassword);
+	}
 }
