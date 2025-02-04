@@ -31,9 +31,9 @@ use n2n\util\ex\NotYetImplementedException;
 use n2n\util\EnumUtils;
 use n2n\util\ex\IllegalStateException;
 
-class DataMap implements AttributeReader, AttributeWriter {
+class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 
-	private $data;
+	private array $data;
 
 	/**
 	 *
@@ -604,5 +604,9 @@ class DataMap implements AttributeReader, AttributeWriter {
 		$attrs = StringUtils::unserialize($serialized);
 		if (!is_array($attrs)) $attrs = array();
 		return new Attributes($attrs);
+	}
+
+	public function jsonSerialize(): array {
+		return $this->data;
 	}
 }
