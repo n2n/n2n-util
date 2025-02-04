@@ -22,13 +22,14 @@
 namespace n2n\util\magic;
 
 /**
+ * @template I
  * @template T
  */
 interface MagicTask {
 
 	/**
 	 * @param MagicContext|null $magicContext
-	 * @param mixed|null $input
+	 * @param I $input
 	 * @return TaskResult<T>
 	 * @throws MagicTaskExecutionException
 	 */
