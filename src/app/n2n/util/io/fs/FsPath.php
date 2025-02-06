@@ -431,9 +431,20 @@ class FsPath {
 	public function ext($pathExt) {
 		return $this->createExtended($pathExt);
 	}
-	
-	public function chmod(string|int $perm) {
-		IoUtils::chmod($this->path, $perm);
+
+	/**
+	 * @throws FileOperationException
+	 */
+	public function chmod(string|int $perm, bool $omitNoSuchFileOrDirectoryError = false): void {
+		try {
+			IoUtils::chmod($this->path, $perm);
+		} catch (FileOperationException $e) {
+			if ($omitNoSuchFileOrDirectoryError && !$this->exists()) {
+				return;
+			}
+
+			throw $e;
+		}
 	}
 	
 	public function equals($obj) {

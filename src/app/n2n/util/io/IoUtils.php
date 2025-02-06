@@ -283,14 +283,15 @@ class IoUtils {
 					null, $e);
 		}
 	}
+
 	/**
 	 *
 	 * @param string $path
-	 * @param string $filePermission octal string
-	 * @throws IoException
+	 * @param int|string $filePermission octal string
 	 * @return bool
+	 * @throws FileOperationException
 	 */
-	public static function chmod($path, int|string $filePermission = 0777) {
+	public static function chmod(string $path, int|string $filePermission = 0777): bool {
 		if (is_string($filePermission)) {
 			$filePermission = octdec($filePermission);
 		}
