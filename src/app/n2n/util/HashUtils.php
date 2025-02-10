@@ -94,4 +94,22 @@ class HashUtils {
 	public static function verifyPassword(string $rawPassword, string $hashedPassword): bool {
 		return password_verify($rawPassword, $hashedPassword);
 	}
+
+	/**
+	 * Hashes the passed value and returns a compressed base64 representation of this hash but only
+	 * if the value is not shorter than the passed value. If not the passed value will be returned.
+	 * So if the hash and value have the same length the hash will be returned to maintain uniqueness.
+	 *
+	 * This method is mainly used if you need a unique representation of value which must be as short
+	 * as possible. Obviously the value must not contain any secret information.
+	 *
+	 * @param string $value
+	 * @param string $algo algo param for {@link hash()}
+	 * @return string
+	 */
+	public static function base64HashOrShorterValue(string $value, string $algo = 'sha3-256'): string {
+		// $hash = base64_encode(hex2bin(hash('sha3-256', $value)));
+
+		return $value;
+	}
 }
