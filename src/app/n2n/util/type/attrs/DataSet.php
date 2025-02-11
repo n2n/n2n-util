@@ -195,7 +195,10 @@ class DataSet implements AttributeReader, AttributeWriter {
 		
 		return $this->optString($name, $defaultValue, $nullAllowed); 
 	}
-	
+
+	/**
+	 * @throws InvalidAttributeException
+	 */
 	public function reqString(string $name, bool $nullAllowed = false, bool $lenient = true) {
 		if (!$lenient) {
 			return $this->req($name, TypeConstraint::createSimple('string', $nullAllowed));
@@ -338,7 +341,10 @@ class DataSet implements AttributeReader, AttributeWriter {
 		
 		return $this->optArray($name, $fieldType, $defaultValue, $nullAllowed);
 	}
-	
+
+	/**
+	 * @throws InvalidAttributeException
+	 */
 	public function reqArray(string $name, $fieldType = null, bool $nullAllowed = false) {
 		return $this->req($name, TypeConstraint::createArrayLike('array', $nullAllowed, $fieldType));
 	}
