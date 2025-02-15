@@ -274,4 +274,13 @@ class ArrayUtils {
 	static function filterNotNull(array $arr): array {
 		return array_filter($arr, fn ($v) => $v !== null);
 	}
+
+	static function find(iterable $collection, \Closure $callback): mixed {
+		foreach ($collection as $value) {
+			if ($callback($value)) {
+				return $value;
+			}
+		}
+		return null;
+	}
 }
