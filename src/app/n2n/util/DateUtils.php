@@ -23,20 +23,20 @@ namespace n2n\util;
 
 class DateUtils {
 	
-	public static function dateIntervalToSeconds(\DateTime $from, \DateInterval $dateInterval) {
+	public static function dateIntervalToSeconds(\DateTime $from, \DateInterval $dateInterval): int {
 		$to = new \DateTime();
 		$to->setTimestamp($from->getTimestamp());
 		$to->add($dateInterval);
 		return $to->getTimestamp() - $from->getTimestamp();
 	}
 	
-	public static function createDateTimeFromTimestamp(int $unixtimestamp) {
+	public static function createDateTimeFromTimestamp(int $unixTimestamp): \DateTime {
 		$dateTime = new \DateTime();
-		$dateTime->setTimestamp($unixtimestamp);
+		$dateTime->setTimestamp($unixTimestamp);
 		return $dateTime;
 	}
 	
-	public static function createDateTime($dateTimeSpec) {
+	public static function createDateTime(?string $dateTimeSpec): ?\DateTime {
 		if ($dateTimeSpec === null) return null;
 		
 		try {
@@ -46,15 +46,15 @@ class DateUtils {
 		}
 	}
 
-	public static function createDateTimeForThomas($dateTimeSpec = null) {
+	public static function createDateTimeForThomas($dateTimeSpec = null): \DateTime {
 		try {
-			return new \DateTime($dateTimeSpec);
+			return new \DateTime($dateTimeSpec ?? 'now');
 		} catch (\Exception $e) {
 			throw new DateParseException($e->getMessage(), 0, $e);
 		}
 	}	
 	
-	public static function createDateInterval($intervalSpec) {
+	public static function createDateInterval(?string $intervalSpec): ?\DateInterval {
 		if ($intervalSpec === null) return null;
 	
 		try {
@@ -66,11 +66,11 @@ class DateUtils {
 	/**
 	 * @param string $format
 	 * @param string $dateTimeString
-	 * @param \DateTimeZone $timeZone
+	 * @param \DateTimeZone|null $timeZone
 	 * @throws \n2n\util\DateParseException
 	 * @return \DateTime
 	 */
-	public static function createDateTimeFromFormat($format, $dateTimeString, ?\DateTimeZone $timeZone = null) {
+	public static function createDateTimeFromFormat(string $format, string $dateTimeString, ?\DateTimeZone $timeZone = null): \DateTime {
 		if (null === $timeZone) {
 			$dateTime = @\DateTime::createFromFormat($format, $dateTimeString);
 		} else {
@@ -84,7 +84,10 @@ class DateUtils {
 		return $dateTime;
 	}
 	
-	public static function formatDateTime(\DateTime $dateTime, $format) {
+	/**
+	 * @deprecated Useless Method
+	 */
+	public static function formatDateTime(\DateTime $dateTime, string $format): string {
 		$dateTimeString = @$dateTime->format($format);
 		if ($dateTimeString === false) {
 			$message = ($err = error_get_last()) ? $err['message'] : null;
@@ -107,10 +110,10 @@ class DateUtils {
 	}
 	
 	/**
-	 * @param \DateTime $dateTime
-	 * @return NULL|string
+	 * @param \DateTime|null $dateTime
+	 * @return null|string
 	 */
-	static function dateTimeToIso(?\DateTime $dateTime) {
+	static function dateTimeToIso(?\DateTime $dateTime): ?string {
 		if ($dateTime === null) {
 			return null;
 		}
@@ -119,10 +122,10 @@ class DateUtils {
 	}
 	
 	/**
-	 * @param string $iso
-	 * @return NULL|\DateTime
+	 * @param string|null $iso
+	 * @return null|\DateTime
 	 */
-	static function isoToDateTime(?string $iso) {
+	static function isoToDateTime(?string $iso): ?\DateTime {
 		if ($iso === null) {
 			return null;
 		}
@@ -131,10 +134,10 @@ class DateUtils {
 	}
 	
 	/**
-	 * @param string $timestamp
-	 * @return NULL|\DateTime
+	 * @param string|null $timestamp
+	 * @return null|\DateTime
 	 */
-	static function timestampToDateTime(?string $timestamp) {
+	static function timestampToDateTime(?string $timestamp): ?\DateTime {
 		if ($timestamp === null) {
 			return null;
 		}
@@ -143,7 +146,8 @@ class DateUtils {
 	}
 	
 	const SQL_DATE_TIME_FORMAT = 'Y-m-d H:i:s';
-	
+	const SQL_DATE_FORMAT = 'Y-m-d';
+
 	/**
 	 * @param \DateTime|null $dateTime
 	 * @return null|string
@@ -158,7 +162,7 @@ class DateUtils {
 	 * 
 	 * @throws \InvalidArgumentException
 	 */
-	static function sqlToDateTime(?string $sqlDateTimeString) {
+	static function sqlToDateTime(?string $sqlDateTimeString): ?\DateTime {
 		if (null === $sqlDateTimeString) return null;
 		try {
 			return self::createDateTimeFromFormat(self::SQL_DATE_TIME_FORMAT,
@@ -169,7 +173,16 @@ class DateUtils {
 	}
 
 	/**
+	 * @param \DateTime|null $dateTime
+	 * @return null|string
+	 */
+	static function dateToSql(?\DateTimeInterface $dateTime): ?string {
+		return $dateTime?->format(self::SQL_DATE_FORMAT);
+	}
+
+	/**
 	 * @param \DateTime $dateTime
+	 * @return \DateTime
 	 */
 	static function stripTime(\DateTime $dateTime): \DateTime {
 		return $dateTime->setTime(0, 0, 0, 0);
@@ -183,14 +196,10 @@ class DateUtils {
 		return $dateTimeImmutable->setTime(0, 0, 0, 0);
 	}
 
+
 	/**
-	 * @param \DateTimeImmutable $dateTime1
-	 * @param \DateTimeImmutable $dateTime2
-	 * @return int days difference
-	 */
-	/**
-	 * @param \DateTimeImmutable $dateTime1
-	 * @param \DateTimeImmutable $dateTime2
+	 * @param \DateTimeInterface $dateTime1
+	 * @param \DateTimeInterface $dateTime2
 	 * @return int days difference
 	 */
 	static function compareDates(\DateTimeInterface $dateTime1, \DateTimeInterface $dateTime2): int {
