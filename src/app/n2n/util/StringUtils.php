@@ -64,7 +64,13 @@ class StringUtils {
 		
 		return ucfirst($str);
 	}
-	
+
+	public static function strOrNullOf(mixed $arg, bool $lenient = false): ?string {
+		if ($arg === null) {
+			return null;
+		}
+		return self::strOf($arg, $lenient);
+	}
 	
 	public static function strOf($arg, bool $lenient = false) {
 		if ($arg === null || is_scalar($arg) || (is_object($arg) && method_exists($arg, '__toString'))) {
@@ -387,6 +393,30 @@ class StringUtils {
 
 		return $value;
 	}
+
+	public static function containsNonPrintables(string|array|null $value): bool {
+		if ($value === null){
+			return false;
+		}
+		if (is_string($value)) {
+			return preg_match('/[\p{C}]/u', $value) === 1;
+		}
+		if (is_array($value)) {
+			foreach ($value as $key => $fieldValue) {
+				if (is_string($key) && self::containsNonPrintables($key)) {
+					return true;
+				}
+				if ((is_string($fieldValue) || is_array($fieldValue)) && self::containsNonPrintables($fieldValue)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static function isClean(string $value, bool $simpleWhitespaceOnly = true): bool {
+		return preg_match('/[^[:alnum:]\s]/u', $value) === 1;
+	}
 	
 // 	public static function generateBase36Uid($maxLentgh = null) {
 // 		$uid =  base_convert(uniqid(), 16, 36);
@@ -442,7 +472,7 @@ class StringUtils {
 		if (false !== ($result = @preg_match($pattern, $subject, $matches, $flags, $offset))) {
 			return $result;
 		}
-	
+
 		$err = error_get_last();
 		throw new RegexSyntaxException($err['message']);
 	}
