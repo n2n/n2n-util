@@ -37,7 +37,7 @@ class StringUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertEquals('', StringUtils::strOf(null));
 		$this->assertEquals('blubb', StringUtils::strOf('blubb'));
 		$this->assertEquals('value-2', StringUtils::strOf(StringBackedEnumMock::VALUE2));
-		$this->assertEquals('blabla', StringUtils::strOf(new TestObjWithToString('blabla')));
+		$this->assertEquals('first last', StringUtils::strOf(new TestObjWithToString('first', 'last')));
 		$this->assertEquals('stringProperty', StringUtils::strOf((new TestObjWithScalarVariables())->stringProperty));
 		$this->assertEquals(5, StringUtils::strOf((new TestObjWithScalarVariables())->intProperty));
 		$this->assertEquals('3.14', StringUtils::strOf((new TestObjWithScalarVariables())->floatProperty));

@@ -3,13 +3,13 @@
 namespace n2n\util\test;
 
 class TestObjWithToString {
-	private string $value;
+	private array $fullname;
 
-	public function __construct(string $value) {
-		$this->value = $value;
+	public function __construct(string $firstname, string $lastname) {
+		$this->fullname = ['first' => $firstname, 'last' => $lastname];
 	}
 
 	public function __toString(): string {
-		return $this->value;
+		return $this->fullname['first'] . ' ' . $this->fullname['last'];
 	}
 }
