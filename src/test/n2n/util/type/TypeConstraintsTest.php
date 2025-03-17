@@ -6,6 +6,7 @@ use n2n\util\type\mock\TypedMethodsMock;
 use n2n\util\uri\Url;
 use n2n\util\type\mock\StringBackedEnumMock;
 use n2n\util\type\mock\PureEnumMock;
+use DateTime;
 
 class TypeConstraintsTest extends TestCase {
 	
@@ -227,5 +228,21 @@ class TypeConstraintsTest extends TestCase {
 
 		$this->assertEquals(['2-converted' => 'atusch', '3-converted' => 'btusch'],
 				$typeConstraint->validate(['2' => 'atusch', '3' => 'btusch']));
+	}
+
+	function testUnionPassableToUnion() {
+		$typeConstraint1 = TypeConstraints::type(['string', DateTime::class]);
+		$typeConstraint2 = TypeConstraints::type(['string', 'bool', DateTime::class]);
+
+		$this->assertTrue($typeConstraint1->isPassableTo($typeConstraint2));
+		$this->assertFalse($typeConstraint2->isPassableTo($typeConstraint1));
+	}
+
+	function testUnionPassableByUnion() {
+		$typeConstraint1 = TypeConstraints::type(['string', DateTime::class]);
+		$typeConstraint2 = TypeConstraints::type(['string', 'bool', DateTime::class]);
+
+		$this->assertFalse($typeConstraint1->isPassableBy($typeConstraint2));
+		$this->assertTrue($typeConstraint2->isPassableBy($typeConstraint1));
 	}
 }

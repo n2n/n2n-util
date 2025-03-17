@@ -49,6 +49,10 @@ abstract class TypeConstraint implements Constraint {
 	abstract function getNamedTypeConstraints(): array;
 
 	abstract function isMixed(): bool;
+
+	abstract function isPassableBy(TypeConstraint $constraint, bool $ignoreNullAllowed = false): bool;
+
+	abstract function isPassableTo(TypeConstraint $constraint, bool $ignoreNullAllowed = false): bool;
 	
 	/**
 	 * @param string|\ReflectionClass|\ReflectionType|TypeConstraint $type

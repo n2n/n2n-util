@@ -109,7 +109,47 @@ class UnionTypeConstraint extends TypeConstraint {
 
 		return false;
 	}
-	
+
+
+	public function isPassableTo(TypeConstraint $constraint, bool $ignoreNullAllowed = false): bool {
+		$toNamedTypeConstraints = $constraint->getNamedTypeConstraints();
+		foreach ($this->namedTypeConstraints as $namedTypeConstraint) {
+			$passable = false;
+
+			foreach ($toNamedTypeConstraints as $toNamedTypeConstraint) {
+				if ($namedTypeConstraint->isPassableTo($toNamedTypeConstraint, $ignoreNullAllowed)) {
+					$passable = true;
+					break;
+				}
+			}
+
+			if (!$passable) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	function isPassableBy(TypeConstraint $constraint, bool $ignoreNullAllowed = false): bool {
+		foreach ($constraint->getNamedTypeConstraints() as $byNamedTypeConstraint) {
+			$passable = false;
+
+			foreach ($this->namedTypeConstraints as $namedTypeConstraint) {
+				if ($namedTypeConstraint->isPassableBy($byNamedTypeConstraint, $ignoreNullAllowed)) {
+					$passable = true;
+					break;
+				}
+			}
+
+			if (!$passable) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	function getLenientCopy() {
 		return new UnionTypeConstraint(array_map(fn ($ntc) => $ntc->getLenientCopy(), $this->namedTypeConstraints));
 	}

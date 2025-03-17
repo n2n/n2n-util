@@ -271,30 +271,57 @@ class NamedTypeConstraint extends TypeConstraint {
 	 * @param TypeConstraint $constraints
 	 * @return bool
 	 */
-	public function isPassableTo(TypeConstraint $constraints, $ignoreNullAllowed = false) {
-		if ($constraints->isEmpty()) return true;
-		 
-		if (!(TypeUtils::isTypeA($this->getTypeName(), $constraints->getTypeName()) 
-				&& ($ignoreNullAllowed || $constraints->allowsNull() || !$this->allowsNull()))) return false;
-				
-		$arrayFieldConstraints = $constraints->getArrayFieldTypeConstraint();
-		if ($arrayFieldConstraints === null) return true;
-		if ($this->arrayFieldTypeConstraint === null) return true;
-		
-		return $this->arrayFieldTypeConstraint->isPassableTo($arrayFieldConstraints, $ignoreNullAllowed);
+	public function isPassableTo(TypeConstraint $constraint, bool $ignoreNullAllowed = false): bool {
+		foreach ($constraint->getNamedTypeConstraints() as $namedTypeConstraint) {
+			if ($namedTypeConstraint->isEmpty()) {
+				return true;
+			}
+
+			if (!(TypeUtils::isTypeA($this->getTypeName(), $namedTypeConstraint->getTypeName())
+					&& ($ignoreNullAllowed || $namedTypeConstraint->allowsNull() || !$this->allowsNull()))) {
+				continue;
+			}
+
+			$arrayFieldConstraints = $namedTypeConstraint->getArrayFieldTypeConstraint();
+			if ($arrayFieldConstraints === null) {
+				return true;
+			}
+			if ($this->arrayFieldTypeConstraint === null) {
+				return true;
+			}
+
+			if ($this->arrayFieldTypeConstraint->isPassableTo($arrayFieldConstraints, $ignoreNullAllowed)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
-	
-	public function isPassableBy(TypeConstraint $constraints, $ignoreNullAllowed = false) {
+
+	public function isPassableBy(TypeConstraint $constraint, bool $ignoreNullAllowed = false): bool {
 		if ($this->isEmpty()) return true;
 
-		if (!(TypeUtils::isTypeA($constraints->getTypeName(), $this->getTypeName())
-				&& ($ignoreNullAllowed || $this->allowsNull() || !$constraints->allowsNull()))) return false;
-		
-		if ($this->arrayFieldTypeConstraint === null) return true;
-		$arrayFieldConstraints = $constraints->getArrayFieldTypeConstraint();
-		if ($arrayFieldConstraints === null) return true;
+		foreach ($constraint->getNamedTypeConstraints() as $namedTypeConstraint) {
+			if (!(TypeUtils::isTypeA($namedTypeConstraint->getTypeName(), $this->getTypeName())
+					&& ($ignoreNullAllowed || $this->allowsNull() || !$namedTypeConstraint->allowsNull()))) {
+				return false;
+			}
 
-		return $this->arrayFieldTypeConstraint->isPassableBy($arrayFieldConstraints, $ignoreNullAllowed);
+			if ($this->arrayFieldTypeConstraint === null) {
+				continue;
+			}
+
+			$arrayFieldConstraints = $namedTypeConstraint->getArrayFieldTypeConstraint();
+			if ($arrayFieldConstraints === null) {
+				continue;
+			}
+
+			if (!$this->arrayFieldTypeConstraint->isPassableBy($arrayFieldConstraints, $ignoreNullAllowed)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 	
 	public function getLenientCopy() {
