@@ -21,6 +21,8 @@
  */
 namespace n2n\util;
 
+use DateTimeInterface;
+
 class DateUtils {
 	
 	public static function dateIntervalToSeconds(\DateTime $from, \DateInterval $dateInterval): int {
@@ -224,5 +226,15 @@ class DateUtils {
 		$dateInterval->s = $s;
 		$dateInterval->f = $f;
 		return $dateInterval;
+	}
+
+	static function min(\DateTimeInterface ...$dateTimes): ?\DateTimeInterface {
+		$minDateTime = null;
+		foreach ($dateTimes as $dateTime) {
+			if ($minDateTime === null || $minDateTime > $dateTime) {
+				$minDateTime = $dateTime;
+			}
+		}
+		return $minDateTime;
 	}
 }

@@ -196,4 +196,14 @@ class DateUtilsTest extends TestCase {
 
 		$this->assertEquals($dateInterval, DateUtils::dateInterval(m: 1, d: 1));
 	}
+
+	function testMin() {
+		$dateTime1 = new \DateTime('2025-11-17 08:30:45');
+		$dateTime2 = new \DateTime('2025-11-18 08:30:45');
+		$dateTime3 = new \DateTime('2025-11-18 08:30:46');
+
+		$this->assertSame($dateTime1, DateUtils::min($dateTime1, $dateTime2, $dateTime3));
+		$this->assertSame($dateTime1, DateUtils::min($dateTime3, $dateTime1, $dateTime2));
+		$this->assertSame($dateTime1, DateUtils::min($dateTime3, $dateTime2, $dateTime1));
+	}
 }
