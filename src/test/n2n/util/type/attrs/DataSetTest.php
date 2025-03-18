@@ -17,4 +17,14 @@ class DataSetTest extends TestCase {
 		$this->assertEquals(PureEnumMock::CASE2,
 				$dataSet->reqEnum('key2', PureEnumMock::cases()));
 	}
+
+	/**
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
+	 */
+	function testReadAttributeEmpty(): void {
+		$dataSet = new DataSet(['key1' => 'value-1']);
+
+		$this->assertSame(['key1' => 'value-1'], $dataSet->readAttribute(new AttributePath([])));
+	}
 }
