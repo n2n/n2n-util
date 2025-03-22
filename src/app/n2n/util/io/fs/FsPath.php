@@ -325,7 +325,7 @@ class FsPath {
 	 * @throws FileOperationException
 	 * @throws IoException
 	 */
-	public function moveFile($fsPath, int|string|null $filePerm, bool $overwrite = false): FsPath {
+	public function moveFile($fsPath, int|string|null $filePerm = null, bool $overwrite = false): FsPath {
 		$fsPath = $this->prepareFileFsPath($fsPath, $overwrite);
 		if (is_file($fsPath)) {
 			IoUtils::unlink($fsPath);
@@ -345,7 +345,7 @@ class FsPath {
 	 * @throws \n2n\util\io\IoException
 	 * @return \n2n\util\io\fs\FsPath
 	 */
-	public function copyFile(FsPath $fsPath, int|string|null $filePerm, bool $overwrite = false) {
+	public function copyFile(FsPath $fsPath, int|string|null $filePerm = null, bool $overwrite = false) {
 		if (!$this->isFile()) {
 			throw new IllegalStateException('This is no file: ' . $this->path);
 		}
@@ -372,7 +372,7 @@ class FsPath {
 	 * @throws IoException
 	 * @throws FileOperationException
 	 */
-	public function copy($fsPath, int|string|null $dirPerm, int|string|null $filePerm, $overwrite = false) {
+	public function copy($fsPath, int|string|null $dirPerm = null, int|string|null $filePerm = null, $overwrite = false) {
 		$fsPath = FsPath::create($fsPath);
 		
 		if ($this->isFile()) {
