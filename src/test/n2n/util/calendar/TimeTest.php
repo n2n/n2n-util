@@ -4,6 +4,8 @@ namespace n2n\util\calendar;
 
 use PHPUnit\Framework\TestCase;
 use n2n\util\DateParseException;
+use DateTime;
+use DateTimeImmutable;
 
 class TimeTest extends TestCase {
 
@@ -17,11 +19,34 @@ class TimeTest extends TestCase {
 
 	function testConstructInvalidArg(): void {
 		$this->expectException(DateParseException::class);
-		$time = new Time('50:10:01');
+		new Time('50:10:01');
 	}
 
 	function testConstructInvalidArg2(): void {
 		$this->expectException(DateParseException::class);
-		$time = new Time('asfasf');
+		new Time('asfasf');
+	}
+
+	function testToSql(): void {
+		$time = new Time('23:10:01');
+		$this->assertEquals('23:10:01', $time->toSql());
+	}
+
+	function testToDateTime(): void {
+		$time = new Time('23:10:01');
+		$dateTime = $time->toDateTime();
+		$this->assertInstanceOf(DateTime::class, $dateTime);
+		$this->assertEquals($dateTime->format('H'), $time->getHour());
+		$this->assertEquals($dateTime->format('i'), $time->getMinute());
+		$this->assertEquals($dateTime->format('s'), $time->getSecond());
+	}
+
+	function testToDateTimeImmutable(): void {
+		$time = new Time('23:10:01');
+		$dateTimeImmutable = $time->toDateTimeImmutable();
+		$this->assertInstanceOf(DateTimeImmutable::class, $dateTimeImmutable);
+		$this->assertEquals($dateTimeImmutable->format('H'), $time->getHour());
+		$this->assertEquals($dateTimeImmutable->format('i'), $time->getMinute());
+		$this->assertEquals($dateTimeImmutable->format('s'), $time->getSecond());
 	}
 }

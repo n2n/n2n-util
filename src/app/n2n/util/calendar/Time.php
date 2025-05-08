@@ -3,6 +3,8 @@
 namespace n2n\util\calendar;
 
 use n2n\util\DateParseException;
+use DateTimeImmutable;
+use DateTime;
 
 class Time implements \JsonSerializable, \Stringable {
 	private readonly int $hour;
@@ -34,13 +36,23 @@ class Time implements \JsonSerializable, \Stringable {
 		return $this->second;
 	}
 
+	public function toSql(): string {
+		return $this->__toString();
+	}
+
+	public function toDateTimeImmutable(): DateTimeImmutable {
+		return DateTimeImmutable::createFromFormat('H:i:s', $this->__toString());
+	}
+
+	public function toDateTime(): DateTime {
+		return DateTime::createFromFormat('H:i:s', $this->__toString());
+	}
+
 	function jsonSerialize(): string {
 		return $this->__toString();
 	}
 
 	public function __toString(): string {
-		return sprintf('%02d', $this->hour) . ':'
-				. sprintf('%02d', $this->minute) . ':'
-				. sprintf('%02d', $this->second);
+		return sprintf('%02d:%02d:%02d', $this->hour, $this->minute, $this->second);
 	}
 }
