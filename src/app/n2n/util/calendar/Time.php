@@ -19,6 +19,10 @@ class Time implements \JsonSerializable, \Stringable {
 					. join(', ', $data['errors']));
 		}
 
+		if ($data['year'] !== false || $data['month'] !== false || $data['day'] !== false) {
+			throw new DateParseException('Date present in time string: ' . $arg);
+		}
+
 		$this->hour = $data['hour'];
 		$this->minute = $data['minute'];
 		$this->second = $data['second'];
