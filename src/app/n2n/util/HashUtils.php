@@ -35,7 +35,15 @@ class HashUtils {
 		if (is_null($length)) return $hash;
 		return mb_substr($hash, 0, (int) $length);
 	}
-	
+
+	public static function base36Sha256Hash(string $str, ?int $length = null): string {
+		$hash = base_convert(hash('sha256', $str), 16, 36);
+		if ($length === null) {
+			return $hash;
+		}
+		return mb_substr($hash, 0, $length);
+	}
+
 	public static function base36Uniqid($moreEntropy = true) {
 		if ($moreEntropy == false) {
 			return base_convert(uniqid(), 16, 36);
