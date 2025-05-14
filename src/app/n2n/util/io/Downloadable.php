@@ -43,5 +43,7 @@ interface Downloadable {
 	 * @return string
 	 */
 	function buildHash(): string;
+
+	function out(): void;
 	
 }
