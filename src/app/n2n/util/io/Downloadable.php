@@ -30,7 +30,7 @@ interface Downloadable {
 	function getMimeType(): string;
 	
 	/**
-	 * @return int
+	 * @return int size in bytes.
 	 */
 	function getSize(): int;
 	
