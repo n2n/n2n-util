@@ -64,4 +64,14 @@ class HashUtilsTest extends TestCase {
 		$this->assertNotEquals($hashAlsoToLongValue, $inputLongValue . $inputLongValue . $inputLongValue);
 
 	}
+
+	function testBase36Sha256Hash(): void {
+		$this->assertEquals(
+				base_convert(hash('sha256', 'holeradio'), 16, 36),
+				HashUtils::base36Sha256Hash('holeradio'));
+
+		$this->assertEquals(
+				mb_substr(base_convert(hash('sha256', 'holeradio'), 16, 36), 0, 7),
+				HashUtils::base36Sha256Hash('holeradio', 7));
+	}
 }
