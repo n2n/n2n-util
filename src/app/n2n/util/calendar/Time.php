@@ -12,7 +12,7 @@ class Time implements \JsonSerializable, \Stringable {
 	private readonly int $second;
 
 	function __construct(?string $arg = null) {
-		$data = date_parse($arg ?? date('h:i:s'));
+		$data = date_parse($arg ?? date('H:i:s'));
 
 		if (!empty($data['errors'])) {
 			throw new DateParseException('Invalid time arg: ' . $arg . ' Reason: '

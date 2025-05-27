@@ -49,4 +49,9 @@ class TimeTest extends TestCase {
 		$this->assertEquals($dateTimeImmutable->format('i'), $time->getMinute());
 		$this->assertEquals($dateTimeImmutable->format('s'), $time->getSecond());
 	}
+
+	function testNoArg(): void {
+		$time = new Time();
+		$this->assertEquals(date('H:i:s'), (string) $time);
+	}
 }
