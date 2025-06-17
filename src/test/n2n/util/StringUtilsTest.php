@@ -4,18 +4,27 @@ namespace n2n\util;
 use n2n\util\type\mock\StringBackedEnumMock;
 use n2n\util\test\TestObjWithToString;
 use n2n\util\test\TestObjWithScalarVariables;
+use InvalidArgumentException;
 
 class StringUtilsTest extends \PHPUnit\Framework\TestCase {
-	public function testConvertPrintables() {
+	public function testConvertNonPrintables() {
 		$cleanStr = ' äüöàéè+"*ç%&/ ()=?€å≈асдфCuraçao£' . "\t\r\n";
 		$dirtyString = ' ​äüö‍‍‍àéè+‌"*ç%‎‏&/ ()=?€å≈асдфCuraçao£' . "\t\r\n";
 		$this->assertEquals($cleanStr, StringUtils::convertNonPrintables($dirtyString));
 	}
 
+	public function testConvertNonPrintablesExpectExceptionBecauseNotScalar() {
+		$this->expectException(\InvalidArgumentException::class);
+		$ao = (new TestObjWithScalarVariables())->arrayObjectProperty;
+		StringUtils::convertNonPrintables([$ao]);
+	}
+
 	public function testClean() {
 		$cleanStr = 'äüöàéè+"*ç%&/ ()=?€å≈асдфCuraçao£';
+		$cleanStrWhitespaceKept = '  äüöàéè+"*ç%&/	()=?€å≈асдфCuraçao£ ';
 		$dirtyString = '  ​äüö‍‍‍àéè+‌"*ç%‎‏&/	()=?€å≈асдфCuraçao£ ';
 		$this->assertEquals($cleanStr, StringUtils::clean($dirtyString, true));
+		$this->assertEquals($cleanStrWhitespaceKept, StringUtils::clean($dirtyString, false));
 	}
 	
 	public function testPretty() {
@@ -89,5 +98,44 @@ class StringUtilsTest extends \PHPUnit\Framework\TestCase {
 			$this->assertTrue(true, $e->getMessage());
 		}
 	}
+
+	public function testContainsNonPrintables() {
+		//a   Figure Space (Unicode: U+2007) char is a printable one
+		$cleanStr = ' äüöàéè+"*ç%&/ ()=?€å≈асдфCuraçao£';
+		$this->assertFalse(StringUtils::containsNonPrintables($cleanStr));
+		//a ​ Zero Width Space (Unicode: U+200B) char for example is a non-printable
+		$cleanStrSpecialWhitespace = '1äüöàéè+"*ç%&/​()=?€å≈асдфCuraçao£';
+		$this->assertTrue(StringUtils::containsNonPrintables($cleanStrSpecialWhitespace));
+		//there are more chars that are not allowed, there are to many to list all, and a Single made a test fail
+		$dirtyString = ' äüö‍‍‍àéè+‌"*ç%‎‏&/ ()=?€å≈асдфCuraçao£ ';
+		$this->assertTrue(StringUtils::containsNonPrintables($dirtyString));
+		//array is searchable, it will check key and value, and it fails if either key or value is not clean
+		$this->assertFalse(StringUtils::containsNonPrintables([$cleanStr => $cleanStr, $cleanStr]));
+		$this->assertTrue(StringUtils::containsNonPrintables([$cleanStr => $cleanStrSpecialWhitespace, $cleanStr]));
+		$this->assertTrue(StringUtils::containsNonPrintables([$cleanStrSpecialWhitespace => $cleanStr, $cleanStr]));
+	}
+	public function testContainsNonPrintablesExpectExceptionIfArrayContainsNinScalar() {
+		//an arrayObject instead of a string or a scalar will throw an exception like it would on convert
+		$this->expectException(InvalidArgumentException::class);
+		$ao = (new TestObjWithScalarVariables())->arrayObjectProperty;
+		$this->assertTrue(StringUtils::containsNonPrintables([$ao]));
+	}
+	public function testIsClean() {
+		//string are ok with and without utf8-chars like äöü
+		$this->assertTrue(StringUtils::isClean('asdf', true));
+		$this->assertTrue(StringUtils::isClean('asdf äöü', true));
+
+		//string with a tab as whitespace, something is clean if clean() method will do nothing on the string
+		$cleanStrSpecialWhitespace = 'äüöàéèç	åасдфCuraçao';
+		$this->assertFalse(StringUtils::isClean($cleanStrSpecialWhitespace, true));
+		$this->assertTrue(StringUtils::isClean($cleanStrSpecialWhitespace, false));
+		//emoji are allowed
+		$this->assertTrue(StringUtils::isClean('£🔧👺$', false));
+
+		//string with special chars
+		$dirtyString = '  ​äüö‍‍‍àéè+‌"*ç%‎‏&/	()=?€å≈асдфCuraçao ';
+		$this->assertFalse(StringUtils::isClean($dirtyString, false));
+	}
+
 
 }

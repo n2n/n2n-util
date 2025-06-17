@@ -365,6 +365,10 @@ class StringUtils {
 
 	}
 
+	public static function isClean(string $value, bool $simpleWhitespaceOnly = true): bool {
+		return $value === self::clean($value, $simpleWhitespaceOnly);
+	}
+
 	/**
 	 * @param string|array|null $value
 	 * @return string|array|null
@@ -395,29 +399,9 @@ class StringUtils {
 	}
 
 	public static function containsNonPrintables(string|array|null $value): bool {
-		if ($value === null){
-			return false;
-		}
-		if (is_string($value)) {
-			return preg_match('/[\p{C}]/u', $value) === 1;
-		}
-		if (is_array($value)) {
-			foreach ($value as $key => $fieldValue) {
-				if (is_string($key) && self::containsNonPrintables($key)) {
-					return true;
-				}
-				if ((is_string($fieldValue) || is_array($fieldValue)) && self::containsNonPrintables($fieldValue)) {
-					return true;
-				}
-			}
-		}
-		return false;
+		return $value !== self::convertNonPrintables($value);
 	}
 
-	public static function isClean(string $value, bool $simpleWhitespaceOnly = true): bool {
-		return preg_match('/[^[:alnum:]\s]/u', $value) === 1;
-	}
-	
 // 	public static function generateBase36Uid($maxLentgh = null) {
 // 		$uid =  base_convert(uniqid(), 16, 36);
 		
