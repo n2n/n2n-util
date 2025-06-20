@@ -24,8 +24,9 @@ namespace n2n\util\uri;
 use n2n\util\type\ArgUtils;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\UriFactoryInterface;
+use Stringable;
 
-class Url implements \JsonSerializable {
+class Url implements \JsonSerializable, Stringable {
 	const SCHEME_SEPARATOR = ':';
 	const AUTHORITY_PREFIX = '//';
 	const PATH_PREFIX = Path::DELIMITER;
