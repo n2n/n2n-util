@@ -11,6 +11,7 @@ class Time implements \JsonSerializable, \Stringable {
 	private readonly int $minute;
 	private readonly int $second;
 
+
 	function __construct(?string $arg = null) {
 		$data = date_parse($arg ?? date('H:i:s'));
 
@@ -58,5 +59,9 @@ class Time implements \JsonSerializable, \Stringable {
 
 	public function __toString(): string {
 		return sprintf('%02d:%02d:%02d', $this->hour, $this->minute, $this->second);
+	}
+
+	static function endOfDay(): Time {
+		return new Time('23:59:59');
 	}
 }

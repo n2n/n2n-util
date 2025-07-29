@@ -54,4 +54,9 @@ class TimeTest extends TestCase {
 		$time = new Time();
 		$this->assertEquals(date('H:i:s'), (string) $time);
 	}
+
+	function testEndOfDay(): void {
+		$time = Time::endOfDay();
+		$this->assertEquals('23:59:59', (string) $time);
+	}
 }
