@@ -24,7 +24,7 @@ class Date implements \JsonSerializable, \Stringable {
 		}
 
 		if (!checkdate($data['month'], $data['day'], $data['year'])) {
-			throw new DateParseException("Invalid calendar date: $arg");
+			throw new DateParseException('Invalid calendar date: ' . $arg);
 		}
 
 		$this->day = $data['day'];
