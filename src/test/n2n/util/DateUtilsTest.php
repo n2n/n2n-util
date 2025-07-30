@@ -4,6 +4,7 @@ namespace n2n\util;
 
 use PHPUnit\Framework\TestCase;
 use DateTimeZone;
+use n2n\util\calendar\Date;
 
 class DateUtilsTest extends TestCase {
 
@@ -161,10 +162,12 @@ class DateUtilsTest extends TestCase {
 	public function testDateToSql() {
 		$dateTime = new \DateTime('2025-11-17 08:30:45');
 		$dateTimeImmutable = new \DateTimeImmutable('2025-11-17 08:30:45');
+		$date = new Date('2025-11-17');
 		$nullInput = null;
 
 		$this->assertEquals('2025-11-17', DateUtils::dateToSql($dateTime));
 		$this->assertEquals('2025-11-17', DateUtils::dateToSql($dateTimeImmutable));
+		$this->assertEquals('2025-11-17', DateUtils::dateToSql($date));
 		$this->assertNull(DateUtils::dateToSql($nullInput));
 	}
 

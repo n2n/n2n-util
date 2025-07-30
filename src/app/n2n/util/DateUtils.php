@@ -22,6 +22,7 @@
 namespace n2n\util;
 
 use DateTimeInterface;
+use n2n\util\calendar\Date;
 
 class DateUtils {
 	
@@ -175,11 +176,16 @@ class DateUtils {
 	}
 
 	/**
-	 * @param \DateTime|null $dateTime
+	 * @param DateTimeInterface|Date|null $dateTime
 	 * @return null|string
 	 */
-	static function dateToSql(?\DateTimeInterface $dateTime): ?string {
-		return $dateTime?->format(self::SQL_DATE_FORMAT);
+	static function dateToSql(null|DateTimeInterface|Date $dateTime): ?string {
+		if (null === $dateTime) {
+			return null;
+		} elseif ($dateTime instanceof DateTimeInterface) {
+			return $dateTime->format(self::SQL_DATE_FORMAT);
+		}
+		return $dateTime->toSql();
 	}
 
 	/**

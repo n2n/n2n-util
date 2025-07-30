@@ -23,6 +23,10 @@ class Date implements \JsonSerializable, \Stringable {
 			throw new DateParseException('Time present in date string: ' . $arg);
 		}
 
+		if (!checkdate($data['month'], $data['day'], $data['year'])) {
+			throw new DateParseException("Invalid calendar date: $arg");
+		}
+
 		$this->day = $data['day'];
 		$this->month = $data['month'];
 		$this->year = $data['year'];
@@ -44,7 +48,7 @@ class Date implements \JsonSerializable, \Stringable {
 		return $this->__toString();
 	}
 
-	public function toDateTimeImmutable(Time $time = null): DateTimeImmutable {
+	public function toDateTimeImmutable(?Time $time = null): DateTimeImmutable {
 		if ($time) {
 			return DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $this->__toString(). ' '
 					. $time->__toString());
@@ -53,7 +57,7 @@ class Date implements \JsonSerializable, \Stringable {
 
 	}
 
-	public function toDateTime(Time $time = null): DateTime {
+	public function toDateTime(?Time $time = null): DateTime {
 		if ($time) {
 			return DateTime::createFromFormat('Y-m-d H:i:s', $this->__toString() . ' '
 					. $time->__toString());

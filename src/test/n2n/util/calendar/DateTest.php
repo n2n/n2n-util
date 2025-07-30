@@ -20,7 +20,7 @@ class DateTest extends TestCase {
 
 	function testConstructInvalidArg(): void {
 		$this->expectException(DateParseException::class);
-		new Date('0020:40:01');
+		new Date('2020-02-30'); //30 february is not possible
 	}
 
 	function testConstructInvalidArg2(): void {
