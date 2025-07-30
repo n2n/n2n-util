@@ -176,16 +176,14 @@ class DateUtils {
 	}
 
 	/**
-	 * @param DateTimeInterface|Date|null $dateTime
+	 * @param DateTimeInterface|Date|null $date
 	 * @return null|string
 	 */
-	static function dateToSql(null|DateTimeInterface|Date $dateTime): ?string {
-		if (null === $dateTime) {
-			return null;
-		} elseif ($dateTime instanceof DateTimeInterface) {
-			return $dateTime->format(self::SQL_DATE_FORMAT);
+	static function dateToSql(null|DateTimeInterface|Date $date): ?string {
+		if ($date instanceof DateTimeInterface) {
+			return $date->format(self::SQL_DATE_FORMAT);
 		}
-		return $dateTime->toSql();
+		return $date?->toSql();
 	}
 
 	/**
