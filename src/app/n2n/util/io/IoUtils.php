@@ -24,6 +24,7 @@ namespace n2n\util\io;
 use n2n\util\io\fs\CouldNotAchieveFlockException;
 use n2n\util\io\fs\FileOperationException;
 use n2n\util\io\stream\impl\FileResourceStream;
+use n2n\util\ex\ExUtils;
 
 class IoUtils {
 
@@ -252,7 +253,7 @@ class IoUtils {
 	 */
 	public static function getContents(string $path) {
 		try {
-			return file_get_contents($path);
+			return ExUtils::convertTriggeredErrors(fn () => file_get_contents($path));
 		} catch (\Throwable $e) {
 			throw new FileOperationException('GetContents of \'' . $path . '\' failed. Reason: ' . $e->getMessage(),
 					null, $e);
