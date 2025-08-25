@@ -32,7 +32,7 @@ class UnionTypeConstraint extends TypeConstraint {
 	 * @param NamedTypeConstraint[] $namedTypeConstraints
 	 * @param array $whitelistTypes
 	 */
-	protected function __construct(array $namedTypeConstraints = [], array $whitelistTypes = array()) {
+	function __construct(array $namedTypeConstraints = [], array $whitelistTypes = array()) {
 		ArgUtils::valArray($namedTypeConstraints, NamedTypeConstraint::class);
 		$this->namedTypeConstraints = $namedTypeConstraints;
 		$this->whitelistTypes = $whitelistTypes;
