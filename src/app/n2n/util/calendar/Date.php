@@ -73,7 +73,10 @@ class Date implements \JsonSerializable, \Stringable {
 		return sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day);
 	}
 
-	static function from(\DateTimeInterface $dateTime): Date {
+	static function from(\DateTimeInterface|Date $dateTime): Date {
+		if ($dateTime instanceof Date) {
+			return $dateTime;
+		}
 		return new Date($dateTime->format('Y-m-d'));
 	}
 }

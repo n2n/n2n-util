@@ -79,4 +79,9 @@ class DateTest extends TestCase {
 		$date = new Date('2023-10-01');
 		$this->assertEquals(Date::from($dateTime), (string) $date);
 	}
+
+	function testFromDate(): void {
+		$date = new Date('2023-10-01');
+		$this->assertEquals(Date::from($date), (string) $date);
+	}
 }
