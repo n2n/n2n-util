@@ -31,7 +31,7 @@ interface MagicTask {
 	 * @param MagicContext|null $magicContext
 	 * @param I $input
 	 * @return TaskResult<T>
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	function exec(?MagicContext $magicContext = null, mixed $input = null): TaskResult;
 }

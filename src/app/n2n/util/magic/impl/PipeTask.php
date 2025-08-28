@@ -7,7 +7,7 @@ use n2n\util\magic\TaskResult;
 use n2n\util\magic\MagicContext;
 use n2n\util\type\TypeConstraints;
 use n2n\util\ex\IllegalStateException;
-use n2n\util\magic\MagicTaskExecutionException;
+use n2n\util\magic\TaskInputMismatchException;
 
 class PipeTask implements MagicTask {
 
@@ -46,7 +46,7 @@ class PipeTask implements MagicTask {
 	}
 
 	/**
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	private function invokeClosure(\Closure $closure, MagicContext $magicContext, mixed $input): TaskResult {
 		$invoker = new MagicMethodInvoker($magicContext);

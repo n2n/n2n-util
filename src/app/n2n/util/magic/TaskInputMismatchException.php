@@ -21,6 +21,6 @@
  */
 namespace n2n\util\magic;
 
-interface MagicTaskExecutionException extends \Throwable {
+interface TaskInputMismatchException extends \Throwable {
 
 }

@@ -4,7 +4,7 @@ namespace n2n\util\magic\impl;
 
 use PHPUnit\Framework\TestCase;
 use n2n\util\magic\MagicContext;
-use n2n\util\magic\MagicTaskExecutionException;
+use n2n\util\magic\TaskInputMismatchException;
 use n2n\util\magic\MagicTask;
 use n2n\util\magic\MagicArray;
 use n2n\util\magic\TaskResult;
@@ -12,14 +12,14 @@ use n2n\util\magic\TaskResult;
 class PipeTaskTest extends TestCase {
 
 	/**
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	function testEmptyPipe(): void {
 		$this->assertTrue(MagicTasks::pipe()->exec($this->createMock(MagicContext::class))->isValid());
 	}
 
 	/**
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	function testPipeWithMagicTasks(): void {
 		$magicTask1 = $this->createMock(MagicTask::class);
@@ -39,7 +39,7 @@ class PipeTaskTest extends TestCase {
 	}
 
 	/**
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	function testPipeWithClosuredMagicTasks(): void {
 		$magicTask1 = $this->createMock(MagicTask::class);

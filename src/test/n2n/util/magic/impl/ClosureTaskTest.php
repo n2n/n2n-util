@@ -4,7 +4,7 @@ namespace n2n\util\magic\impl;
 
 use PHPUnit\Framework\TestCase;
 use n2n\util\magic\MagicContext;
-use n2n\util\magic\MagicTaskExecutionException;
+use n2n\util\magic\TaskInputMismatchException;
 use n2n\util\magic\MagicTask;
 use n2n\util\magic\MagicArray;
 use n2n\util\magic\TaskResult;
@@ -12,7 +12,7 @@ use n2n\util\magic\TaskResult;
 class ClosureTaskTest extends TestCase {
 
 	/**
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	function testClosureWithMagicTasks(): void {
 		$magicTask1 = $this->createMock(MagicTask::class);
@@ -31,7 +31,7 @@ class ClosureTaskTest extends TestCase {
 	}
 
 	/**
-	 * @throws MagicTaskExecutionException
+	 * @throws TaskInputMismatchException
 	 */
 	function testClosureWithTaskResults(): void {
 		$this->assertTrue(MagicTasks::closure(fn () => TaskResults::valid())
