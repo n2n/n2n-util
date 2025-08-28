@@ -18,4 +18,7 @@ class FloatUtils {
 		return (float) number_format($value, $decimals, '.', '');
 	}
 
+	static function countDecimalPlaces(float $value): int {
+		return strlen(substr(strrchr($value, '.'), 1));
+	}
 }
