@@ -26,12 +26,19 @@ class Undefined {
 
 	private function __construct() {}
 
+	/**
+	 * @deprecated use {@link self::val()}
+	 */
 	static function i(): Undefined {
+		return self::val();
+	}
+
+	static function val(): Undefined {
 		return self::$i ??= new Undefined();
 	}
 
 	static function is(mixed $arg): bool {
-		return $arg === self::i();
+		return $arg === self::val();
 	}
 
 	static function isNot(mixed $arg): bool {
