@@ -21,6 +21,8 @@
  */
 namespace n2n\util\type\custom;
 
+use n2n\util\type\TypeConstraints;
+
 class Undefined {
 	private static Undefined $i;
 
@@ -43,5 +45,18 @@ class Undefined {
 
 	static function isNot(mixed $arg): bool {
 		return !self::is($arg);
+	}
+
+	static function initProperties(object $obj): void {
+		$class = new \ReflectionClass($obj);
+		foreach ($class->getProperties() as $property) {
+			if ($property->isInitialized($obj)) {
+				continue;
+			}
+
+			if (TypeConstraints::type($property->getType())->isPassableBy(TypeConstraints::type(Undefined::class))) {
+				$property->setValue($obj, self::val());
+			}
+		}
 	}
 }
