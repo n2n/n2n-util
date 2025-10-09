@@ -59,4 +59,14 @@ class Undefined {
 			}
 		}
 	}
+
+	static function coalesce(mixed ...$args): mixed {
+		foreach ($args as $arg) {
+			if (self::isNot($arg)) {
+				return $arg;
+			}
+		}
+
+		return Undefined::val();
+	}
 }

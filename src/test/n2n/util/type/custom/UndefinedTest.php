@@ -42,4 +42,13 @@ class UndefinedTest extends TestCase {
 		$this->assertFalse($ref->getProperty('intOnly')->isInitialized($testObj));
 		$this->assertFalse($ref->getProperty('unionNoUndefined')->isInitialized($testObj));
 	}
+
+	function testCoalesce(): void {
+		$this->assertSame(2, Undefined::coalesce(Undefined::val(), 2, 'holeradio'));
+		$this->assertSame(Undefined::val(), Undefined::coalesce(Undefined::val(), Undefined::val(), Undefined::val()));
+		$this->assertSame(Undefined::val(), Undefined::coalesce(Undefined::val()));
+		$this->assertSame('holeradio', Undefined::coalesce('holeradio'));
+		$this->assertNull(Undefined::coalesce(null, 'holeradio'));
+		$this->assertNull(Undefined::coalesce(Undefined::val(), null, 'holeradio'));
+	}
 }
