@@ -283,4 +283,19 @@ class ArrayUtils {
 		}
 		return null;
 	}
+
+	/**
+	 * Returns the field value if it exists, otherwise the passed $fallbackValue.
+	 * @param array $array
+	 * @param string|int $key
+	 * @param mixed $fallbackValue
+	 * @return mixed
+	 */
+	static function fieldOr(array &$array, string|int $key, mixed $fallbackValue): mixed {
+		if (array_key_exists($key, $array)) {
+			return $array[$key];
+		}
+
+		return $fallbackValue;
+	}
 }
