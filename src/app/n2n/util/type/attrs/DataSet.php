@@ -28,6 +28,8 @@ use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeName;
 use n2n\util\EnumUtils;
+use n2n\util\type\TypeConstraints;
+use Stringable;
 
 class DataSet implements AttributeReader, AttributeWriter {
 	private $attrs;
@@ -186,6 +188,7 @@ class DataSet implements AttributeReader, AttributeWriter {
 	 * @param mixed|null $defaultValue
 	 * @param bool $nullAllowed
 	 * @return mixed|null
+	 * @throws InvalidAttributeException
 	 * @deprecated use {@see self::reqString()} or {@see self::optString()}
 	 */
 	public function getString(string $name, bool $mandatory = true, $defaultValue = null, bool $nullAllowed = false) {
@@ -204,11 +207,12 @@ class DataSet implements AttributeReader, AttributeWriter {
 			return $this->req($name, TypeConstraint::createSimple('string', $nullAllowed));
 		}
 
-		if (null !== ($value = $this->reqScalar($name, $nullAllowed))) {
-			return (string) $value;
+		$typeNames = ['scalar', Stringable::class];
+		if ($nullAllowed) {
+			$typeNames[] = 'null';
 		}
 
-		return null;
+		return StringUtils::strOrNullOf($this->req($name, TypeConstraints::type($typeNames)));
 	}
 
 	public function optString(string $name, $defaultValue = null, $nullAllowed = true, bool $lenient = true) {
@@ -216,11 +220,12 @@ class DataSet implements AttributeReader, AttributeWriter {
 			return $this->opt($name, TypeConstraint::createSimple('string', $nullAllowed), $defaultValue);
 		}
 
-		if (null !== ($value = $this->optScalar($name, $defaultValue, $nullAllowed))) {
-			return (string) $value;
+		$typeNames = ['scalar', Stringable::class];
+		if ($nullAllowed) {
+			$typeNames[] = 'null';
 		}
 
-		return null;
+		return StringUtils::strOrNullOf($this->opt($name, TypeConstraints::type($typeNames)));
 	}
 
 	/**

@@ -27,4 +27,32 @@ class DataSetTest extends TestCase {
 
 		$this->assertSame(['key1' => 'value-1'], $dataSet->readAttribute(new AttributePath([])));
 	}
+
+	private function createStringable(string $value): \Stringable {
+		return new class($value) implements \Stringable{
+
+			function __construct(private string $value) {
+			}
+
+			public function __toString(): string {
+				return $this->value;
+			}
+		};
+	}
+
+	/**
+	 * @throws InvalidAttributeException
+	 */
+	function testReqString(): void {
+		$dataSet = new DataSet(['key1' => 'value-1', 'key2' => $this->createStringable('value-2')]);
+		$this->assertSame('value-1', $dataSet->reqString('key1'));
+		$this->assertSame('value-2', $dataSet->reqString('key2'));
+	}
+
+	function testOptString(): void {
+		$dataSet = new DataSet(['key1' => 'value-1', 'key2' => $this->createStringable('value-2')]);
+		$this->assertSame('value-1', $dataSet->optString('key1'));
+		$this->assertSame('value-2', $dataSet->optString('key2'));
+		$this->assertNull($dataSet->optString('key3'));
+	}
 }
