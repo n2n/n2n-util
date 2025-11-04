@@ -44,15 +44,35 @@ class DataSetTest extends TestCase {
 	 * @throws InvalidAttributeException
 	 */
 	function testReqString(): void {
-		$dataSet = new DataSet(['key1' => 'value-1', 'key2' => $this->createStringable('value-2')]);
+		$dataSet = new DataSet(['key1' => 'value-1', 'key2' => $this->createStringable('value-2'), 'key3' => null]);
 		$this->assertSame('value-1', $dataSet->reqString('key1'));
 		$this->assertSame('value-2', $dataSet->reqString('key2'));
+		$this->assertNull($dataSet->reqString('key3', nullAllowed: true));
+	}
+
+	function testReqStringNotLenientStringable(): void {
+		$dataSet = new DataSet(['key2' => $this->createStringable('value-2')]);
+		$this->expectException(InvalidAttributeException::class);
+		$dataSet->reqString('key2', lenient: false);
+	}
+
+	function testReqStringNullNotAllowedStringable(): void {
+		$dataSet = new DataSet(['key3' => null]);
+		$this->expectException(InvalidAttributeException::class);
+		$dataSet->reqString('key3');
 	}
 
 	function testOptString(): void {
-		$dataSet = new DataSet(['key1' => 'value-1', 'key2' => $this->createStringable('value-2')]);
+		$dataSet = new DataSet(['key1' => 'value-1', 'key2' => $this->createStringable('value-2'), 'key3' => null]);
 		$this->assertSame('value-1', $dataSet->optString('key1'));
 		$this->assertSame('value-2', $dataSet->optString('key2'));
 		$this->assertNull($dataSet->optString('key3'));
+		$this->assertNull($dataSet->optString('key4'));
+	}
+
+	function testOptStringNotLenientStringable(): void {
+		$dataSet = new DataSet(['key2' => $this->createStringable('value-2')]);
+		$this->expectException(InvalidAttributeException::class);
+		$dataSet->optString('key2', lenient: false);
 	}
 }
