@@ -64,4 +64,8 @@ class Time implements \JsonSerializable, \Stringable {
 	static function endOfDay(): Time {
 		return new Time('23:59:59');
 	}
+
+	static function from(\DateTimeInterface $dateTime): Time {
+		return new Time($dateTime->format('H:i:s'));
+	}
 }

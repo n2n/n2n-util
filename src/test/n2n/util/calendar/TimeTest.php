@@ -59,4 +59,8 @@ class TimeTest extends TestCase {
 		$time = Time::endOfDay();
 		$this->assertEquals('23:59:59', (string) $time);
 	}
+
+	function testFrom(): void {
+		$this->assertEquals('12:13:14', Time::from(new \DateTime('1985-09-07 12:13:14')));
+	}
 }
