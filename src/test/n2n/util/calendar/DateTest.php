@@ -84,4 +84,20 @@ class DateTest extends TestCase {
 		$date = new Date('2023-10-01');
 		$this->assertEquals(Date::from($date), (string) $date);
 	}
+
+	function testDiff(): void {
+		$date = new Date('2023-01-01');
+		$date2 = new Date('2025-04-07');
+		$dateInterval = $date->diff($date2);
+
+		$this->assertSame(827, $dateInterval->days);
+		$this->assertSame(2, $dateInterval->y);
+		$this->assertSame(3, $dateInterval->m);
+		$this->assertSame(6, $dateInterval->d);
+		$this->assertSame(0, $dateInterval->h);
+		$this->assertSame(0, $dateInterval->i);
+		$this->assertSame(0, $dateInterval->s);
+		$this->assertSame(0.0, $dateInterval->f);
+		$this->assertSame(0, $dateInterval->invert);
+	}
 }

@@ -5,6 +5,7 @@ namespace n2n\util\calendar;
 use n2n\util\DateParseException;
 use DateTimeImmutable;
 use DateTime;
+use DateInterval;
 
 class Date implements \JsonSerializable, \Stringable {
 	private readonly int $day;
@@ -63,6 +64,10 @@ class Date implements \JsonSerializable, \Stringable {
 					. $time->__toString());
 		}
 		return DateTime::createFromFormat('Y-m-d H:i:s', $this->__toString() . ' 00:00:00');
+	}
+
+	function diff(Date $date): \DateInterval {
+		return $this->toDateTime()->diff($date->toDateTime());
 	}
 
 	function jsonSerialize(): string {
