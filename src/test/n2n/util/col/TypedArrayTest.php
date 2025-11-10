@@ -17,6 +17,9 @@ class TypedArrayTest extends TestCase {
 
 		$this->assertEquals(new ObjMock('value1'), $arr['key1']);
 		$this->assertEquals(new ObjMock('value2'), $arr[2]);
+
+		unset($arr['key1']);
+		$this->assertSame(1, $arr->count());
 	}
 
 	function testNonExistingScalarKeyArrayAccess() {
@@ -50,6 +53,16 @@ class TypedArrayTest extends TestCase {
 		$this->assertSame(0, $arr->count());
 	}
 
+	function testScalarKeyToArray() {
+		$arr = new ObjMockArray();
+		$value1 = new ObjMock('value1');
+		$value2 = new ObjMock('value2');
+		$arr['key1'] = $value1;
+		$arr[2] = $value2;
+
+		$this->assertSame(['key1' => $value1, 2 => $value2], $arr->toArray());
+	}
+
 	function testScalarKeyIterate() {
 		$arr = new ObjMockArray();
 		$arr['key1'] = new ObjMock('value1');
@@ -78,6 +91,9 @@ class TypedArrayTest extends TestCase {
 
 		$this->assertSame('value1', $arr[$key1]);
 		$this->assertSame('2', $arr[$key2]);
+
+		unset($arr[$key1]);
+		$this->assertSame(1, $arr->count());
 	}
 
 	function testNonExistingObjKeyArrayAccess() {
@@ -113,6 +129,16 @@ class TypedArrayTest extends TestCase {
 		$arr->clear();
 
 		$this->assertSame(0, $arr->count());
+	}
+
+	function testObjKeyToArray() {
+		$arr = new ObjMockKeyArray();
+		$key1 = new ObjMock('key1');
+		$key2 = new ObjMock('key2');
+		$arr[$key1] = 'value1';
+		$arr[$key2] = 2;
+
+		$this->assertSame(['key1' => 'value1', 'key2' => '2'], $arr->toArray());
 	}
 
 	function testObjKeyIterate() {

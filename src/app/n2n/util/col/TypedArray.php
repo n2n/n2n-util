@@ -12,6 +12,7 @@ use n2n\util\type\ValueIncompatibleWithConstraintsException;
 use InvalidArgumentException;
 use OutOfBoundsException;
 use ArrayIterator;
+use n2n\util\StringUtils;
 
 
 /**
@@ -43,8 +44,9 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 	 * @param V[]|\IteratorAggregate<K, V> $array
 	 */
 	final function __construct(array|\IteratorAggregate $array = []) {
-		$this->keyTypeConstraint = CollectionGenericsUtils::determineKeyTypeConstraint($this);
-		$this->valueTypeConstraint = CollectionGenericsUtils::determineValueTypeConstraint($this);
+		$class = new \ReflectionClass($this);
+		$this->keyTypeConstraint = CollectionTypeUtils::detectKeyTypeConstraint($class);
+		$this->valueTypeConstraint = CollectionTypeUtils::detectValueTypeConstraint($class);
 
 		if (TypeName::isScalar($this->keyTypeConstraint->getTypeName())) {
 			$this->array = [];
@@ -162,6 +164,38 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 		} else {
 			$this->array = [];
 		}
+	}
+
+	final function toArray(): array {
+		if ($this->array !== null) {
+			return $this->array;
+		}
+
+		$array = [];
+		foreach ($this as $key => $value) {
+			$array[StringUtils::strOf($key)] = $value;
+		}
+		return $array;
+	}
+
+	final function values(): array {
+		if ($this->array !== null) {
+			return array_values($this->array);
+		}
+
+		$array = [];
+		foreach ($this as $value) {
+			$array[] = $value;
+		}
+		return $array;
+	}
+
+	final function keys(): array {
+		if ($this->array !== null) {
+			return array_keys($this->array);
+		}
+
+		return $this->objectStorage->toArray();
 	}
 }
 
