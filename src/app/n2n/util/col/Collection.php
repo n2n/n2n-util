@@ -21,9 +21,14 @@
  */
 namespace n2n\util\col;
 
+/**
+ * @template K
+ * @template V
+ * @template-extends \IteratorAggregate<K, V>
+ */
 interface Collection extends \IteratorAggregate, \Countable {
 		
-	public function clear();
+	public function clear(): void;
 	
-	public function isEmpty();
+	public function isEmpty(): bool;
 }

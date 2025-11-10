@@ -8,7 +8,7 @@ class TokenUtilsTest extends TestCase {
 
 	function testRandomToken(): void {
 		$this->assertNotEquals(TokenUtils::randomToken(), TokenUtils::randomToken());
-
+		// @todo might be false
 		$this->assertTrue(mb_strlen(TokenUtils::randomToken(17))
 				> mb_strlen(TokenUtils::randomToken(16)));
 
