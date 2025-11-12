@@ -53,6 +53,10 @@ class TaskResults {
 		};
 	}
 
+	/**
+	 * @param MagicArray $errorMap
+	 * @return TaskResult
+	 */
 	static function invalid(MagicArray $errorMap): TaskResult {
 		return new class($errorMap) implements TaskResult {
 			function __construct(private MagicArray $errorMap) {
@@ -75,6 +79,38 @@ class TaskResults {
 
 			function get(): mixed {
 				throw new IllegalStateException('TaskResult is invalid.');
+			}
+		};
+	}
+
+	/**
+	 * @template T
+	 * @param MagicArray $errorMap
+	 * @param T $value
+	 * @return TaskResult<T>
+	 */
+	static function invalidWithValue(MagicArray $errorMap, $value): TaskResult {
+		return new class($errorMap, $value) implements TaskResult {
+			function __construct(private MagicArray $errorMap, private $value) {
+			}
+
+			function isValid(): bool {
+				return false;
+			}
+
+			/**
+			 * @deprecated legacy usage only
+			 */
+			function hasErrors(): bool {
+				return true;
+			}
+
+			function getErrorMap(): MagicArray {
+				return $this->errorMap;
+			}
+
+			function get(): mixed {
+				return $this->value;
 			}
 		};
 	}

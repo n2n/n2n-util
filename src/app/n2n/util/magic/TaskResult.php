@@ -35,13 +35,13 @@ interface TaskResult {
 
 	/**
 	 * @return MagicArray
-	 * @throws IllegalStateException if {@self::hasErrors()} returns true
+	 * @throws IllegalStateException if {@link self::isValid()} returns true
 	 */
 	function getErrorMap(): MagicArray;
 
 	/**
-	 * Returns the value representing the result on success. This method may throw an IllegalStateException if
-	 * the result has errors and should not be called in such a case.
+	 * Returns the value representing the result. This method may throw an IllegalStateException if
+	 * the result has errors
 	 * @return T
 	 */
 	function get(): mixed;
