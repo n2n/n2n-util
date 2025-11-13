@@ -21,13 +21,17 @@
  */
 namespace n2n\util\col;
 
+/**
+ * @template V
+ * @template-extends Collection<int, V>
+ */
 interface Set extends Collection {
 	public function add($arg);
 	public function addAll(array $args);
 	public function remove($arg);
 	public function removeAll(array $args);
-	public function clear();
+	public function clear(): void;
 	public function contains($arg);
-	public function isEmpty();
+	public function isEmpty(): bool;
 	public function toArray();
 }
