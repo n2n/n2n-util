@@ -38,6 +38,11 @@ class DateUtils {
 		$dateTime->setTimestamp($unixTimestamp);
 		return $dateTime;
 	}
+
+	public static function createDateTimeImmutableFromTimestamp(int $unixTimestamp): \DateTimeImmutable {
+		$dateTime = new \DateTimeImmutable();
+		return $dateTime->setTimestamp($unixTimestamp);
+	}
 	
 	public static function createDateTime(?string $dateTimeSpec): ?\DateTime {
 		if ($dateTimeSpec === null) return null;
