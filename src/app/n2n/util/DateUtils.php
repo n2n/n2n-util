@@ -43,7 +43,11 @@ class DateUtils {
 		$dateTime = new \DateTimeImmutable();
 		return $dateTime->setTimestamp($unixTimestamp);
 	}
-	
+
+
+	/**
+	 * @throws DateParseException
+	 */
 	public static function createDateTime(?string $dateTimeSpec): ?\DateTime {
 		if ($dateTimeSpec === null) return null;
 		
@@ -54,14 +58,20 @@ class DateUtils {
 		}
 	}
 
+	/**
+	 * @throws DateParseException
+	 */
 	public static function createDateTimeForThomas($dateTimeSpec = null): \DateTime {
 		try {
 			return new \DateTime($dateTimeSpec ?? 'now');
 		} catch (\Exception $e) {
 			throw new DateParseException($e->getMessage(), 0, $e);
 		}
-	}	
-	
+	}
+
+	/**
+	 * @throws DateParseException
+	 */
 	public static function createDateInterval(?string $intervalSpec): ?\DateInterval {
 		if ($intervalSpec === null) return null;
 	
@@ -75,7 +85,7 @@ class DateUtils {
 	 * @param string $format
 	 * @param string $dateTimeString
 	 * @param \DateTimeZone|null $timeZone
-	 * @throws \n2n\util\DateParseException
+	 * @throws DateParseException
 	 * @return \DateTime
 	 */
 	public static function createDateTimeFromFormat(string $format, string $dateTimeString, ?\DateTimeZone $timeZone = null): \DateTime {
@@ -84,12 +94,38 @@ class DateUtils {
 		} else {
 			$dateTime = @\DateTime::createFromFormat($format, $dateTimeString, $timeZone);
 		}
-		if ($dateTime === false) {
-			throw new DateParseException('Invalid date time string \'' . $dateTimeString . '\' for format \'' 
-					. $format . '\' given. Reason: ' . self::buildLastDateTimeErrorsString(
-							'Could not parse date: ' . $dateTimeString));
-		}
+		self::valDateTimeCreateReturn($dateTime, $format, $dateTimeString);
 		return $dateTime;
+	}
+
+	/**
+	 * @param string $format
+	 * @param string $dateTimeString
+	 * @param \DateTimeZone|null $timeZone
+	 * @return \DateTimeImmutable
+	 * @throws DateParseException
+	 */
+	public static function createDateTimeImmutableFromFormat(string $format, string $dateTimeString, ?\DateTimeZone $timeZone = null): \DateTimeImmutable {
+		if (null === $timeZone) {
+			$dateTime = @\DateTimeImmutable::createFromFormat($format, $dateTimeString);
+		} else {
+			$dateTime = @\DateTimeImmutable::createFromFormat($format, $dateTimeString, $timeZone);
+		}
+		self::valDateTimeCreateReturn($dateTime, $format, $dateTimeString);
+		return $dateTime;
+	}
+
+	/**
+	 * @throws DateParseException
+	 */
+	private static function valDateTimeCreateReturn(\DateTimeInterface|false $arg, string $format, string $dateTimeString): void {
+		if ($arg !== false) {
+			return;
+		}
+
+		throw new DateParseException('Invalid date time string \'' . $dateTimeString . '\' for format \''
+				. $format . '\' given. Reason: ' . self::buildLastDateTimeErrorsString(
+						'Could not parse date: ' . $dateTimeString));
 	}
 	
 	/**

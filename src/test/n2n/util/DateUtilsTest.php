@@ -21,6 +21,9 @@ class DateUtilsTest extends TestCase {
 		$this->assertEquals( new \DateTime('today'), $dateTime);
 	}
 
+	/**
+	 * @throws DateParseException
+	 */
 	public function testCreateDateTime() {
 		$successfulInput1 = 'today';
 		$successfulInput2 = '2025-12-24';
@@ -44,6 +47,9 @@ class DateUtilsTest extends TestCase {
 
 	}
 
+	/**
+	 * @throws DateParseException
+	 */
 	public function testCreateDateTimeForThomas() {
 		$successfulInput1 = 'today';
 		$successfulInput2 = '2025-12-24';
@@ -64,6 +70,9 @@ class DateUtilsTest extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws DateParseException
+	 */
 	public function testCreateDateInterval() {
 		$successfulInput1 = 'P1M';
 		$successfulInput2 = 'P0Y1D';
@@ -86,6 +95,9 @@ class DateUtilsTest extends TestCase {
 		}
 	}
 
+	/**
+	 * @throws DateParseException
+	 */
 	public function testCreateDateTimeFromFormat() {
 		$dateTime = new \DateTime('2025-11-17 08:30:45');
 		$dateTimeFromFormat = DateUtils::createDateTimeFromFormat('d/m/Y H/i/s', '17/11/2025 08/30/45');
@@ -95,6 +107,26 @@ class DateUtilsTest extends TestCase {
 		$this->assertEquals($dateTime, $dateTimeFromFormat);
 		$this->assertEquals($dateTimeFromFormat2, $dateTimeFromFormat3);
 
+	}
+
+	/**
+	 * @throws DateParseException
+	 */
+	public function testCreateDateTimeImmutableFromFormat() {
+		$dateTime = new \DateTime('2025-11-17 08:30:45');
+		$dateTimeFromFormat = DateUtils::createDateTimeImmutableFromFormat('d/m/Y H/i/s', '17/11/2025 08/30/45');
+		$dateTimeFromFormat2 = DateUtils::createDateTimeImmutableFromFormat('d/m/Y H/i/s', '17/11/2025 08/30/45', new DateTimeZone('Europe/London'));
+		$dateTimeFromFormat3 = DateUtils::createDateTimeImmutableFromFormat('d/m/Y H/i/s', '17/11/2025 09/30/45', new DateTimeZone('Europe/Zurich'));
+
+		$this->assertEquals($dateTime, $dateTimeFromFormat);
+		$this->assertEquals($dateTimeFromFormat2, $dateTimeFromFormat3);
+	}
+
+	public function testCreateDateTimeImmutableFromFormatFail() {
+		$dateTime = new \DateTime('2025-11-17 08:30:45');
+
+		$this->expectException(DateParseException::class);
+		DateUtils::createDateTimeImmutableFromFormat('d/m/Y H/i/s', '17.11.2025 08:30:45');
 	}
 
 	public function testFormatDateTime() {
