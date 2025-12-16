@@ -434,7 +434,7 @@ class FsPath {
 	/**
 	 * @throws FileOperationException
 	 */
-	public function chmod(string|int $perm, bool $omitNoSuchFileOrDirectoryError = false): void {
+	public function chmod(FsPerm|string|int $perm, bool $omitNoSuchFileOrDirectoryError = false): void {
 		try {
 			IoUtils::chmod($this->path, $perm);
 		} catch (FileOperationException $e) {
