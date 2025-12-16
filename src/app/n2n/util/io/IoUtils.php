@@ -25,6 +25,7 @@ use n2n\util\io\fs\CouldNotAchieveFlockException;
 use n2n\util\io\fs\FileOperationException;
 use n2n\util\io\stream\impl\FileResourceStream;
 use n2n\util\ex\ExUtils;
+use n2n\util\io\fs\FsPerm;
 
 class IoUtils {
 
@@ -110,19 +111,39 @@ class IoUtils {
 		}
 	}
 
+	static function normalizePermission(FsPerm|string|int|null $arg): ?int {
+		if ($arg === null) {
+			return null;
+		}
+
+		if ($arg instanceof FsPerm) {
+			return $arg->toInt();
+		}
+
+		if (is_int($arg)) {
+			// test if int is in range (0 to 0777 octal = 511 decimal) int with leading 0 is automatic handled as octal
+			if ($arg >= 0 && $arg <= 0777) {
+				return $arg;
+			}
+		} else {
+			// test if string is a correct octal (0000 to 0777) leading 0 is automatic added if it was missing
+			if (preg_match('/^(0?[0-7]{3})$/', $arg)) {
+				return octdec($arg);
+			}
+		}
+
+		throw new \InvalidArgumentException('Illegal permission value passed: ' . $arg);
+
+	}
+
 	/**
 	 * @param string $path
-	 * @param int|string|null $permission keep possible umask restrictions in mind.
+	 * @param FsPerm|int|string|null $permission keep possible umask restrictions in mind.
 	 * @return bool
 	 * @throws FileOperationException
 	 */
-	public static function mkdirs(string $path, int|string|null $permission = null): bool {
-		if (is_string($permission)) {
-			$permission = octdec($permission);
-		} else if ($permission === null) {
-			$permission = 0777;
-		}
-
+	public static function mkdirs(string $path, FsPerm|int|string|null $permission = null): bool {
+		$permission = IoUtils::normalizePermission($permission) ?? 0777;
 		try {
 			return self::valReturn(@mkdir($path, $permission, true));
 		} catch(\Throwable $e) {
@@ -209,11 +230,11 @@ class IoUtils {
 	/**
 	 *
 	 * @param string $path
-	 * @param string $filePermission
+	 * @param FsPerm|int|string|null $filePermission
 	 * @throws IoException
 	 * @deprecated use IoUtils::touch() and IoUtils::chmod()
 	 */
-	public static function createFile($path, $filePermission = null) {
+	public static function createFile($path, FsPerm|int|string|null $filePermission = null) {
 		self::touch($path);
 		if (isset($filePermission)) {
 			self::chmod($path, $filePermission);
@@ -287,14 +308,12 @@ class IoUtils {
 	/**
 	 *
 	 * @param string $path
-	 * @param int|string $filePermission octal string
+	 * @param FsPerm|int|string $filePermission octal string
 	 * @return bool
 	 * @throws FileOperationException
 	 */
-	public static function chmod(string $path, int|string $filePermission = 0777): bool {
-		if (is_string($filePermission)) {
-			$filePermission = octdec($filePermission);
-		}
+	public static function chmod(string $path, FsPerm|int|string $filePermission = 0777): bool {
+		$filePermission = IoUtils::normalizePermission($filePermission);
 
 		try {
 			return self::valReturn(@chmod($path, $filePermission));

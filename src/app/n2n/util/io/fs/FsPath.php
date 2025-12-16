@@ -134,13 +134,12 @@ class FsPath {
 			IoUtils::rmdirs($this->path);
 		}
 	}
-	/**
-	 * 
-	 * @param string $perm
-	 */
-	public function mkdirs(int|string|null $perm = null): void {
-		if ($this->isDir()) return;
 
+	/**
+	 * @throws FileOperationException
+	 */
+	public function mkdirs(FsPerm|int|string|null $perm = null): void {
+		if ($this->isDir()) return;
 		try {
 			IoUtils::mkdirs($this->path, $perm);
 		} catch (FileOperationException $e) {

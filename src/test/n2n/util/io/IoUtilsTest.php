@@ -4,6 +4,7 @@ namespace n2n\util\io;
 use n2n\util\io\fs\FileOperationException;
 use PHPUnit\Framework\TestCase;
 use n2n\util\ex\err\impl\WarningError;
+use n2n\util\io\fs\FsPerm;
 
 class IoUtilsTest extends TestCase {
 	const TEST_DIR = __DIR__ . '/testFiles';
@@ -42,15 +43,38 @@ class IoUtilsTest extends TestCase {
 		IoUtils::rename('asdf', 'asdf');
 	}
 
-	public function testMkdir() {
+	public function testMkdirOctal() {
 		$newDir = self::TEST_DIR . '/dir1/dir2';
-		IoUtils::mkdirs($newDir, 0777);
+		IoUtils::mkdirs($newDir, 0755);
 		$this->assertTrue(is_dir($newDir));
+//		$this->assertEquals('0755', substr(sprintf('%o', fileperms($newDir)), -4));
+
+	}
+
+	public function testMkdirInt() {
+		$newDir = self::TEST_DIR . '/dir1/dir2';
+		IoUtils::mkdirs($newDir, 493);
+		$this->assertTrue(is_dir($newDir));
+//		$this->assertEquals('0755', substr(sprintf('%o', fileperms($newDir)), -4));
+	}
+
+	public function testMkdirString() {
+		$newDir = self::TEST_DIR . '/dir1/dir2';
+		IoUtils::mkdirs($newDir, '0755');
+		$this->assertTrue(is_dir($newDir));
+//		$this->assertEquals('0755', substr(sprintf('%o', fileperms($newDir)), -4));
+	}
+
+	public function testMkdirFsPerm() {
+		$newDir = self::TEST_DIR . '/dir1/dir2';
+		IoUtils::mkdirs($newDir, new FsPerm(493));
+		$this->assertTrue(is_dir($newDir));
+//		$this->assertEquals('0755', substr(sprintf('%o', fileperms($newDir)), -4));
 	}
 
 	public function testRmdir() {
 		$dirToDelete = self::TEST_DIR . '/dirToDelete';
-		IoUtils::mkdirs($dirToDelete, 777);
+		IoUtils::mkdirs($dirToDelete, 0777);
 		IoUtils::rmdir($dirToDelete);
 		$this->assertFalse(is_dir($dirToDelete));
 	}
