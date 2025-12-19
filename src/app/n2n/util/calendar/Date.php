@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use DateTime;
 use DateInterval;
 use n2n\util\DateUtils;
+use n2n\util\ex\ExUtils;
 
 class Date implements \JsonSerializable, \Stringable {
 	private readonly int $day;
@@ -68,7 +69,7 @@ class Date implements \JsonSerializable, \Stringable {
 	}
 
 	function diff(Date|\DateTimeInterface $date, bool $absolute = false): \DateInterval {
-		return $this->toDateTime()->diff(DateUtils::createDateTime($date), $absolute);
+		return $this->toDateTime()->diff(ExUtils::try(fn () => DateUtils::createDateTime($date)), $absolute);
 	}
 
 	function jsonSerialize(): string {
