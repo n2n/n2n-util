@@ -48,8 +48,18 @@ class DateUtils {
 	/**
 	 * @throws DateParseException
 	 */
-	public static function createDateTime(?string $dateTimeSpec): ?\DateTime {
-		if ($dateTimeSpec === null) return null;
+	public static function createDateTime(\DateTimeInterface|Date|string|null $dateTimeSpec): ?\DateTime {
+		if ($dateTimeSpec === null) {
+			return null;
+		}
+
+		if ($dateTimeSpec instanceof DateTimeInterface) {
+			return \DateTime::createFromInterface($dateTimeSpec);
+		}
+
+		if ($dateTimeSpec instanceof Date) {
+			return $dateTimeSpec->toDateTime();
+		}
 		
 		try {
 			return new \DateTime($dateTimeSpec);

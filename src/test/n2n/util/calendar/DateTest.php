@@ -100,4 +100,21 @@ class DateTest extends TestCase {
 		$this->assertSame(0.0, $dateInterval->f);
 		$this->assertSame(0, $dateInterval->invert);
 	}
+
+	function testDiffAbsolute(): void {
+		$date = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$dateInterval = $date->diff($date2, true);
+
+		$this->assertSame(827, $dateInterval->days);
+		$this->assertSame(2, $dateInterval->y);
+		$this->assertSame(3, $dateInterval->m);
+		$this->assertSame(0, $dateInterval->invert);
+
+		$dateInterval = $date->diff($date2);
+		$this->assertSame(827, $dateInterval->days);
+		$this->assertSame(2, $dateInterval->y);
+		$this->assertSame(3, $dateInterval->m);
+		$this->assertSame(1, $dateInterval->invert);
+	}
 }

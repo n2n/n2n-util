@@ -6,6 +6,7 @@ use n2n\util\DateParseException;
 use DateTimeImmutable;
 use DateTime;
 use DateInterval;
+use n2n\util\DateUtils;
 
 class Date implements \JsonSerializable, \Stringable {
 	private readonly int $day;
@@ -66,8 +67,8 @@ class Date implements \JsonSerializable, \Stringable {
 		return DateTime::createFromFormat('Y-m-d H:i:s', $this->__toString() . ' 00:00:00');
 	}
 
-	function diff(Date $date): \DateInterval {
-		return $this->toDateTime()->diff($date->toDateTime());
+	function diff(Date|\DateTimeInterface $date, bool $absolute = false): \DateInterval {
+		return $this->toDateTime()->diff(DateUtils::createDateTime($date), $absolute);
 	}
 
 	function jsonSerialize(): string {
