@@ -117,4 +117,59 @@ class DateTest extends TestCase {
 		$this->assertSame(3, $dateInterval->m);
 		$this->assertSame(1, $dateInterval->invert);
 	}
+
+	function testSpaceshipCompareWith(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertSame(-1, $date->spaceshipCompareWith($date1));
+		$this->assertSame(0, $date->spaceshipCompareWith($date2));
+		$this->assertSame(1, $date->spaceshipCompareWith($date3));
+	}
+
+	function testIsLessThan(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertTrue($date->isLessThan($date1));
+		$this->assertFalse($date->isLessThan($date2));
+		$this->assertFalse($date->isLessThan($date3));
+	}
+
+	function testIsLessThanOrEqualTo(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertTrue($date->isLessThanOrEqualTo($date1));
+		$this->assertTrue($date->isLessThanOrEqualTo($date2));
+		$this->assertFalse($date->isLessThanOrEqualTo($date3));
+	}
+
+	function testIsGreaterThan(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertFalse($date->isGreaterThan($date1));
+		$this->assertFalse($date->isGreaterThan($date2));
+		$this->assertTrue($date->isGreaterThan($date3));
+	}
+
+	function testIsGreaterThanOrEqualTo(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertFalse($date->isGreaterThanOrEqualTo($date1));
+		$this->assertTrue($date->isGreaterThanOrEqualTo($date2));
+		$this->assertTrue($date->isGreaterThanOrEqualTo($date3));
+	}
 }
