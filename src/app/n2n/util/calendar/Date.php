@@ -77,7 +77,7 @@ class Date implements \JsonSerializable, \Stringable {
 	}
 
 	function spaceshipCompareWith(Date|\DateTimeInterface $date): int {
-		return $this->toDateTimeImmutable() <=>  ExUtils::try(fn () => Date::from($date)->toDateTimeImmutable());
+		return $this->toDateTimeImmutable() <=> Date::from($date)->toDateTimeImmutable();
 	}
 
 	function isLessThan(Date|\DateTimeInterface $date): bool {
