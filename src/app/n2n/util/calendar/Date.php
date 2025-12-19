@@ -14,6 +14,10 @@ class Date implements \JsonSerializable, \Stringable {
 	private readonly int $month;
 	private readonly int $year;
 
+	/**
+	 * TODO: maybe change to RuntimeException like InvalidArgumentException
+	 * @throws DateParseException
+	 */
 	function __construct(?string $arg = null) {
 		$data = date_parse($arg ?? date('Y-m-d'));
 
@@ -108,6 +112,6 @@ class Date implements \JsonSerializable, \Stringable {
 		if ($dateTime instanceof Date) {
 			return $dateTime;
 		}
-		return new Date($dateTime->format('Y-m-d'));
+		return ExUtils::try(fn () => new Date($dateTime->format('Y-m-d')));
 	}
 }
