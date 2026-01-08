@@ -203,11 +203,12 @@ class DataSet implements AttributeReader, AttributeWriter {
 	 * @throws InvalidAttributeException
 	 */
 	public function reqString(string $name, bool $nullAllowed = false, bool $lenient = true) {
+
 		if (!$lenient) {
 			return $this->req($name, TypeConstraint::createSimple('string', $nullAllowed));
 		}
 
-		$typeNames = ['scalar', Stringable::class];
+		$typeNames = ['scalar', Stringable::class, \BackedEnum::class];
 		if ($nullAllowed) {
 			$typeNames[] = 'null';
 		}
@@ -220,7 +221,7 @@ class DataSet implements AttributeReader, AttributeWriter {
 			return $this->opt($name, TypeConstraint::createSimple('string', $nullAllowed), $defaultValue);
 		}
 
-		$typeNames = ['scalar', Stringable::class];
+		$typeNames = ['scalar', Stringable::class, \BackedEnum::class];
 		if ($nullAllowed) {
 			$typeNames[] = 'null';
 		}

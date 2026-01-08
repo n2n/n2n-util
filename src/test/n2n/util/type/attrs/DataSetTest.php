@@ -75,4 +75,16 @@ class DataSetTest extends TestCase {
 		$this->expectException(InvalidAttributeException::class);
 		$dataSet->optString('key2', lenient: false);
 	}
+
+
+	/**
+	 * @throws InvalidAttributeException
+	 */
+	function testReqStringStringBackedEnum(): void {
+		$dataSet = new DataSet(['key1' => StringBackedEnumMock::VALUE1, 'key2' => $this->createStringable('value-2'), 'key3' => null]);
+		$this->assertSame('value-1', $dataSet->reqString('key1'));
+		$this->assertSame(StringBackedEnumMock::VALUE1->value, $dataSet->reqString('key1'));
+		$this->assertSame('value-2', $dataSet->reqString('key2'));
+		$this->assertNull($dataSet->reqString('key3', nullAllowed: true));
+	}
 }
