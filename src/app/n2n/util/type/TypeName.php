@@ -11,6 +11,8 @@ class TypeName {
 	const INT = 'int';
 	const FLOAT = 'float';
 	const BOOL = 'bool';
+	const TRUE = 'true';
+	const FALSE = 'false';
 	const ARRAY = 'array';
 	const RESOURCE = 'resource';
 	const OBJECT = 'object';
@@ -30,6 +32,8 @@ class TypeName {
 			case self::INT:
 			case self::FLOAT:
 			case self::BOOL:
+			case self::TRUE:
+			case self::FALSE:
 			case self::PSEUDO_SCALAR:
 			case self::PSEUDO_NUMERIC:
 				return true;
@@ -52,6 +56,10 @@ class TypeName {
 				throw self::createValueNotConvertableException($value, $typeName);
 			case self::BOOL:
 				return (bool) $value;
+			case self::FALSE:
+				return false;
+			case self::TRUE:
+				return true;
 			case self::FLOAT:
 				if (is_numeric($value)) {
 					return (float) $value;
@@ -84,6 +92,8 @@ class TypeName {
 			case self::STRING;
 				return is_scalar($value);
 			case self::BOOL:
+			case self::FALSE:
+			case self::TRUE:
 				return true;
 			case self::FLOAT:
 				return is_numeric($value);
@@ -106,6 +116,8 @@ class TypeName {
 		switch ($typeName) {
 			case self::STRING:
 			case self::BOOL:
+			case self::FALSE:
+			case self::TRUE:
 			case self::INT:
 			case self::FLOAT:
 				return true;
@@ -139,6 +151,8 @@ class TypeName {
 				return $typeName == self::INT || $typeName == self::PSEUDO_NUMERIC || $typeName == self::PSEUDO_SCALAR;
 			case self::STRING:
 			case self::BOOL:
+			case self::FALSE:
+			case self::TRUE:
 			case self::PSEUDO_NUMERIC:
 				return $typeName == self::PSEUDO_SCALAR;
 			case self::ARRAY:
@@ -179,6 +193,10 @@ class TypeName {
 				return is_float($value);
 			case TypeName::BOOL:
 				return is_bool($value);
+			case TypeName::FALSE:
+				return false === $value;
+			case TypeName::TRUE:
+				return true === $value;
 			case TypeName::OBJECT:
 				return is_object($value);
 			case TypeName::RESOURCE:
@@ -226,6 +244,8 @@ class TypeName {
 			case self::INT:
 			case self::FLOAT:
 			case self::BOOL:
+			case self::TRUE:
+			case self::FALSE:
 			case self::RESOURCE:
 			case self::OBJECT:
 			case self::NULL:

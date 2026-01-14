@@ -65,4 +65,27 @@ class TypeNameTest extends TestCase {
 		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames('huii & hoi '));
 		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames(' (huii&hoi)'));
 	}
+
+	function testFalse() {
+		$this->assertTrue(TypeName::isScalar('false'));
+		$this->assertFalse(TypeName::convertValue('holeradio', 'false'));
+		$this->assertTrue(TypeName::isValueConvertTo('holeradio', 'false'));
+		$this->assertTrue(TypeName::isConvertable('false'));
+		$this->assertTrue(TypeName::isA('false', 'false'));
+		$this->assertTrue(TypeName::isValueA(false, 'false'));
+		$this->assertFalse(TypeName::isValueA(true, 'false'));
+		$this->assertFalse(TypeName::isValueA(0, 'false'));
+		$this->assertFalse(TypeName::isValueA('', 'false'));
+	}
+
+	function testTrue() {
+		$this->assertTrue(TypeName::isScalar('true'));
+		$this->assertTrue(TypeName::convertValue('holeradio', 'true'));
+		$this->assertTrue(TypeName::isValueConvertTo('holeradio', 'true'));
+		$this->assertTrue(TypeName::isConvertable('true'));
+		$this->assertTrue(TypeName::isA('true', 'true'));
+		$this->assertTrue(TypeName::isValueA(true, 'true'));
+		$this->assertFalse(TypeName::isValueA(false, 'true'));
+		$this->assertFalse(TypeName::isValueA(1, 'true'));
+	}
 }
