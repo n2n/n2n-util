@@ -68,8 +68,14 @@ class TypeNameTest extends TestCase {
 
 	function testFalse() {
 		$this->assertTrue(TypeName::isScalar('false'));
-		$this->assertFalse(TypeName::convertValue('holeradio', 'false'));
-		$this->assertTrue(TypeName::isValueConvertTo('holeradio', 'false'));
+		try {
+			$this->assertFalse(TypeName::convertValue('holeradio', 'false'));
+			$this->fail('Exception expected');
+		} catch (\InvalidArgumentException $e) {
+		}
+		$this->assertFalse(TypeName::isValueConvertTo('holeradio', 'false'));
+		$this->assertFalse(TypeName::convertValue(0, 'false'));
+		$this->assertTrue(TypeName::isValueConvertTo(0, 'false'));
 		$this->assertTrue(TypeName::isConvertable('false'));
 		$this->assertTrue(TypeName::isA('false', 'false'));
 		$this->assertTrue(TypeName::isValueA(false, 'false'));
@@ -82,6 +88,13 @@ class TypeNameTest extends TestCase {
 		$this->assertTrue(TypeName::isScalar('true'));
 		$this->assertTrue(TypeName::convertValue('holeradio', 'true'));
 		$this->assertTrue(TypeName::isValueConvertTo('holeradio', 'true'));
+		try {
+			$this->assertFalse(TypeName::convertValue(0, 'true'));
+			$this->fail('Exception expected');
+		} catch (\InvalidArgumentException $e) {
+		}
+		$this->assertFalse(TypeName::isValueConvertTo(0, 'true'));
+
 		$this->assertTrue(TypeName::isConvertable('true'));
 		$this->assertTrue(TypeName::isA('true', 'true'));
 		$this->assertTrue(TypeName::isValueA(true, 'true'));

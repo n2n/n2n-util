@@ -41,12 +41,8 @@ class TypeName {
 				return false;
 		}
 	}
-	
-	/**
-	 * @param mixed $value
-	 * @param string $typeName
-	 */
-	static function convertValue($value, string $typeName) {
+
+	static function convertValue(mixed $value, string $typeName): mixed{
 		switch ($typeName) {
 			case self::STRING;
 				if (is_scalar($value)) {
@@ -57,9 +53,17 @@ class TypeName {
 			case self::BOOL:
 				return (bool) $value;
 			case self::FALSE:
-				return false;
+				if (false === boolval($value)) {
+					return false;
+				}
+
+				throw self::createValueNotConvertableException($value, $typeName);
 			case self::TRUE:
-				return true;
+				if (true === boolval($value)) {
+					return true;
+				}
+
+				throw self::createValueNotConvertableException($value, $typeName);
 			case self::FLOAT:
 				if (is_numeric($value)) {
 					return (float) $value;
@@ -87,14 +91,16 @@ class TypeName {
 	 * @param string $typeName
 	 * @return bool
 	 */
-	static function isValueConvertTo($value, string $typeName) {
+	static function isValueConvertTo(mixed $value, string $typeName): bool {
 		switch ($typeName) {
 			case self::STRING;
 				return is_scalar($value);
 			case self::BOOL:
-			case self::FALSE:
-			case self::TRUE:
 				return true;
+			case self::FALSE:
+				return false === boolval($value);
+			case self::TRUE:
+				return true === boolval($value);
 			case self::FLOAT:
 				return is_numeric($value);
 			case self::INT:
@@ -112,18 +118,11 @@ class TypeName {
 	 * @param string $typeName
 	 * @return bool
 	 */
-	static function isConvertable(string $typeName) {
-		switch ($typeName) {
-			case self::STRING:
-			case self::BOOL:
-			case self::FALSE:
-			case self::TRUE:
-			case self::INT:
-			case self::FLOAT:
-				return true;
-			default:
-				return EnumUtils::isEnumType($typeName);
-		}
+	static function isConvertable(string $typeName): bool {
+		return match ($typeName) {
+			self::STRING, self::BOOL, self::FALSE, self::TRUE, self::INT, self::FLOAT => true,
+			default => EnumUtils::isEnumType($typeName),
+		};
 	}
 	
 	/**
@@ -131,7 +130,7 @@ class TypeName {
 	 * @param string $typeName
 	 * @throws \InvalidArgumentException
 	 */
-	private static function createValueNotConvertableException($value, string $typeName) {
+	private static function createValueNotConvertableException(mixed $value, string $typeName) {
 		throw new \InvalidArgumentException('Value ' . TypeUtils::getTypeInfo($value) . ' is not convertable to ' . $typeName);
 	}
 	
@@ -224,7 +223,7 @@ class TypeName {
 	 * @param \ReflectionClass $class
 	 * @return boolean
 	 */
-	static function isClassArrayLike(\ReflectionClass $class) {
+	static function isClassArrayLike(\ReflectionClass $class): bool {
 		return $class->implementsInterface('ArrayAccess')
 				&& $class->implementsInterface('IteratorAggregate')
 				&& $class->implementsInterface('Countable');
@@ -234,7 +233,7 @@ class TypeName {
 	 * @param string $typeName
 	 * @return boolean
 	 */
-	static function isArrayLike(string $typeName) {
+	static function isArrayLike(string $typeName): bool {
 		switch ($typeName) {
 			case self::ARRAY:
 			case self::PSEUDO_ARRAYLIKE:
@@ -259,11 +258,8 @@ class TypeName {
 				&& is_subclass_of($typeName, 'IteratorAggregate')
 				&& is_subclass_of($typeName, 'Countable');
 	}
-	
-	/**
-	 * @param string $typeName
-	 */
-	static function isNullable(string $typeName) {
+
+	static function isNullable(string $typeName): bool {
 		switch ($typeName) {
 			case self::PSEUDO_MIXED:
 			case self::NULL:
@@ -297,7 +293,7 @@ class TypeName {
 
 	const NULLABLE_PREFIX = '?';
 
-	static function isUnionType(string|\ReflectionType $type) {
+	static function isUnionType(string|\ReflectionType $type): bool {
 		if (is_string($type)) {
 			return StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type);
 		}
@@ -318,7 +314,7 @@ class TypeName {
 		return !str_contains($trimedType, '(') && !str_contains($trimedType, ')');
 	}
 
-	static function isNamedType(string|\ReflectionType $type) {
+	static function isNamedType(string|\ReflectionType $type): bool {
 		if (is_string($type)) {
 			return !StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type)
 					&& !StringUtils::contains(self::INTERSECTION_TYPE_SEPARATOR, $type);
@@ -347,7 +343,7 @@ class TypeName {
 		return [$type];
 	}
 
-	static function extractUnionTypeNames(string|\ReflectionUnionType $type) {
+	static function extractUnionTypeNames(string|\ReflectionUnionType $type): array {
 		if ($type instanceof \ReflectionUnionType) {
 			return array_map(function ($namedType) { return $namedType->getName(); }, $type->getTypes());
 		}
@@ -364,7 +360,7 @@ class TypeName {
 				}, explode(self::UNION_TYPE_SEPARATOR, $type));
 	}
 	
-	static function concatUnionTypeNames(array $typeNames) {
+	static function concatUnionTypeNames(array $typeNames): string {
 		ArgUtils::valArray($typeNames, 'string');
 		return implode(self::UNION_TYPE_SEPARATOR, $typeNames);
 	}
