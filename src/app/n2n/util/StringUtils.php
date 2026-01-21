@@ -483,4 +483,23 @@ class StringUtils {
 	public static function stripNl(string $str, string $replacement = ' ', bool $strpWhitespacePrefixes = true) {
 		return preg_replace('/' . ($strpWhitespacePrefixes ? '\\s*' : '') . '[\\r\\n]+/', $replacement, $str);
 	}
+
+
+	/**
+	 * @param string $input that is none control char out of Basic Latin, Latin-1 Supplement, Latin Extended-A
+	 * @return bool
+	 */
+	public static function isLatin(string $input): bool {
+
+		$pattern = '/^[' .
+				'\x{0020}-\x{007E}' .   // Basic Latin
+				'\x{00A0}-\x{00FF}' .   // Latin-1 Supplement
+				'\x{0100}-\x{017F}' .   // Latin Extended-A
+				'\x{0218}\x{0219}\x{021A}\x{021B}' . // Ș ș Ț ț (Romanian Chars from Latin Extended-B)
+				'\x{20AC}' .            // €
+				']*$/u';
+
+		return preg_match($pattern, $input) === 1;
+	}
+
 }
