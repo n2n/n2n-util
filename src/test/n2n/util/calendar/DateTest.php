@@ -9,7 +9,9 @@ use DateTimeImmutable;
 use n2n\util\DateUtils;
 
 class DateTest extends TestCase {
-
+	/**
+	 * this will test  {@link Date}
+	 */
 	function testConstruct(): void {
 		$date = new Date('2023-10-01');
 		$this->assertEquals(2023, $date->getYear());
@@ -171,5 +173,16 @@ class DateTest extends TestCase {
 		$this->assertFalse($date->isGreaterThanOrEqualTo($date1));
 		$this->assertTrue($date->isGreaterThanOrEqualTo($date2));
 		$this->assertTrue($date->isGreaterThanOrEqualTo($date3));
+	}
+
+	function testNullable(): void {
+		$this->assertNull(Date::from(null));
+	}
+
+
+	function testFromDigits(): void {
+		$date = new Date('2023-01-01');
+		$date1 = Date::fromDigits(2023,1,1);
+		$this->assertEquals($date, $date1);
 	}
 }

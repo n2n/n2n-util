@@ -8,7 +8,9 @@ use DateTime;
 use DateTimeImmutable;
 
 class TimeTest extends TestCase {
-
+	/**
+	 * this will test  {@link Time}
+	 */
 	function testConstruct(): void {
 		$time = new Time('23:10:01');
 		$this->assertEquals(23, $time->getHour());
@@ -62,5 +64,19 @@ class TimeTest extends TestCase {
 
 	function testFrom(): void {
 		$this->assertEquals('12:13:14', Time::from(new \DateTime('1985-09-07 12:13:14')));
+	}
+
+	function testFromTime(): void {
+		$this->assertEquals('12:13:14', Time::from(new Time('12:13:14')));
+	}
+
+	function testNullable(): void {
+		$this->assertNull(Time::from(null));
+	}
+
+	function testFromDigits(): void {
+		$date = new Time('16:55:40');
+		$date1 = Time::fromDigits(16,55,40);
+		$this->assertEquals($date, $date1);
 	}
 }

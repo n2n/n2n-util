@@ -5,6 +5,7 @@ namespace n2n\util\calendar;
 use n2n\util\DateParseException;
 use DateTimeImmutable;
 use DateTime;
+use n2n\util\ex\ExUtils;
 
 class Time implements \JsonSerializable, \Stringable {
 	private readonly int $hour;
@@ -12,6 +13,9 @@ class Time implements \JsonSerializable, \Stringable {
 	private readonly int $second;
 
 
+	/**
+	 * @throws DateParseException
+	 */
 	function __construct(?string $arg = null) {
 		$data = date_parse($arg ?? date('H:i:s'));
 
@@ -65,7 +69,34 @@ class Time implements \JsonSerializable, \Stringable {
 		return new Time('23:59:59');
 	}
 
-	static function from(\DateTimeInterface $dateTime): Time {
-		return new Time($dateTime->format('H:i:s'));
+	static function now(): Time {
+		return ExUtils::try(fn() => new Time());
+	}
+
+	static function from(\DateTimeInterface|Time|string|null $dateTime): ?Time {
+		if ($dateTime === null) {
+			return null;
+		}
+		if (is_string($dateTime)) {
+			try {
+				return new Time($dateTime);
+			} catch (DateParseException $e) {
+				throw new \InvalidArgumentException($e->getMessage(), previous: $e);
+			}
+		}
+		if ($dateTime instanceof Time) {
+			return $dateTime;
+		}
+
+		return self::from($dateTime->format('H:i:s'));
+
+	}
+
+	static function fromDigits(int $hour, int $minute, int $second): Time {
+		try {
+			return new Time($hour . ':' . $minute . ':' . $second);
+		} catch (DateParseException $e) {
+			throw new \InvalidArgumentException($e->getMessage(), previous: $e);
+		}
 	}
 }

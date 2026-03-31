@@ -5,7 +5,6 @@ namespace n2n\util\calendar;
 use n2n\util\DateParseException;
 use DateTimeImmutable;
 use DateTime;
-use DateInterval;
 use n2n\util\DateUtils;
 use n2n\util\ex\ExUtils;
 
@@ -108,10 +107,27 @@ class Date implements \JsonSerializable, \Stringable {
 		return sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day);
 	}
 
-	static function from(\DateTimeInterface|Date $dateTime): Date {
-		if ($dateTime instanceof Date) {
-			return $dateTime;
+	static function from(\DateTimeInterface|Date|PlainDateTime|string|null $dateTime): ?Date {
+		if ($dateTime === null) {
+			return null;
 		}
-		return ExUtils::try(fn () => new Date($dateTime->format('Y-m-d')));
+		if (is_string($dateTime)) {
+			try {
+				return new Date($dateTime);
+			} catch (DateParseException $e) {
+				throw new \InvalidArgumentException($e->getMessage(), previous: $e);
+			}
+		}
+		if ($dateTime instanceof PlainDateTime) {
+			$dateTime = $dateTime->toDateTimeImmutable();
+		}
+		if ($dateTime instanceof Date) {
+			$dateTime = $dateTime->toDateTimeImmutable();
+		}
+		return self::from($dateTime->format('Y-m-d'));
+	}
+
+	static function fromDigits(int $year, int $month, int $day): Date {
+		return self::from($year . '-' . $month . '-' . $day);
 	}
 }
