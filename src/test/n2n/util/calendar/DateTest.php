@@ -185,4 +185,18 @@ class DateTest extends TestCase {
 		$date1 = Date::fromDigits(2023,1,1);
 		$this->assertEquals($date, $date1);
 	}
+
+	function testDaysDiffPositive(): void {
+		$date = new Date('2023-01-01');
+		$date2 = new Date('2025-04-07');
+
+		$this->assertSame(827, $date->daysDiff($date2));
+	}
+
+	function testDaysDiffNegative(): void {
+		$date = new Date('2023-01-01');
+		$date2 = new Date('2025-04-07');
+
+		$this->assertSame(-827, $date2->daysDiff($date));
+	}
 }

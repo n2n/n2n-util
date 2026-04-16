@@ -99,6 +99,15 @@ class Date implements \JsonSerializable, \Stringable {
 		return $this->spaceshipCompareWith($date) === 0;
 	}
 
+	function daysDiff(Date $date): int {
+		$dateInterval = $this->diff($date);
+		if ($dateInterval->invert) {
+			return -$dateInterval->days;
+		}
+
+		return $dateInterval->days;
+	}
+
 	function jsonSerialize(): string {
 		return $this->__toString();
 	}
