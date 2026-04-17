@@ -14,7 +14,8 @@ class Date implements \JsonSerializable, \Stringable {
 	private readonly int $year;
 
 	/**
-	 * @throws DateParseException
+	 * @throws DateParseException if you do not wish to handle this checked exception use {@link Date::from()}
+	 *   or {@link Date::today()}.
 	 */
 	function __construct(?string $arg = null) {
 		$data = date_parse($arg ?? date('Y-m-d'));
