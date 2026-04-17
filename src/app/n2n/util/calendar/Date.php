@@ -14,7 +14,6 @@ class Date implements \JsonSerializable, \Stringable {
 	private readonly int $year;
 
 	/**
-	 * TODO: maybe change to RuntimeException like InvalidArgumentException
 	 * @throws DateParseException
 	 */
 	function __construct(?string $arg = null) {
@@ -114,6 +113,10 @@ class Date implements \JsonSerializable, \Stringable {
 
 	public function __toString(): string {
 		return sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day);
+	}
+
+	static function today(): Date {
+		return ExUtils::try(fn () => new Date());
 	}
 
 	static function from(\DateTimeInterface|Date|PlainDateTime|string|null $dateTime): ?Date {

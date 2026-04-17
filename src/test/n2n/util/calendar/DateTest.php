@@ -199,4 +199,11 @@ class DateTest extends TestCase {
 
 		$this->assertSame(-827, $date2->daysDiff($date));
 	}
+
+	function testToday(): void {
+		// two tries due to race condition
+		$this->assertTrue(
+				date('Y-m-d') === Date::today()->toSql()
+						|| date('Y-m-d') === Date::today()->toSql());
+	}
 }
