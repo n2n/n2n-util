@@ -141,7 +141,7 @@ class DateUtils {
 	/**
 	 * @deprecated Useless Method
 	 */
-	public static function formatDateTime(\DateTime $dateTime, string $format): string {
+	public static function formatDateTime(\DateTimeInterface $dateTime, string $format): string {
 		$dateTimeString = @$dateTime->format($format);
 		if ($dateTimeString === false) {
 			$message = ($err = error_get_last()) ? $err['message'] : null;
