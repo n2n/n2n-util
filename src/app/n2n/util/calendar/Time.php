@@ -99,4 +99,12 @@ class Time implements \JsonSerializable, \Stringable {
 			throw new \InvalidArgumentException($e->getMessage(), previous: $e);
 		}
 	}
+
+	static function min(): Time {
+		return self::fromDigits(0, 0, 0);
+	}
+
+	static function max(): Time {
+		return self::fromDigits(23, 59, 59);
+	}
 }

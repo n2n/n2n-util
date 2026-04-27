@@ -79,4 +79,12 @@ class TimeTest extends TestCase {
 		$date1 = Time::fromDigits(16,55,40);
 		$this->assertEquals($date, $date1);
 	}
+
+	function testMin(): void {
+		$this->assertEquals(new Time('00:00:00'), Time::min());
+	}
+
+	function testMax(): void {
+		$this->assertEquals(new Time('23:59:59'), Time::max());
+	}
 }
