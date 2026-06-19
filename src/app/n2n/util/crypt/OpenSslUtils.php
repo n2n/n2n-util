@@ -31,7 +31,7 @@ class OpenSslUtils {
 		}
 		return $res;
 	}
-	
+
 	public static function randomPseudoBytes($size) {
 		$res = @openssl_random_pseudo_bytes($size);
 		if ($res === false && $err = error_get_last()) {
@@ -39,19 +39,34 @@ class OpenSslUtils {
 		}
 		return $res;
 	}
-	
-	public static function encrypt(string $data, string $method, string $key, int $options = 0, $iv = '') {
-		$res = @openssl_encrypt($data, $method, $key, $options, $iv);
-		if ($res === false && $err = error_get_last()) {
-			throw new EncryptionFailedException($err['message']);
+
+	/**
+	 * @param string $data
+	 * @param string $method
+	 * @param string $key
+	 * @param int $options
+	 * @param string $iv Pass nonce for AEAD ciphers.
+	 * @param string|null &$tag Passed by reference. Required for AEAD ciphers.
+	 * @param string $aad
+	 * @param int $tagLength
+	 * @return string
+	 */
+	public static function encrypt(string $data, string $method, string $key, int $options = 0,
+			string $iv = '', ?string &$tag = null, string $aad = '', int $tagLength = 16): string {
+		$res = @openssl_encrypt($data, $method, $key, $options, $iv, $tag, $aad, $tagLength);
+		if ($res === false) {
+			$err = error_get_last();
+			throw new EncryptionFailedException($err['message'] ?? 'Encryption failed.');
 		}
 		return $res;
 	}
-	
-	public static function decrypt($data, $method, $key, int $options = 0, $iv = '') {
-		$res = @openssl_decrypt($data, $method, $key, $options, $iv);
-		if ($res === false && $err = error_get_last()) {
-			throw new DecryptionFailedException($err['message']);
+
+	public static function decrypt(string $data, string $method, string $key, int $options = 0,
+			string $iv = '', ?string $tag = null, string $aad = ''): string {
+		$res = @openssl_decrypt($data, $method, $key, $options, $iv, $tag, $aad);
+		if ($res === false) {
+			$err = error_get_last();
+			throw new DecryptionFailedException($err['message'] ?? 'Decryption failed.');
 		}
 		return $res;
 	}
