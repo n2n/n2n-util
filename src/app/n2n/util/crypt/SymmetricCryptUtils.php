@@ -4,16 +4,16 @@ namespace n2n\util\crypt;
 
 class SymmetricCryptUtils {
 	static function encrypt(PlainSecret $plainSecret, string $key, ?string $aad = null,
-			SymmetricCryptAlgorithm $algorithm = SymmetricCryptAlgorithm::AES_256_GCM): EncryptedResult {
+			SymmetricCipher $algorithm = SymmetricCipher::AES_256_GCM): EncryptedSecret {
 		$nonce = OpenSslUtils::randomPseudoBytes(12);
 		$tag = '';
 		$ciphertext = OpenSslUtils::encrypt($plainSecret->reveal(), $algorithm->value, $key, OPENSSL_RAW_DATA, $nonce,
 				$tag, $aad ?? '');
-		return new EncryptedResult(base64_encode($nonce), base64_encode($tag), base64_encode($ciphertext));
+		return new EncryptedSecret(base64_encode($nonce), base64_encode($tag), base64_encode($ciphertext));
 	}
 
-	static function decrypt(EncryptedResult $encryptedResult, string $key, ?string $aad = null,
-			SymmetricCryptAlgorithm $algorithm = SymmetricCryptAlgorithm::AES_256_GCM): PlainSecret {
+	static function decrypt(EncryptedSecret $encryptedResult, string $key, ?string $aad = null,
+			SymmetricCipher $algorithm = SymmetricCipher::AES_256_GCM): PlainSecret {
 		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedResult->getCiphertext()),
 				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedResult->getNonce()),
 				self::base64Decode($encryptedResult->getTag()), $aad ?? ''));

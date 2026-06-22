@@ -3,7 +3,7 @@ namespace n2n\util\crypt;
 
 use n2n\util\StringUtils;
 
-final class EncryptedResult implements \JsonSerializable {
+final class EncryptedSecret implements \JsonSerializable {
 	private const FIELDS = ['nonce', 'tag', 'ciphertext'];
 
 	function __construct(private string $nonce, private string $tag, private string $ciphertext) {
@@ -30,7 +30,7 @@ final class EncryptedResult implements \JsonSerializable {
 			}
 		}
 
-		return new EncryptedResult($data['nonce'], $data['tag'], $data['ciphertext']);
+		return new EncryptedSecret($data['nonce'], $data['tag'], $data['ciphertext']);
 	}
 
 	function toJson(): string {

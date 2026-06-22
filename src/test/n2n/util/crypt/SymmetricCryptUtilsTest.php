@@ -21,20 +21,20 @@ class SymmetricCryptUtilsTest extends TestCase {
 		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
 		$this->assertArrayNotHasKey('algorithm', $encryptedResult->toArray());
-		$this->assertSame($encryptedResult->toArray(), EncryptedResult::fromJson($encryptedResult->toJson())->toArray());
+		$this->assertSame($encryptedResult->toArray(), EncryptedSecret::fromJson($encryptedResult->toJson())->toArray());
 	}
 
 	function testCanUseSupportedAlgorithm(): void {
 		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
-				SymmetricCryptAlgorithm::AES_128_GCM);
+				SymmetricCipher::AES_128_GCM);
 
 		$this->assertSame('secret-data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 16), null,
-				SymmetricCryptAlgorithm::AES_128_GCM)->reveal());
+				SymmetricCipher::AES_128_GCM)->reveal());
 	}
 
 	function testDecryptFailsIfWrongAlgorithmIsUsed(): void {
 		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
-				SymmetricCryptAlgorithm::AES_128_GCM);
+				SymmetricCipher::AES_128_GCM);
 
 		$this->expectException(DecryptionFailedException::class);
 		SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 16));
@@ -85,11 +85,11 @@ class SymmetricCryptUtilsTest extends TestCase {
 		json_encode($plainSecret, JSON_THROW_ON_ERROR);
 	}
 
-	private function tamper(EncryptedResult $encryptedResult, string $field): EncryptedResult {
+	private function tamper(EncryptedSecret $encryptedResult, string $field): EncryptedSecret {
 		$data = $encryptedResult->toArray();
 		$raw = base64_decode($data[$field], true);
 		$raw[0] = chr(ord($raw[0]) ^ 1);
 		$data[$field] = base64_encode($raw);
-		return EncryptedResult::fromArray($data);
+		return EncryptedSecret::fromArray($data);
 	}
 }
