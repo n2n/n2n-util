@@ -1,6 +1,7 @@
 <?php
 namespace n2n\util\crypt;
 
+
 class SymmetricCryptUtils {
 	private const ALGORITHM = 'aes-256-gcm';
 
@@ -18,17 +19,16 @@ class SymmetricCryptUtils {
 					. $encryptedResult->getAlgorithm() . '. Supported: ' . self::ALGORITHM);
 		}
 
-		return OpenSslUtils::decrypt(self::decode($encryptedResult->getCiphertext()), $encryptedResult->getAlgorithm(),
-				$key, OPENSSL_RAW_DATA, self::decode($encryptedResult->getNonce()),
-				self::decode($encryptedResult->getTag()), $aad ?? '');
+		return OpenSslUtils::decrypt(self::base64Decode($encryptedResult->getCiphertext()), $encryptedResult->getAlgorithm(),
+				$key, OPENSSL_RAW_DATA, self::base64Decode($encryptedResult->getNonce()),
+				self::base64Decode($encryptedResult->getTag()), $aad ?? '');
 	}
 
-	private static function decode(string $value): string {
+	private static function base64Decode(string $value): string {
 		$decoded = base64_decode($value, true);
 		if ($decoded === false) {
 			throw new \InvalidArgumentException('Invalid encrypted result.');
 		}
-
 		return $decoded;
 	}
 }
