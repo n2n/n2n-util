@@ -2,7 +2,7 @@
 namespace n2n\util\crypt;
 
 class SymmetricCryptUtils {
-	private const ALGORITHM =  'aes-256-gcm';
+	private const ALGORITHM = 'aes-256-gcm';
 
 	static function encrypt(string $data, string $key, ?string $aad = null): EncryptedResult {
 		$nonce = OpenSslUtils::randomPseudoBytes(12);
@@ -14,8 +14,8 @@ class SymmetricCryptUtils {
 
 	static function decrypt(EncryptedResult $encryptedResult, string $key, ?string $aad = null): string {
 		if ($encryptedResult->getAlgorithm() !== self::ALGORITHM) {
-			throw new \InvalidArgumentException('Couldn\'t decrypt. Unsupported algorithm:'
-					. $encryptedResult->getAlgorithm() . '. Supported' . self::ALGORITHM);
+			throw new \InvalidArgumentException('Unsupported symmetric encryption algorithm: '
+					. $encryptedResult->getAlgorithm() . '. Supported: ' . self::ALGORITHM);
 		}
 
 		return OpenSslUtils::decrypt(self::decode($encryptedResult->getCiphertext()), $encryptedResult->getAlgorithm(),
