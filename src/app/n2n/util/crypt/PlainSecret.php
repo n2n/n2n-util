@@ -25,6 +25,6 @@ class PlainSecret implements \JsonSerializable {
 	}
 
 	function jsonSerialize(): mixed {
-		throw new PlainSecretSerializationException('Plain secrets must not be serialized.');
+		return $this->__toString();
 	}
 }

@@ -14,9 +14,9 @@ class SymmetricCryptUtils {
 
 	static function decrypt(EncryptedSecret $encryptedSecret, string $key, ?string $aad = null,
 			SymmetricCipher $algorithm = SymmetricCipher::AES_256_GCM): PlainSecret {
-		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedSecret->getCiphertext()),
-				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedSecret->getNonce()),
-				self::base64Decode($encryptedSecret->getTag()), $aad ?? ''));
+		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedSecret->ciphertext),
+				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedSecret->nonce),
+				self::base64Decode($encryptedSecret->tag), $aad ?? ''));
 	}
 
 	private static function base64Decode(string $value): string {
