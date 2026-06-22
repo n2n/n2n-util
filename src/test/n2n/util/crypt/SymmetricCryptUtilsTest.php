@@ -5,27 +5,36 @@ use PHPUnit\Framework\TestCase;
 
 class SymmetricCryptUtilsTest extends TestCase {
 	function testEncryptDecryptRoundtrip(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('very secret data', str_repeat('s', 32));
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('very secret data'), str_repeat('s', 32));
 
-		$this->assertSame('very secret data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 32)));
+		$this->assertSame('very secret data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 32))->reveal());
 	}
 
 	function testSamePlaintextEncryptedTwiceProducesDifferentPayloads(): void {
-		$encryptedResultOne = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
-		$encryptedResultTwo = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
+		$encryptedResultOne = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
+		$encryptedResultTwo = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
 		$this->assertNotSame($encryptedResultOne->toJson(), $encryptedResultTwo->toJson());
 	}
 
 	function testJsonContainsAlgorithm(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
-		$this->assertSame('aes-256-gcm', $encryptedResult->getAlgorithm());
+		$this->assertSame(SymmetricCryptAlgorithm::AES_256_GCM->value, $encryptedResult->getAlgorithm());
 		$this->assertSame($encryptedResult->toArray(), EncryptedResult::fromJson($encryptedResult->toJson())->toArray());
 	}
 
+	function testCanUseSupportedAlgorithm(): void {
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
+				SymmetricCryptAlgorithm::AES_128_GCM);
+
+		$this->assertSame(SymmetricCryptAlgorithm::AES_128_GCM->value, $encryptedResult->getAlgorithm());
+		$this->assertSame('secret-data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 16), null,
+				SymmetricCryptAlgorithm::AES_128_GCM)->reveal());
+	}
+
 	function testDecryptRejectsUnsupportedStoredAlgorithm(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 		$data = $encryptedResult->toArray();
 		$data['algorithm'] = 'aes-128-gcm';
 
@@ -34,37 +43,48 @@ class SymmetricCryptUtilsTest extends TestCase {
 	}
 
 	function testDecryptFailsIfCiphertextIsModified(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
 		$this->expectException(DecryptionFailedException::class);
 		SymmetricCryptUtils::decrypt($this->tamper($encryptedResult, 'ciphertext'), str_repeat('s', 32));
 	}
 
 	function testDecryptFailsIfTagIsModified(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
 		$this->expectException(DecryptionFailedException::class);
 		SymmetricCryptUtils::decrypt($this->tamper($encryptedResult, 'tag'), str_repeat('s', 32));
 	}
 
 	function testDecryptFailsIfNonceIsModified(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32));
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
 		$this->expectException(DecryptionFailedException::class);
 		SymmetricCryptUtils::decrypt($this->tamper($encryptedResult, 'nonce'), str_repeat('s', 32));
 	}
 
 	function testDecryptFailsIfAadChanges(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32), 'aad-a');
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32),
+				'aad-a');
 
 		$this->expectException(DecryptionFailedException::class);
 		SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 32), 'aad-b');
 	}
 
 	function testNullAadRoundtrip(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt('secret-data', str_repeat('s', 32), null);
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32), null);
 
-		$this->assertSame('secret-data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 32), null));
+		$this->assertSame('secret-data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 32), null)
+				->reveal());
+	}
+
+	function testPlainSecretRepresentationIsRedacted(): void {
+		$plainSecret = PlainSecret::fromString('secret-data');
+
+		$this->assertSame('[REDACTED]', (string) $plainSecret);
+		$this->assertSame(['value' => '[REDACTED]'], $plainSecret->__debugInfo());
+		$this->expectException(PlainSecretSerializationException::class);
+		json_encode($plainSecret, JSON_THROW_ON_ERROR);
 	}
 
 	private function tamper(EncryptedResult $encryptedResult, string $field): EncryptedResult {

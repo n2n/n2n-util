@@ -2,25 +2,26 @@
 namespace n2n\util\crypt;
 
 class SymmetricCryptUtils {
-	private const ALGORITHM = 'aes-256-gcm';
-
-	static function encrypt(string $data, string $key, ?string $aad = null): EncryptedResult {
+	static function encrypt(PlainSecret $plainSecret, string $key, ?string $aad = null,
+			SymmetricCryptAlgorithm $algorithm = SymmetricCryptAlgorithm::AES_256_GCM): EncryptedResult {
 		$nonce = OpenSslUtils::randomPseudoBytes(12);
 		$tag = '';
-		$ciphertext = OpenSslUtils::encrypt($data, self::ALGORITHM, $key, OPENSSL_RAW_DATA, $nonce, $tag, $aad ?? '');
-		return new EncryptedResult(self::ALGORITHM, base64_encode($nonce), base64_encode($tag),
+		$ciphertext = OpenSslUtils::encrypt($plainSecret->reveal(), $algorithm->value, $key, OPENSSL_RAW_DATA, $nonce,
+				$tag, $aad ?? '');
+		return new EncryptedResult($algorithm->value, base64_encode($nonce), base64_encode($tag),
 				base64_encode($ciphertext));
 	}
 
-	static function decrypt(EncryptedResult $encryptedResult, string $key, ?string $aad = null): string {
-		if ($encryptedResult->getAlgorithm() !== self::ALGORITHM) {
+	static function decrypt(EncryptedResult $encryptedResult, string $key, ?string $aad = null,
+			SymmetricCryptAlgorithm $algorithm = SymmetricCryptAlgorithm::AES_256_GCM): PlainSecret {
+		if ($encryptedResult->getAlgorithm() !== $algorithm->value) {
 			throw new \InvalidArgumentException('Unsupported symmetric encryption algorithm: '
-					. $encryptedResult->getAlgorithm() . '. Supported: ' . self::ALGORITHM);
+					. $encryptedResult->getAlgorithm() . '. Supported: ' . $algorithm->value);
 		}
 
-		return OpenSslUtils::decrypt(self::decode($encryptedResult->getCiphertext()), $encryptedResult->getAlgorithm(),
-				$key, OPENSSL_RAW_DATA, self::decode($encryptedResult->getNonce()),
-				self::decode($encryptedResult->getTag()), $aad ?? '');
+		return PlainSecret::fromString(OpenSslUtils::decrypt(self::decode($encryptedResult->getCiphertext()),
+				$algorithm->value, $key, OPENSSL_RAW_DATA, self::decode($encryptedResult->getNonce()),
+				self::decode($encryptedResult->getTag()), $aad ?? ''));
 	}
 
 	private static function decode(string $value): string {
