@@ -4,10 +4,9 @@ namespace n2n\util\crypt;
 use n2n\util\StringUtils;
 
 final class EncryptedResult implements \JsonSerializable {
-	private const FIELDS = ['algorithm', 'nonce', 'tag', 'ciphertext'];
+	private const FIELDS = ['nonce', 'tag', 'ciphertext'];
 
-	function __construct(private string $algorithm, private string $nonce, private string $tag,
-			private string $ciphertext) {
+	function __construct(private string $nonce, private string $tag, private string $ciphertext) {
 	}
 
 	static function fromJson(string $json): self {
@@ -31,7 +30,7 @@ final class EncryptedResult implements \JsonSerializable {
 			}
 		}
 
-		return new EncryptedResult($data['algorithm'], $data['nonce'], $data['tag'], $data['ciphertext']);
+		return new EncryptedResult($data['nonce'], $data['tag'], $data['ciphertext']);
 	}
 
 	function toJson(): string {
@@ -44,15 +43,10 @@ final class EncryptedResult implements \JsonSerializable {
 
 	function toArray(): array {
 		return [
-			'algorithm' => $this->algorithm,
 			'nonce' => $this->nonce,
 			'tag' => $this->tag,
 			'ciphertext' => $this->ciphertext
 		];
-	}
-
-	function getAlgorithm(): string {
-		return $this->algorithm;
 	}
 
 	function getNonce(): string {

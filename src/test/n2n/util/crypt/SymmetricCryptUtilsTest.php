@@ -17,10 +17,10 @@ class SymmetricCryptUtilsTest extends TestCase {
 		$this->assertNotSame($encryptedResultOne->toJson(), $encryptedResultTwo->toJson());
 	}
 
-	function testJsonContainsAlgorithm(): void {
+	function testJsonRoundtrip(): void {
 		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
 
-		$this->assertSame(SymmetricCryptAlgorithm::AES_256_GCM->value, $encryptedResult->getAlgorithm());
+		$this->assertArrayNotHasKey('algorithm', $encryptedResult->toArray());
 		$this->assertSame($encryptedResult->toArray(), EncryptedResult::fromJson($encryptedResult->toJson())->toArray());
 	}
 
@@ -28,18 +28,16 @@ class SymmetricCryptUtilsTest extends TestCase {
 		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
 				SymmetricCryptAlgorithm::AES_128_GCM);
 
-		$this->assertSame(SymmetricCryptAlgorithm::AES_128_GCM->value, $encryptedResult->getAlgorithm());
 		$this->assertSame('secret-data', SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 16), null,
 				SymmetricCryptAlgorithm::AES_128_GCM)->reveal());
 	}
 
-	function testDecryptRejectsUnsupportedStoredAlgorithm(): void {
-		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 32));
-		$data = $encryptedResult->toArray();
-		$data['algorithm'] = 'aes-128-gcm';
+	function testDecryptFailsIfWrongAlgorithmIsUsed(): void {
+		$encryptedResult = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
+				SymmetricCryptAlgorithm::AES_128_GCM);
 
-		$this->expectException(\InvalidArgumentException::class);
-		SymmetricCryptUtils::decrypt(EncryptedResult::fromArray($data), str_repeat('s', 32));
+		$this->expectException(DecryptionFailedException::class);
+		SymmetricCryptUtils::decrypt($encryptedResult, str_repeat('s', 16));
 	}
 
 	function testDecryptFailsIfCiphertextIsModified(): void {

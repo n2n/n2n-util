@@ -9,17 +9,11 @@ class SymmetricCryptUtils {
 		$tag = '';
 		$ciphertext = OpenSslUtils::encrypt($plainSecret->reveal(), $algorithm->value, $key, OPENSSL_RAW_DATA, $nonce,
 				$tag, $aad ?? '');
-		return new EncryptedResult($algorithm->value, base64_encode($nonce), base64_encode($tag),
-				base64_encode($ciphertext));
+		return new EncryptedResult(base64_encode($nonce), base64_encode($tag), base64_encode($ciphertext));
 	}
 
 	static function decrypt(EncryptedResult $encryptedResult, string $key, ?string $aad = null,
 			SymmetricCryptAlgorithm $algorithm = SymmetricCryptAlgorithm::AES_256_GCM): PlainSecret {
-		if ($encryptedResult->getAlgorithm() !== $algorithm->value) {
-			throw new \InvalidArgumentException('Unsupported symmetric encryption algorithm: '
-					. $encryptedResult->getAlgorithm() . '. Supported: ' . $algorithm->value);
-		}
-
 		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedResult->getCiphertext()),
 				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedResult->getNonce()),
 				self::base64Decode($encryptedResult->getTag()), $aad ?? ''));
