@@ -82,7 +82,7 @@ class UnionTypeConstraint extends TypeConstraint {
 			}
 		}
 		
-		throw $this->createIncompatbleValueException($value);
+		throw $this->createIncompatibleValueException($value);
 	}
 	
 	

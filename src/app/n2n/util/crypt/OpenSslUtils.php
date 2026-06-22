@@ -21,10 +21,13 @@
  */
 namespace n2n\util\crypt;
 
-use lib\n2n\util\crypt\RandomPseudoBytesException;
+use n2n\util\crypt\ex\RandomPseudoBytesException;
+use n2n\util\crypt\ex\CipherIvLengthException;
+use n2n\util\crypt\ex\DecryptionFailedException;
+use n2n\util\crypt\ex\EncryptionFailedException;
 
 class OpenSslUtils {
-	public static function cipherIvLength($algorithm) {
+	public static function cipherIvLength(string $algorithm): int {
 		$res = @openssl_cipher_iv_length($algorithm);
 		if ($res === false && $err = error_get_last()) {
 			throw new CipherIvLengthException($err['message']);
@@ -32,7 +35,7 @@ class OpenSslUtils {
 		return $res;
 	}
 
-	public static function randomPseudoBytes($size) {
+	public static function randomPseudoBytes(int $size): string {
 		$res = @openssl_random_pseudo_bytes($size);
 		if ($res === false && $err = error_get_last()) {
 			throw new RandomPseudoBytesException($err['message']);

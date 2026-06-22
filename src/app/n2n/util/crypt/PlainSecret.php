@@ -24,7 +24,7 @@ class PlainSecret implements \JsonSerializable {
 		return ['value' => '[REDACTED]'];
 	}
 
-	function jsonSerialize(): mixed {
+	function jsonSerialize(): string {
 		return $this->__toString();
 	}
 }

@@ -4,7 +4,11 @@ namespace n2n\util\crypt;
 use PHPUnit\Framework\TestCase;
 use n2n\util\crypt\symmetric\SymmetricCryptUtils;
 use n2n\util\crypt\symmetric\EncryptedSecret;
-use n2n\util\crypt\symmetric\SymmetricCipher;
+use n2n\util\crypt\symmetric\SymmetricAlgorithm;
+use n2n\util\crypt\ex\DecryptionFailedException;
+use n2n\util\type\attrs\InvalidAttributeException;
+use n2n\util\type\attrs\MissingAttributeFieldException;
+use n2n\util\type\attrs\AttributesException;
 
 class SymmetricCryptUtilsTest extends TestCase {
 	function testEncryptDecryptRoundtrip(): void {
@@ -27,23 +31,27 @@ class SymmetricCryptUtilsTest extends TestCase {
 		$this->assertSame($encryptedSecret->toArray(), EncryptedSecret::fromJson($encryptedSecret->toJson())->toArray());
 	}
 
+	/**
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
+	 */
 	function testEncryptedSecretRejectsInvalidPayload(): void {
-		$this->expectException(\InvalidArgumentException::class);
+		$this->expectException(AttributesException::class);
 
 		EncryptedSecret::fromArray(['nonce' => 'nonce', 'tag' => 'tag', 'ciphertext' => 123]);
 	}
 
 	function testCanUseSupportedAlgorithm(): void {
 		$encryptedSecret = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
-				SymmetricCipher::AES_128_GCM);
+				SymmetricAlgorithm::AES_128_GCM);
 
 		$this->assertSame('secret-data', SymmetricCryptUtils::decrypt($encryptedSecret, str_repeat('s', 16), null,
-				SymmetricCipher::AES_128_GCM)->reveal());
+				SymmetricAlgorithm::AES_128_GCM)->reveal());
 	}
 
 	function testDecryptFailsIfWrongAlgorithmIsUsed(): void {
 		$encryptedSecret = SymmetricCryptUtils::encrypt(PlainSecret::fromString('secret-data'), str_repeat('s', 16), null,
-				SymmetricCipher::AES_128_GCM);
+				SymmetricAlgorithm::AES_128_GCM);
 
 		$this->expectException(DecryptionFailedException::class);
 		SymmetricCryptUtils::decrypt($encryptedSecret, str_repeat('s', 16));
@@ -90,10 +98,13 @@ class SymmetricCryptUtilsTest extends TestCase {
 
 		$this->assertSame('[REDACTED]', (string) $plainSecret);
 		$this->assertSame(['value' => '[REDACTED]'], $plainSecret->__debugInfo());
-		$this->expectException(PlainSecretSerializationException::class);
-		json_encode($plainSecret, JSON_THROW_ON_ERROR);
+		$this->assertSame('[REDACTED]', $plainSecret->jsonSerialize());
 	}
 
+	/**
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
+	 */
 	private function tamper(EncryptedSecret $encryptedSecret, string $field): EncryptedSecret {
 		$data = $encryptedSecret->toArray();
 		$raw = base64_decode($data[$field], true);

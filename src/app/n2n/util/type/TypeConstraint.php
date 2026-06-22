@@ -154,8 +154,11 @@ abstract class TypeConstraint implements Constraint {
 		
 		return self::create($type);
 	}
-	
-	protected function createIncompatbleValueException($value, $previousE = null) {
+
+	/**
+	 * @throws ValueIncompatibleWithConstraintsException
+	 */
+	protected function createIncompatibleValueException($value, $previousE = null) {
 		throw new ValueIncompatibleWithConstraintsException('Value type not allowed with constraints. Required type: '
 				. $this->__toString() . '; Given type: '
 				. TypeUtils::getTypeInfo($value), 0, $previousE);

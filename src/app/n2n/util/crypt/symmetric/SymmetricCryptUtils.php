@@ -7,7 +7,7 @@ use n2n\util\crypt\PlainSecret;
 
 class SymmetricCryptUtils {
 	static function encrypt(PlainSecret $plainSecret, string $key, ?string $aad = null,
-			SymmetricCipher $algorithm = SymmetricCipher::AES_256_GCM): EncryptedSecret {
+			SymmetricAlgorithm $algorithm = SymmetricAlgorithm::AES_256_GCM): EncryptedSecret {
 		$nonce = OpenSslUtils::randomPseudoBytes(12);
 		$tag = '';
 		$ciphertext = OpenSslUtils::encrypt($plainSecret->reveal(), $algorithm->value, $key, OPENSSL_RAW_DATA, $nonce,
@@ -16,7 +16,7 @@ class SymmetricCryptUtils {
 	}
 
 	static function decrypt(EncryptedSecret $encryptedSecret, string $key, ?string $aad = null,
-			SymmetricCipher $algorithm = SymmetricCipher::AES_256_GCM): PlainSecret {
+			SymmetricAlgorithm $algorithm = SymmetricAlgorithm::AES_256_GCM): PlainSecret {
 		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedSecret->ciphertext),
 				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedSecret->nonce),
 				self::base64Decode($encryptedSecret->tag), $aad ?? ''));
