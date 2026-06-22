@@ -12,17 +12,17 @@ class SymmetricCryptUtils {
 		return new EncryptedSecret(base64_encode($nonce), base64_encode($tag), base64_encode($ciphertext));
 	}
 
-	static function decrypt(EncryptedSecret $encryptedResult, string $key, ?string $aad = null,
+	static function decrypt(EncryptedSecret $encryptedSecret, string $key, ?string $aad = null,
 			SymmetricCipher $algorithm = SymmetricCipher::AES_256_GCM): PlainSecret {
-		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedResult->getCiphertext()),
-				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedResult->getNonce()),
-				self::base64Decode($encryptedResult->getTag()), $aad ?? ''));
+		return PlainSecret::fromString(OpenSslUtils::decrypt(self::base64Decode($encryptedSecret->getCiphertext()),
+				$algorithm->value, $key, OPENSSL_RAW_DATA, self::base64Decode($encryptedSecret->getNonce()),
+				self::base64Decode($encryptedSecret->getTag()), $aad ?? ''));
 	}
 
 	private static function base64Decode(string $value): string {
 		$decoded = base64_decode($value, true);
 		if ($decoded === false) {
-			throw new \InvalidArgumentException('Invalid encrypted result.');
+			throw new \InvalidArgumentException('Invalid encrypted secret.');
 		}
 		return $decoded;
 	}
