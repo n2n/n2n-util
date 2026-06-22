@@ -1,6 +1,9 @@
 <?php
-namespace n2n\util\crypt;
+namespace n2n\util\crypt\symmetric;
 
+
+use n2n\util\crypt\OpenSslUtils;
+use n2n\util\crypt\PlainSecret;
 
 class SymmetricCryptUtils {
 	static function encrypt(PlainSecret $plainSecret, string $key, ?string $aad = null,

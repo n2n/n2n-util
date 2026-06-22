@@ -1,5 +1,5 @@
 <?php
-namespace n2n\util\crypt;
+namespace n2n\util\crypt\symmetric;
 
 use n2n\util\StringUtils;
 use n2n\util\type\attrs\AttributesException;

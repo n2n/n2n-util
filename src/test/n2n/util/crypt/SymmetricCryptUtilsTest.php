@@ -2,6 +2,9 @@
 namespace n2n\util\crypt;
 
 use PHPUnit\Framework\TestCase;
+use n2n\util\crypt\symmetric\SymmetricCryptUtils;
+use n2n\util\crypt\symmetric\EncryptedSecret;
+use n2n\util\crypt\symmetric\SymmetricCipher;
 
 class SymmetricCryptUtilsTest extends TestCase {
 	function testEncryptDecryptRoundtrip(): void {

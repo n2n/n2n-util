@@ -1,5 +1,5 @@
 <?php
-namespace n2n\util\crypt;
+namespace n2n\util\crypt\symmetric;
 
 enum SymmetricCipher: string {
 	case AES_128_GCM = 'aes-128-gcm';
