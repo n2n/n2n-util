@@ -8,7 +8,11 @@ class PlainSecret implements \JsonSerializable {
 		$this->value = $value;
 	}
 
-	static function fromString(string $value): self {
+	static function from(string|self|null $value): self|null {
+		if ($value === null || $value instanceof self) {
+			return $value;
+		}
+
 		return new self($value);
 	}
 
