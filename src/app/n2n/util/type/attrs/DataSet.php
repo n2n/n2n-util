@@ -23,9 +23,7 @@ namespace n2n\util\type\attrs;
 
 use n2n\util\type\TypeConstraint;
 use n2n\util\type\ValueIncompatibleWithConstraintsException;
-use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
-use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeName;
 use n2n\util\EnumUtils;
 use n2n\util\type\TypeConstraints;
