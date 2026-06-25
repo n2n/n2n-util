@@ -21,32 +21,9 @@
  */
 namespace n2n\util\type\attrs;
 
-use n2n\util\type\TypeConstraint;
-
 /**
  * @deprecated
  */
-interface AttributeReader {
-	
-	/**
-	 * @param AttributePath $path
-	 * @return bool
-	 */
-	function containsAttribute(AttributePath $path): bool;
+interface AttributeReader extends \n2n\util\attr\AttributeReader {
 
-	/**
-	 * @param AttributePath $path
-	 * @param TypeConstraint|null $typeConstraint
-	 * @param bool $mandatory
-	 * @param mixed|null $defaultValue
-	 * @return mixed|null
-	 * @throws InvalidAttributeException
-	 * @throws MissingAttributeFieldException
-	 */
-	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true,
-			mixed $defaultValue = null): mixed;
 }
-
-
-
-
