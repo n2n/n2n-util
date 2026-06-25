@@ -191,6 +191,23 @@ class DateUtilsTest extends TestCase {
 		}
 	}
 
+	public function testSqlToDateTimeImmutable() {
+		$sqlDateTimeString = '2025-11-17 08:30:45';
+		$nullInput = null;
+		$throwErrorInput = '+ 3d';
+
+		$this->assertEquals(new \DateTimeImmutable('2025-11-17 08:30:45'), DateUtils::sqlToDateTimeImmutable($sqlDateTimeString));
+		$this->assertNull(DateUtils::sqlToDateTimeImmutable($nullInput));
+
+		try {
+			DateUtils::sqlToDateTimeImmutable($throwErrorInput);
+			$this->fail('Exception expected');
+
+		} catch (\InvalidArgumentException $e) {
+			$this->assertTrue(true, 'Exception is thrown');
+		}
+	}
+
 	public function testDateToSql() {
 		$dateTime = new \DateTime('2025-11-17 08:30:45');
 		$dateTimeImmutable = new \DateTimeImmutable('2025-11-17 08:30:45');

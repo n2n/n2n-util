@@ -227,6 +227,22 @@ class DateUtils {
 	}
 
 	/**
+	 * @param string|null $sqlDateTimeString
+	 * @return null|\DateTime
+	 *
+	 * @throws \InvalidArgumentException
+	 */
+	static function sqlToDateTimeImmutable(?string $sqlDateTimeString): ?\DateTimeImmutable {
+		if (null === $sqlDateTimeString) return null;
+		try {
+			return self::createDateTimeImmutableFromFormat(self::SQL_DATE_TIME_FORMAT,
+					$sqlDateTimeString);
+		} catch (DateParseException $e) {
+			throw new \InvalidArgumentException($e->getMessage(), previous:  $e);
+		}
+	}
+
+	/**
 	 * @param DateTimeInterface|Date|null $date
 	 * @return null|string
 	 */
