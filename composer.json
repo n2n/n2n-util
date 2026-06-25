@@ -37,12 +37,12 @@
 	},
 	"autoload" : {
 		"psr-4" : {
-			"n2n\\util\\" : "src/app/n2n/util"
+			"n2n\\util\\attr" : "src/app/n2n/util/attr"
 		}
 	},
 	"autoload-dev" : {
 		"psr-4" : {
-			"n2n\\util\\" : "src/test/n2n/util"
+			"n2n\\util\\attr" : "src/test/n2n/util/attr"
 		}
 	}
 }

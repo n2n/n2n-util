@@ -23,6 +23,9 @@ namespace n2n\util\type\attrs;
 
 use n2n\util\type\TypeConstraint;
 
+/**
+ * @deprecated
+ */
 class LenientAttributeReader {
 	private $attributes;
 	

@@ -31,6 +31,9 @@ use n2n\util\ex\NotYetImplementedException;
 use n2n\util\EnumUtils;
 use n2n\util\ex\IllegalStateException;
 
+/**
+ * @deprecated
+ */
 class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 
 	private array $data;

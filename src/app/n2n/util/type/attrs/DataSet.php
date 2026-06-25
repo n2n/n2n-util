@@ -31,6 +31,9 @@ use n2n\util\EnumUtils;
 use n2n\util\type\TypeConstraints;
 use Stringable;
 
+/**
+ * @deprecated
+ */
 class DataSet implements AttributeReader, AttributeWriter {
 	private $attrs;
 	private $interceptor;

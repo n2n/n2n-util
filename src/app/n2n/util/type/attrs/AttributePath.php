@@ -27,6 +27,9 @@ use n2n\util\StringUtils;
 use InvalidArgumentException;
 use n2n\util\col\ArrayUtils;
 
+/**
+ * @deprecated
+ */
 class AttributePath {
 	const SEPARATOR = '/';
 //	const WILDHARD = '*';
