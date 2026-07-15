@@ -219,12 +219,12 @@ class StringUtils {
 	 * @param string $serializedStr
 	 * @throws UnserializationFailedException
 	 */
-	public static function unserialize($serializedStr): mixed {
+	public static function unserialize(string $serializedStr, array $options = []): mixed {
 		if ($serializedStr == self::SER_FALSE) {
 			return false;
 		}
 		
-		$obj = @unserialize($serializedStr);
+		$obj = @unserialize($serializedStr, $options);
 		
 		if ($obj === false && $err = error_get_last()) {
 			throw new UnserializationFailedException($err['message']);
