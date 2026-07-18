@@ -218,6 +218,7 @@ class StringUtils {
 	 *
 	 * @param string $serializedStr
 	 * @throws UnserializationFailedException
+	 * @deprecated use {@link \n2n\util\serialize\SerializationUtils::unserialize()}
 	 */
 	public static function unserialize(string $serializedStr, array $options = []): mixed {
 		if ($serializedStr == self::SER_FALSE) {

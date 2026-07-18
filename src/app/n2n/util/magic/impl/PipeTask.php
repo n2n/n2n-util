@@ -27,14 +27,16 @@ class PipeTask implements MagicTask {
 		$magicContext ??= MagicContexts::simple([]);
 
 		$lastTaskResult = null;
-		foreach ($this->steps as $step) {
+		foreach ($this->steps as $key => $step) {
 			if ($step instanceof MagicTask) {
-				$lastTaskResult = $step->exec($magicContext, $input);
+				$invokeClosure = fn () => $step->exec($magicContext, $input);
 			} else if ($step instanceof \Closure) {
-				$lastTaskResult = $this->invokeClosure($step, $magicContext, $input);
+				$invokeClosure = fn () => $this->invokeClosure($step, $magicContext, $input);
 			} else {
 				throw new IllegalStateException('Invalid step type: ' . get_class($step));
 			}
+
+			$lastTaskResult = $this->tryInvoke($invokeClosure, $key + 1, $invokeClosure);
 
 			if (!$lastTaskResult->isValid()) {
 				return $lastTaskResult;
@@ -43,6 +45,18 @@ class PipeTask implements MagicTask {
 			$input = $lastTaskResult->get();
 		}
 		return $lastTaskResult ?? TaskResults::valid();
+	}
+
+	/**
+	 * @throws TaskInputMismatchException
+	 */
+	private function tryInvoke(callable $invokeCall, int $stepNo, \Closure|MagicTask $step): TaskResult {
+		try {
+			return $invokeCall();
+		} catch (TaskInputMismatchException $e) {
+			throw new WrappedTaskInputMismatchException('PipeTask threw an TaskInputMismatchException on step#'
+					. $stepNo . '. Step type: ' . get_class($step) . '. Reason: ' . $e->getMessage(), previous: $e);
+		}
 	}
 
 	/**
