@@ -32,6 +32,7 @@ class TypeName {
 			default => false,
 		};
 	}
+
 	/**
 	 * @param string $typeName
 	 * @return boolean
