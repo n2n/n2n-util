@@ -26,21 +26,26 @@ class TypeName {
 	 * @param string $typeName
 	 * @return boolean
 	 */
-	static function isScalar(string $typeName) {
-		switch ($typeName) {
-			case self::STRING:
-			case self::INT:
-			case self::FLOAT:
-			case self::BOOL:
-			case self::TRUE:
-			case self::FALSE:
-			case self::PSEUDO_SCALAR:
-			case self::PSEUDO_NUMERIC:
-				return true;
-			default:
-				return false;
-		}
+	static function isScalar(string $typeName): bool {
+		return match ($typeName) {
+			self::STRING, self::INT, self::FLOAT, self::BOOL, self::TRUE, self::FALSE, self::PSEUDO_SCALAR, self::PSEUDO_NUMERIC => true,
+			default => false,
+		};
 	}
+	/**
+	 * @param string $typeName
+	 * @return boolean
+	 */
+	static function isBuiltin(string $typeName): bool {
+		return match ($typeName) {
+			self::STRING, self::INT, self::FLOAT, self::BOOL, self::TRUE, self::FALSE,
+			self::NULL, self::ARRAY, self::RESOURCE, self::OBJECT, self::PSEUDO_SCALAR,
+			self::PSEUDO_MIXED, self::PSEUDO_ARRAYLIKE, self::PSEUDO_NUMERIC => true,
+			default => false,
+		};
+	}
+
+
 
 	static function convertValue(mixed $value, string $typeName): mixed{
 		switch ($typeName) {
@@ -167,7 +172,7 @@ class TypeName {
 			return self::isArrayLike($testingTypeName);
 		}
 
-		if ($typeName === self::OBJECT) {
+		if ($typeName ===  self::OBJECT) {
 			return class_exists($testingTypeName);
 		}
 		
