@@ -165,11 +165,16 @@ class IoUtils {
 					null, $e);
 		}
 	}
+
 	/**
-	 * @param string $path
-	 * @throws IoException
+	 * @throws FileOperationException
 	 */
-	public static function rmdirs(string $path) {
+	public static function rmdirs(string $path, bool $symlinkFollowed = false): void {
+		if (!$symlinkFollowed && is_link($path)) {
+			IoUtils::unlink($path);
+			return;
+		}
+
 		if (is_dir($path)) {
 			try {
 				$handle = self::valReturn(@opendir($path));
@@ -181,7 +186,7 @@ class IoUtils {
 
 				closedir($handle);
 			} catch(\Throwable $e) {
-				throw new IoException('Opendir of \'' . $path . '\' failed. Reason: ' . $e->getMessage(), null, $e);
+				throw new FileOperationException('Opendir of \'' . $path . '\' failed. Reason: ' . $e->getMessage(), null, $e);
 			}
 
 			// @todo check requirements

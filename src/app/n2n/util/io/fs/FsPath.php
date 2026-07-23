@@ -139,7 +139,7 @@ class FsPath {
 		if ($this->isFile()) {
 			IoUtils::unlink($this->path);
 		} else if ($this->isDir()) {
-			IoUtils::rmdirs($this->path);
+			IoUtils::rmdirs($this->path, $symlinksFollowed);
 		}
 	}
 
