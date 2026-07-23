@@ -129,10 +129,13 @@ class FsPath {
 	public function touch() {
 		return IoUtils::touch($this->path);
 	}
-	/**
-	 * 
-	 */
-	public function delete() {
+
+	public function delete(bool $symlinksFollowed = false): void {
+		if (!$symlinksFollowed && $this->isLink()) {
+			IoUtils::unlink($this->path);
+			return;
+		}
+
 		if ($this->isFile()) {
 			IoUtils::unlink($this->path);
 		} else if ($this->isDir()) {
