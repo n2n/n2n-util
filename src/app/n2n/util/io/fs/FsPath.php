@@ -108,16 +108,21 @@ class FsPath {
 	 * 
 	 * @return boolean
 	 */
-	public function isDir() {
+	public function isDir(): bool {
 		return is_dir($this->path);
 	}
 	/**
 	 * 
 	 * @return boolean
 	 */
-	public function isFile() {
+	public function isFile(): bool {
 		return is_file($this->path);
 	}
+
+	function isLink(): bool {
+		return is_link($this->path);
+	}
+
 	/**
 	 * 
 	 */
