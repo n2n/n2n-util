@@ -106,4 +106,9 @@ class TypeNameTest extends TestCase {
 	function testConvert() {
 		$this->assertEquals('first last', TypeName::convertValue((new StringValueMock('first', 'last')), 'string'));
 	}
+
+	function testIsValueConvertTo() {
+		$this->assertTrue(TypeName::isValueConvertableTo((new StringValueMock('first', 'last')), 'string'));
+		$this->assertFalse(TypeName::isValueConvertableTo((new \DateTime()), 'string'));
+	}
 }

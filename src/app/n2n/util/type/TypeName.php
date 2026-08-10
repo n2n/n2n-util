@@ -100,13 +100,20 @@ class TypeName {
 				throw new \InvalidArgumentException('It is not possible to convert a value to ' . $typeName);
 		}
 	}
-	
+
+	/**
+	 * @deprecated use {@link self::isValueConvertableTo()}
+	 */
+	static function isValueConvertTo(mixed $value, string $typeName): bool {
+		return self::isValueConvertableTo($value, $typeName);
+	}
+
 	/**
 	 * @param mixed $value
 	 * @param string $typeName
 	 * @return bool
 	 */
-	static function isValueConvertTo(mixed $value, string $typeName): bool {
+	static function isValueConvertableTo(mixed $value, string $typeName): bool {
 		switch ($typeName) {
 			case self::STRING;
 				$value = self::objToStr($value);
