@@ -3,6 +3,7 @@ namespace n2n\util\type;
 
 use PHPUnit\Framework\TestCase;
 use n2n\util\type\mock\TypedMethodsMock;
+use n2n\util\type\mock\StringValueMock;
 
 class TypeNameTest extends TestCase {
 	
@@ -100,5 +101,9 @@ class TypeNameTest extends TestCase {
 		$this->assertTrue(TypeName::isValueA(true, 'true'));
 		$this->assertFalse(TypeName::isValueA(false, 'true'));
 		$this->assertFalse(TypeName::isValueA(1, 'true'));
+	}
+
+	function testConvert() {
+		$this->assertEquals('first last', TypeName::convertValue((new StringValueMock('first', 'last')), 'string'));
 	}
 }
