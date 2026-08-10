@@ -46,11 +46,18 @@ class TypeName {
 		};
 	}
 
+	private static function objToStr(mixed $value): mixed {
+		if ($value instanceof \Stringable) {
+			return $value->__toString();
+		}
 
+		return $value;
+	}
 
 	static function convertValue(mixed $value, string $typeName): mixed{
 		switch ($typeName) {
 			case self::STRING;
+				$value = self::objToStr($value);
 				if (is_scalar($value)) {
 					return (string) $value;
 				}
@@ -71,12 +78,14 @@ class TypeName {
 
 				throw self::createValueNotConvertableException($value, $typeName);
 			case self::FLOAT:
+				$value = self::objToStr($value);
 				if (is_numeric($value)) {
 					return (float) $value;
 				}
 				
 				throw self::createValueNotConvertableException($value, $typeName);
 			case self::INT:
+				$value = self::objToStr($value);
 				if (is_numeric($value) && (int) $value == $value) {
 					return (int) $value;
 				}
@@ -100,6 +109,7 @@ class TypeName {
 	static function isValueConvertTo(mixed $value, string $typeName): bool {
 		switch ($typeName) {
 			case self::STRING;
+				$value = self::objToStr($value);
 				return is_scalar($value);
 			case self::BOOL:
 				return true;
@@ -108,8 +118,10 @@ class TypeName {
 			case self::TRUE:
 				return true === boolval($value);
 			case self::FLOAT:
+				$value = self::objToStr($value);
 				return is_numeric($value);
 			case self::INT:
+				$value = self::objToStr($value);
 				return is_numeric($value) && ((int) $value == $value);
 			default:
 				if (EnumUtils::isEnumType($typeName)) {
