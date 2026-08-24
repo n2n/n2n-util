@@ -13,6 +13,9 @@ use InvalidArgumentException;
 use OutOfBoundsException;
 use ArrayIterator;
 use n2n\util\StringUtils;
+use n2n\util\type\attrs\DataMap;
+use n2n\util\type\ArgUtils;
+use n2n\util\ex\IllegalStateException;
 
 
 /**
@@ -44,6 +47,14 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 	 * @param V[]|\IteratorAggregate<K, V> $array
 	 */
 	final function __construct(array|\IteratorAggregate $array = []) {
+		$this->initializeTypes();
+
+		foreach ($array as $key => $value) {
+			$this->offsetSet($key, $value);
+		}
+	}
+
+	private function initializeTypes(): void {
 		$class = new \ReflectionClass($this);
 		$this->keyTypeConstraint = CollectionTypeUtils::detectKeyTypeConstraint($class);
 		$this->valueTypeConstraint = CollectionTypeUtils::detectValueTypeConstraint($class);
@@ -52,10 +63,6 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 			$this->array = [];
 		} else {
 			$this->objectStorage = new SplObjectStorage();
-		}
-
-		foreach ($array as $key => $value) {
-			$this->offsetSet($key, $value);
 		}
 	}
 
@@ -196,6 +203,33 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 		}
 
 		return $this->objectStorage->toArray();
+	}
+
+	/**
+	 * mainly used for strict serialization of n2n/n2n-util-serialize
+	 * @return array
+	 */
+	final function __serialize(): array {
+		return [
+			'values' => $this->values(),
+			'keys' => $this->keys()
+		];
+	}
+
+	/**
+	 * mainly used for strict serialization of n2n/n2n-util-serialize
+	 */
+	final function __unserialize(array $data): void {
+		ArgUtils::assertTrue(
+				isset($data['values']) && is_array($data['values'])
+				&& isset($data['keys']) && is_array($data['keys'])
+				&& count($data['keys']) === count($data['values']));
+
+		$this->initializeTypes();
+
+		foreach ($data['keys'] as $index => $key) {
+			$this->offsetSet($key, $data['values'][$index]);
+		}
 	}
 }
 

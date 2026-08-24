@@ -66,16 +66,11 @@ class NamedTypeConstraint extends TypeConstraint {
 	/**
 	 * @return bool
 	 */
-	public function isConvertable() {
+	public function isConvertable(): bool {
 		return $this->convertable;
 	}
-	
-	/**
-	 * @param bool $convertable
-	 * @throws IllegalStateException
-	 * @return NamedTypeConstraint
-	 */
-	public function setConvertable(bool $convertable) {
+
+	public function setConvertable(bool $convertable): static {
 		if ($convertable && !TypeName::isConvertable($this->typeName)) {
 			throw new IllegalStateException('Values are not convertable to ' . $this->typeName);
 		}

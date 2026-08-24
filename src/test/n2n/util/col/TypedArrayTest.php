@@ -185,4 +185,14 @@ class TypedArrayTest extends TestCase {
 		$arr = new ObjMockArray();
 		$arr['key1'] = new \DateTime();
 	}
+
+	function testSerialize(): void {
+		$arr = new ObjMockArray();
+		$arr['key1'] = new ObjMock('value1');
+		$arr[2] = new ObjMock('value2');
+		$ser = serialize($arr);
+		$unserArr = unserialize($ser);
+
+		$this->assertEquals($arr, $unserArr);
+	}
 }
