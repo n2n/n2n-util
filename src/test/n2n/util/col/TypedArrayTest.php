@@ -80,8 +80,6 @@ class TypedArrayTest extends TestCase {
 		}
 	}
 
-
-
 	function testValidObjKeyArrayAccess() {
 		$arr = new ObjMockKeyArray();
 		$key1 = new ObjMock('key1');
