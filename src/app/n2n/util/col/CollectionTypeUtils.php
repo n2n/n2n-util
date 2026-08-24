@@ -12,8 +12,9 @@ class CollectionTypeUtils {
 
 	static function detectKeyTypeConstraint(\ReflectionClass $class): NamedTypeConstraint {
 		$attributes = $class->getAttributes(KeyType::class);
+		$parentClass = $class->getParentClass() ?: null;
 		if (empty($attributes)) {
-			return self::validateParentKeyTypeConstraint($class->getParentClass(), $class, null)
+			return self::validateParentKeyTypeConstraint($parentClass, $class, null)
 					?? NamedTypeConstraint::createSimple('scalar', false, true);
 		}
 
@@ -23,7 +24,7 @@ class CollectionTypeUtils {
 		$typeConstraint = self::createTypeConstraint($class, $attribute, $keyType->typeName, false,
 				TypeName::isConvertable($keyType->typeName));
 
-		self::validateParentKeyTypeConstraint($class->getParentClass(), $class, $typeConstraint);
+		self::validateParentKeyTypeConstraint($parentClass, $class, $typeConstraint);
 
 		return $typeConstraint;
 	}
