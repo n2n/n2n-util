@@ -160,8 +160,6 @@ class TypedArrayTest extends TestCase {
 		}
 	}
 
-
-
 	function testInvalidKeyArrayAccessGet() {
 		$this->expectException(\InvalidArgumentException::class);
 		$this->expectExceptionMessage('Passed array key is invalid: ' . ObjMock::class);
@@ -194,5 +192,22 @@ class TypedArrayTest extends TestCase {
 		$unserArr = unserialize($ser);
 
 		$this->assertEquals($arr, $unserArr);
+	}
+
+	function testAppendScalarKey(): void {
+		$arr = new ObjMockArray();
+		$arr[] = new ObjMock('value1');
+		$arr[] = new ObjMock('value2');
+
+		$this->assertSame(2, $arr->count());
+		$this->assertSame('value1', $arr[0]->value);
+		$this->assertSame('value2', $arr[1]->value);
+	}
+
+	function testAppendNotSupportedOnNonScalarKeys() {
+		$this->expectException(\InvalidArgumentException::class);
+
+		$arr = new ObjMockKeyArray();
+		$arr[] = new ObjMock('key1');
 	}
 }

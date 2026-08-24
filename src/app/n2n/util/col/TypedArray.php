@@ -129,7 +129,9 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 	 * @return void
 	 */
 	final function offsetSet(mixed $offset, mixed $value): void {
-		$offset = $this->valKey($offset);
+		if ($offset !== null || !$this->keyTypeConstraint->isScalar()) {
+			$offset = $this->valKey($offset);
+		}
 		$value = $this->valValue($value);
 
 		if ($this->objectStorage !== null) {
@@ -137,7 +139,12 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 			return;
 		}
 
-		$this->array[$offset] = $value;
+		if ($offset === null) {
+			$this->array[] = $value;
+		} else {
+			$this->array[$offset] = $value;
+		}
+
 	}
 
 	/**
@@ -145,6 +152,8 @@ abstract class TypedArray implements \ArrayAccess, Collection {
 	 * @return void
 	 */
 	final function offsetUnset(mixed $offset): void {
+		$this->valKey($offset);
+
 		if ($this->objectStorage !== null) {
 			$this->objectStorage->offsetUnset($offset);
 			return;
