@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class TimestampTest extends TestCase {
 	function testDateTimeConvertsWithoutLosingPrecision(): void {
 		$dateTime = new DateTimeImmutable('2026-08-26 12:13:14');
-		$timestamp = Timestamp::fromDateTime($dateTime);
+		$timestamp = Timestamp::from($dateTime);
 
 		$this->assertSame('2026-08-26 12:13:14', (string) $timestamp);
 		$this->assertEquals($dateTime, $timestamp->toDateTimeImmutable());
@@ -18,6 +18,12 @@ class TimestampTest extends TestCase {
 		$this->assertSame('2026-08-26 12:13:14', $timestamp->toDateTime()->format('Y-m-d H:i:s'));
 		$this->assertSame('2026-08-26 12:13:14', $timestamp->toSql());
 		$this->assertSame('"2026-08-26 12:13:14"', json_encode($timestamp));
+	}
+
+	function testDateConvertsToMidnight(): void {
+		$timestamp = Timestamp::from(new Date('2026-08-26'));
+
+		$this->assertSame('2026-08-26 00:00:00', (string) $timestamp);
 	}
 
 	function testFromReturnsSameInstance(): void {

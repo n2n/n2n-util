@@ -55,7 +55,7 @@ final class Timestamp implements \JsonSerializable, \Stringable {
 		return ExUtils::try(fn() => new Timestamp());
 	}
 
-	static function from(DateTimeInterface|Timestamp|string|null $dateTime): ?Timestamp {
+	static function from(DateTimeInterface|Timestamp|Date|string|null $dateTime): ?Timestamp {
 		if ($dateTime === null) {
 			return null;
 		}
@@ -69,11 +69,10 @@ final class Timestamp implements \JsonSerializable, \Stringable {
 		if ($dateTime instanceof Timestamp) {
 			return $dateTime;
 		}
+		if ($dateTime instanceof Date) {
+			$dateTime = $dateTime->toDateTimeImmutable();
+		}
 
 		return self::from($dateTime->format(DateUtils::SQL_DATE_TIME_FORMAT));
-	}
-
-	static function fromDateTime(DateTimeInterface $dateTime): Timestamp {
-		return self::from($dateTime);
 	}
 }
