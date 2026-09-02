@@ -34,9 +34,9 @@ final class Url implements \JsonSerializable, Stringable {
 	const FRAGMENT_PREFIX = '#';
 
 	private readonly ?string $scheme;
-	private readonly ?string $authority;
-	private readonly ?string $path;
-	private readonly ?string $query;
+	private readonly ?Authority $authority;
+	private readonly ?Path $path;
+	private readonly ?Query $query;
 
 	/**
 	 * According to RFC 2396, RFC 3986, and RFC 7320, the format of fragment identifiers depends on the media type.
@@ -49,9 +49,9 @@ final class Url implements \JsonSerializable, Stringable {
 	public function __construct(?string $scheme = null, ?Authority $authority = null, ?Path $path = null,
 			?Query $query = null, ?string $fragment = null) {
 		$this->scheme = ArgUtils::stringOrNull($scheme);
-		$this->authority = $authority === null ? null : (string) $authority;
-		$this->path = $path === null ? null : (string) $path;
-		$this->query = $query === null ? null : (string) $query;
+		$this->authority = $authority;
+		$this->path = $path;
+		$this->query = $query;
 		$this->fragment = $fragment;
 	}
 	/**
@@ -71,14 +71,7 @@ final class Url implements \JsonSerializable, Stringable {
 		if ($this->authority === null) {
 			return new Authority();
 		}
-
-		$authorityMap = parse_url(self::AUTHORITY_PREFIX . $this->authority);
-		if ($authorityMap === false) {
-			throw new \InvalidArgumentException('Invalid authority: ' . $this->authority);
-		}
-		return new Authority($authorityMap['host'] ?? null, $authorityMap['port'] ?? null,
-				isset($authorityMap['user']) ? rawurldecode($authorityMap['user']) : null,
-				isset($authorityMap['pass']) ? rawurldecode($authorityMap['pass']) : null);
+		return $this->authority;
 	}
 	/**
 	 * @return Path
@@ -87,7 +80,7 @@ final class Url implements \JsonSerializable, Stringable {
 		if ($this->path === null) {
 			return new Path(array());
 		}
-		return Path::create($this->path);
+		return $this->path;
 	}
 	/**
 	 * @return Query
@@ -96,7 +89,7 @@ final class Url implements \JsonSerializable, Stringable {
 		if ($this->query === null) {
 			return new Query(array());
 		}
-		return Query::create($this->query);
+		return $this->query;
 	}
 	/**
 	 * @return string|null
@@ -110,7 +103,7 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chScheme(?string $scheme = null): Url {
 		if ($scheme === $this->scheme) return $this;
-		return new Url($scheme, $this->storedAuthority(), $this->storedPath(), $this->storedQuery(), $this->fragment);
+		return new Url($scheme, $this->authority, $this->path, $this->query, $this->fragment);
 	}
 	/**
 	 * @param mixed $authority
@@ -118,8 +111,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chAuthority(mixed $authority): Url {
 		$authority = Authority::create($authority);
-		if ((string) $authority === $this->authority) return $this;
-		return new Url($this->scheme, $authority, $this->storedPath(), $this->storedQuery(), $this->fragment);
+		if ($this->authority !== null && (string) $authority === (string) $this->authority) return $this;
+		return new Url($this->scheme, $authority, $this->path, $this->query, $this->fragment);
 	}
 	/**
 	 * @param string|null $userInfo
@@ -134,7 +127,7 @@ final class Url implements \JsonSerializable, Stringable {
 
 		return new Url($this->scheme,
 				new Authority($authority->getHost(), $authority->getPort(), $user, $password),
-				$this->storedPath(), $this->storedQuery(), $this->fragment);
+				$this->path, $this->query, $this->fragment);
 	}
 	/**
 	 * @param string|null $host
@@ -142,8 +135,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chHost(?string $host = null): Url {
 		if ($this->getAuthority()->getHost() === $host) return $this;
-		return new Url($this->scheme, $this->getAuthority()->chHost($host), $this->storedPath(),
-				$this->storedQuery(), $this->fragment);
+		return new Url($this->scheme, $this->getAuthority()->chHost($host), $this->path,
+				$this->query, $this->fragment);
 	}
 	/**
 	 * @param int|null $port
@@ -151,8 +144,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chPort(?int $port = null): Url {
 		if ($this->getAuthority()->getPort() === $port) return $this;
-		return new Url($this->scheme, $this->getAuthority()->chPort($port), $this->storedPath(),
-				$this->storedQuery(), $this->fragment);
+		return new Url($this->scheme, $this->getAuthority()->chPort($port), $this->path,
+				$this->query, $this->fragment);
 	}
 	/**
 	 * @param string|Path|null $path
@@ -160,8 +153,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chPath(string|Path|null $path = null): Url {
 		$path = Path::create($path);
-		if ((string) $path === $this->path) return $this;
-		return new Url($this->scheme, $this->storedAuthority(), $path, $this->storedQuery(), $this->fragment);
+		if ($this->path !== null && (string) $path === (string) $this->path) return $this;
+		return new Url($this->scheme, $this->authority, $path, $this->query, $this->fragment);
 	}
 	
 	/**
@@ -178,8 +171,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chQuery(mixed $query): Url {
 		$query = Query::create($query);
-		if ((string) $query === $this->query) return $this;
-		return new Url($this->scheme, $this->storedAuthority(), $this->storedPath(), $query, $this->fragment);
+		if ($this->query !== null && (string) $query === (string) $this->query) return $this;
+		return new Url($this->scheme, $this->authority, $this->path, $query, $this->fragment);
 	}
 	/**
 	 * @param string|null $fragment
@@ -187,7 +180,7 @@ final class Url implements \JsonSerializable, Stringable {
 	 */
 	public function chFragment(?string $fragment): Url {
 		if ($fragment === $this->fragment) return $this;
-		return new Url($this->scheme, $this->storedAuthority(), $this->storedPath(), $this->storedQuery(), $fragment);
+		return new Url($this->scheme, $this->authority, $this->path, $this->query, $fragment);
 	}
 
 	public function ext(mixed $relativeUrl): Url {
@@ -210,7 +203,7 @@ final class Url implements \JsonSerializable, Stringable {
 	public function extR(mixed $pathExt = null, mixed $queryExt = null, ?string $fragment = null): Url {
 		if ($pathExt === null && $queryExt === null && $fragment === null) return $this;
 
-		return new Url($this->scheme, $this->storedAuthority(), $this->getPath()->ext($pathExt),
+		return new Url($this->scheme, $this->authority, $this->getPath()->ext($pathExt),
 				$this->getQuery()->ext($queryExt),
 				($fragment === null ? $this->fragment : $fragment));
 	}
@@ -220,8 +213,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function pathExt(mixed ...$pathPartExts): Url {
-		return new Url($this->scheme, $this->storedAuthority(), $this->getPath()->ext(...$pathPartExts),
-				$this->storedQuery(), $this->fragment);
+		return new Url($this->scheme, $this->authority, $this->getPath()->ext(...$pathPartExts),
+				$this->query, $this->fragment);
 	}
 
 	/**
@@ -229,8 +222,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function pathExtEnc(mixed ...$pathExts): Url {
-		return new Url($this->scheme, $this->storedAuthority(), $this->getPath()->extEnc(...$pathExts),
-				$this->storedQuery(), $this->fragment);
+		return new Url($this->scheme, $this->authority, $this->getPath()->extEnc(...$pathExts),
+				$this->query, $this->fragment);
 	}
 
 	/**
@@ -238,7 +231,7 @@ final class Url implements \JsonSerializable, Stringable {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function queryExt(mixed $query): Url {
-		return new Url($this->scheme, $this->storedAuthority(), $this->getPath(), $this->getQuery()->ext($query),
+		return new Url($this->scheme, $this->authority, $this->getPath(), $this->getQuery()->ext($query),
 				$this->fragment);
 	}
 
@@ -247,8 +240,8 @@ final class Url implements \JsonSerializable, Stringable {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function reducedPath(int $num = 1): Url {
-		return new Url($this->scheme, $this->storedAuthority(), $this->getPath()->reduced($num),
-				$this->storedQuery(), $this->fragment);
+		return new Url($this->scheme, $this->authority, $this->getPath()->reduced($num),
+				$this->query, $this->fragment);
 	}
 	/**
 	 * @param int $start
@@ -256,14 +249,14 @@ final class Url implements \JsonSerializable, Stringable {
 	 * @return \n2n\util\uri\Url
 	 */
 	public function subPath(int $start, ?int $num = null): Url {
-		return new Url($this->scheme, $this->storedAuthority(), $this->getPath()->sub($start, $num),
-				$this->storedQuery(), $this->fragment);
+		return new Url($this->scheme, $this->authority, $this->getPath()->sub($start, $num),
+				$this->query, $this->fragment);
 	}
 	/**
 	 * @return \n2n\util\uri\Url
 	 */
 	public function toRelativeUrl(): Url {
-		return new Url(null, null, $this->storedPath(), $this->storedQuery(), $this->fragment);
+		return new Url(null, null, $this->path, $this->query, $this->fragment);
 	}
 
 	public static function createRelativeUrl(mixed $path = null, mixed $query = null,
@@ -331,7 +324,7 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 
 	public function isRelative(): bool {
-		return $this->scheme === null && ($this->authority === null || $this->getAuthority()->isEmpty());
+		return $this->scheme === null && ($this->authority === null || $this->authority->isEmpty());
 	}
 
 	/**
@@ -351,16 +344,16 @@ final class Url implements \JsonSerializable, Stringable {
 			$str .= $this->scheme . self::SCHEME_SEPARATOR;
 		}
 
-		if ($this->authority !== null && !$this->getAuthority()->isEmpty()) {
-			$str .= self::AUTHORITY_PREFIX . ($idn ? $this->authority : $this->getAuthority()->toIdnaAsciiString());
-			$leadingPathDelimiter = $this->path !== null && !$this->getPath()->isEmpty();
+		if ($this->authority !== null && !$this->authority->isEmpty()) {
+			$str .= self::AUTHORITY_PREFIX . ($idn ? (string) $this->authority : $this->authority->toIdnaAsciiString());
+			$leadingPathDelimiter = $this->path !== null && !$this->path->isEmpty();
 		}
 
 		if ($this->path !== null) {
-			$str .= $this->getPath()->toRealString($leadingPathDelimiter);
+			$str .= $this->path->toRealString($leadingPathDelimiter);
 		}
 
-		if ($this->query !== null && !$this->getQuery()->isEmpty()) {
+		if ($this->query !== null && !$this->query->isEmpty()) {
 			$str .= self::QUERY_PREFIX . $this->query;
 		}
 
@@ -370,18 +363,6 @@ final class Url implements \JsonSerializable, Stringable {
 		}
 
 		return $str;
-	}
-
-	private function storedAuthority(): ?Authority {
-		return $this->authority === null ? null : $this->getAuthority();
-	}
-
-	private function storedPath(): ?Path {
-		return $this->path === null ? null : $this->getPath();
-	}
-
-	private function storedQuery(): ?Query {
-		return $this->query === null ? null : $this->getQuery();
 	}
 
 	/**
