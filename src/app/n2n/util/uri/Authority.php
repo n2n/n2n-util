@@ -67,6 +67,14 @@ final class Authority implements Stringable {
 		return $this->port;
 	}
 
+	public function chPort(?int $port = null): Authority {
+		if ($this->port === $port) {
+			return $this;
+		}
+
+		return new Authority($this->host, $port, $this->user, $this->password);
+	}
+
 	public function hasPort(): bool {
 		return $this->port !== null;
 	}

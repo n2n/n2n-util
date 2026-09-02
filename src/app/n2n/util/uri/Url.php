@@ -99,7 +99,7 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 	/**
 	 * @param string|null $scheme
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chScheme(?string $scheme = null): Url {
 		if ($scheme === $this->scheme) return $this;
@@ -107,23 +107,27 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 	/**
 	 * @param mixed $authority
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chAuthority(mixed $authority): Url {
 		$authority = Authority::create($authority);
-		if ($this->authority !== null && (string) $authority === (string) $this->authority) return $this;
+		if ($this->authority !== null && (string) $authority === (string) $this->authority) {
+			return $this;
+		}
 		return new Url($this->scheme, $authority, $this->path, $this->query, $this->fragment);
 	}
 	/**
 	 * @param string|null $userInfo
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chUserInfo(?string $userInfo): Url {
 		$authority = $this->getAuthority();
 		$userInfoParts = $userInfo === null ? array(null, null) : explode(':', $userInfo, 2);
 		$user = $userInfoParts[0];
 		$password = $userInfoParts[1] ?? null;
-		if ($authority->getUser() === $user && $authority->getPassword() === $password) return $this;
+		if ($authority->getUser() === $user && $authority->getPassword() === $password) {
+			return $this;
+		}
 
 		return new Url($this->scheme,
 				new Authority($authority->getHost(), $authority->getPort(), $user, $password),
@@ -131,7 +135,7 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 	/**
 	 * @param string|null $host
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chHost(?string $host = null): Url {
 		if ($this->getAuthority()->getHost() === $host) return $this;
@@ -140,7 +144,7 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 	/**
 	 * @param int|null $port
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chPort(?int $port = null): Url {
 		if ($this->getAuthority()->getPort() === $port) return $this;
@@ -149,7 +153,7 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 	/**
 	 * @param string|Path|null $path
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chPath(string|Path|null $path = null): Url {
 		$path = Path::create($path);
@@ -159,7 +163,7 @@ final class Url implements \JsonSerializable, Stringable {
 	
 	/**
 	 * @param bool $endingDelimitter
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chPathEndingDelimiter(bool $endingDelimitter): Url {
 		return $this->chPath($this->getPath()->chEndingDelimiter($endingDelimitter));
@@ -167,7 +171,7 @@ final class Url implements \JsonSerializable, Stringable {
 	
 	/**
 	 * @param mixed $query
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chQuery(mixed $query): Url {
 		$query = Query::create($query);
@@ -176,7 +180,7 @@ final class Url implements \JsonSerializable, Stringable {
 	}
 	/**
 	 * @param string|null $fragment
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function chFragment(?string $fragment): Url {
 		if ($fragment === $this->fragment) return $this;
@@ -198,7 +202,7 @@ final class Url implements \JsonSerializable, Stringable {
 	 * @param mixed $pathExt
 	 * @param mixed $queryExt
 	 * @param string|null $fragment
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function extR(mixed $pathExt = null, mixed $queryExt = null, ?string $fragment = null): Url {
 		if ($pathExt === null && $queryExt === null && $fragment === null) return $this;
@@ -210,7 +214,7 @@ final class Url implements \JsonSerializable, Stringable {
 
 	/**
 	 * @param mixed ...$pathPartExts
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function pathExt(mixed ...$pathPartExts): Url {
 		return new Url($this->scheme, $this->authority, $this->getPath()->ext(...$pathPartExts),
@@ -219,7 +223,7 @@ final class Url implements \JsonSerializable, Stringable {
 
 	/**
 	 * @param mixed ...$pathExts
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function pathExtEnc(mixed ...$pathExts): Url {
 		return new Url($this->scheme, $this->authority, $this->getPath()->extEnc(...$pathExts),
@@ -228,7 +232,7 @@ final class Url implements \JsonSerializable, Stringable {
 
 	/**
 	 * @param mixed $query
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function queryExt(mixed $query): Url {
 		return new Url($this->scheme, $this->authority, $this->getPath(), $this->getQuery()->ext($query),
@@ -237,7 +241,7 @@ final class Url implements \JsonSerializable, Stringable {
 
 	/**
 	 * @param int $num
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function reducedPath(int $num = 1): Url {
 		return new Url($this->scheme, $this->authority, $this->getPath()->reduced($num),
@@ -246,14 +250,14 @@ final class Url implements \JsonSerializable, Stringable {
 	/**
 	 * @param int $start
 	 * @param int|null $num
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function subPath(int $start, ?int $num = null): Url {
 		return new Url($this->scheme, $this->authority, $this->getPath()->sub($start, $num),
 				$this->query, $this->fragment);
 	}
 	/**
-	 * @return \n2n\util\uri\Url
+	 * @return Url
 	 */
 	public function toRelativeUrl(): Url {
 		return new Url(null, null, $this->path, $this->query, $this->fragment);
@@ -276,8 +280,8 @@ final class Url implements \JsonSerializable, Stringable {
 
 	/**
 	 * @param mixed $expression
-	 * @throws \InvalidArgumentException
-	 * @return \n2n\util\uri\Url
+	 * @return Url
+	 *@throws \InvalidArgumentException
 	 */
 	public static function create(mixed $expression, bool $lenient = false): Url {
 		if ($expression instanceof Url) {
