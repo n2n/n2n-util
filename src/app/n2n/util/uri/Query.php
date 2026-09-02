@@ -21,9 +21,9 @@
  */
 namespace n2n\util\uri;
 
-class Query {
-	private $attrs = array();
-	private $empty = true;
+final class Query {
+	private array $attrs = array();
+	private bool $empty = true;
 	
 	public function __construct(array $attrs) {
 		$this->attrs = $this->normalizeAttrs($attrs);
@@ -34,7 +34,7 @@ class Query {
 	 * @throws \InvalidArgumentException
 	 * @return array
 	 */
-	private function normalizeAttrs($attrs) {
+	private function normalizeAttrs(array $attrs): array {
 		foreach ($attrs as $key => $value) {
 			if ($value === null) continue;
 			
@@ -58,15 +58,15 @@ class Query {
 		return $attrs;
 	}
 	
-	public function isEmpty() {
+	public function isEmpty(): bool {
 		return $this->empty;
 	}
 	
-	public function contains($name) {
+	public function contains(string|int $name): bool {
 		return array_key_exists($name, $this->attrs);
 	}
 	
-	public function get($name) {
+	public function get(string|int $name): mixed {
 		if ($this->contains($name)) {
 			return $this->attrs[$name];
 		}
@@ -79,7 +79,7 @@ class Query {
 	 * @param mixed $query array or string 
 	 * @return \n2n\util\uri\Query
 	 */
-	public function ext($query) {
+	public function ext(mixed $query): Query {
 		$query = Query::create($query);
 		return new Query($query->toArray() + $this->attrs);
 	}
@@ -87,7 +87,7 @@ class Query {
 	/**
 	 * @return array
 	 */
-	public function toArray() {
+	public function toArray(): array {
 		return $this->attrs;
 	}
 	
@@ -101,7 +101,7 @@ class Query {
 // 		return implode('&', $strs);
 	}
 	
-	private function buildArrayStrs($value, $name, array $keys) {
+	private function buildArrayStrs(mixed $value, string|int $name, array $keys): void {
 // 		if (!is_array($value)) {
 // 			return array($this->buildStr($name, $keys, $value));
 // 		}
@@ -127,7 +127,7 @@ class Query {
 // 		return $str . '=' . urlencode($value);
 // 	}
 
-	public static function create($expression) {
+	public static function create(mixed $expression): Query {
 		if ($expression === null) {
 			return new Query(array());
 		}
@@ -140,8 +140,8 @@ class Query {
 			return new Query($expression);
 		}
 	
-		$attrs = null;
-		parse_str($expression, $attrs);
+		$attrs = [];
+		parse_str((string) $expression, $attrs);
 		return new Query($attrs);
 	}
 	

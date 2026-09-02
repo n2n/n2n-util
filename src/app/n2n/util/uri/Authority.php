@@ -22,16 +22,17 @@
 namespace n2n\util\uri;
 
 use n2n\util\type\ArgUtils;
+use Stringable;
 
-class Authority {
+final class Authority implements Stringable {
 	const USER_PASS_SEPARATOR = ':';
 	const USER_INFO_SUFFIX = '@';
 	const PORT_PREFIX = ':';
 
-	private $user;
-	private $password;
-	private $host;
-	private $port;
+	private readonly ?string $user;
+	private readonly ?string $password;
+	private readonly ?string $host;
+	private readonly ?int $port;
 
 	public function __construct(?string $host = null, ?int $port = null, ?string $user = null, ?string $password = null) {
 		ArgUtils::assertTrue($user !== null || $password === null);
@@ -42,39 +43,39 @@ class Authority {
 		$this->port = $port;
 	}
 
-	public function getUser() {
+	public function getUser(): ?string {
 		return $this->user;
 	}
 
-	public function hasUserInfo() {
+	public function hasUserInfo(): bool {
 		return $this->user !== null;
 	}
 
-	public function getPassword() {
+	public function getPassword(): ?string {
 		return $this->password;
 	}
 
-	public function getHost() {
+	public function getHost(): ?string {
 		return $this->host;
 	}
 
-	public function hasHost() {
+	public function hasHost(): bool {
 		return $this->host !== null;
 	}
 
-	public function getPort() {
+	public function getPort(): ?int {
 		return $this->port;
 	}
 
-	public function hasPort() {
+	public function hasPort(): bool {
 		return $this->port !== null;
 	}
 
-	public function isEmpty() {
+	public function isEmpty(): bool {
 		return $this->user === null && $this->host === null && $this->port === null;
 	}
 
-	public function chHost(?string $host = null) {
+	public function chHost(?string $host = null): Authority {
 		if ($this->host === $host) return $this;
 
 		return new Authority($host, $this->port, $this->user, $this->password);
@@ -88,11 +89,11 @@ class Authority {
 	 * Converts host to IDNA ASCII form.
 	 * @return string
 	 */
-	public function toIdnaAsciiString() {
+	public function toIdnaAsciiString(): string {
 		return $this->buildString(false);
 	}
 
-	private function buildString($idn = true) {
+	private function buildString(bool $idn = true): string {
 		$str = '';
 
 		if ($this->user !== null) {
@@ -116,7 +117,7 @@ class Authority {
 		return $str;
 	}
 
-	public static function create($param) {
+	public static function create(mixed $param): Authority {
 		if ($param instanceof Authority) {
 			return $param;
 		}
