@@ -23,13 +23,13 @@ namespace n2n\util\type\attrs;
 
 use n2n\util\type\TypeConstraint;
 use n2n\util\type\ValueIncompatibleWithConstraintsException;
-use n2n\util\col\ArrayUtils;
 use n2n\util\StringUtils;
 use n2n\util\type\TypeUtils;
 use n2n\util\type\TypeConstraints;
 use n2n\util\ex\NotYetImplementedException;
 use n2n\util\EnumUtils;
 use n2n\util\ex\IllegalStateException;
+use n2n\util\type\TypeName;
 
 class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 
@@ -108,7 +108,7 @@ class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\util\type\attrs\AttributeReader::containsAttribute()
+	 * @see AttributeReader::containsAttribute
 	 */
 	function containsAttribute(AttributePath $path): bool {
 		return $this->has($path);
@@ -116,7 +116,7 @@ class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \n2n\util\type\attrs\AttributeReader::readAttribute()
+	 * @see AttributeReader::readAttribute
 	 */
 	function readAttribute(AttributePath $path, ?TypeConstraint $typeConstraint = null, bool $mandatory = true, 
 			mixed $defaultValue = null): mixed {
@@ -411,6 +411,44 @@ class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 
 	/**
 	 * @throws InvalidAttributeException
+	 */
+	private function checkValueObjectTypeName(string|\ReflectionClass|null $typeName) {
+		if (TypeName::isValueObject($typeName)) {
+			return;
+		}
+
+		throw new InvalidAttributeException($typeName . ' is not a valid value object type');
+	}
+	/**
+	 * @param mixed $path must be compatible with {@link AttributePath::create()}.
+	 * @param string $typeName
+	 * @param bool $nullAllowed
+	 * @return mixed
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
+	 */
+	public function reqValueObject(mixed $path, string|\ReflectionClass|null $typeName, bool $nullAllowed = false): mixed {
+		$this->checkValueObjectTypeName($typeName);
+
+		return $this->req($path, TypeConstraints::namedType($typeName, $nullAllowed, true));
+	}
+
+	/**
+	 * @param mixed $path must be compatible with {@link AttributePath::create()}.
+	 * @param array $allowedValues
+	 * @param mixed $defaultValue
+	 * @param bool $nullAllowed
+	 * @return mixed
+	 * @throws InvalidAttributeException
+	 */
+	public function optValueObject(mixed $path, string $typeName, mixed $defaultValue = null, bool $nullAllowed = true): mixed {
+		$this->checkValueObjectTypeName($typeName);
+
+		return $this->opt($path, TypeConstraints::namedType($typeName, $nullAllowed, true), $defaultValue);
+	}
+
+	/**
+	 * @throws InvalidAttributeException
 	 * @throws MissingAttributeFieldException
 	 */
 	public function reqArray($name, $fieldType = null, bool $nullAllowed = false, $keyType = null) {
@@ -438,12 +476,36 @@ class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 	public function optScalarArray($name, $defaultValue = [], bool $nullAllowed = false, bool $fieldNullAllowed = false) {
 		return $this->optArray($name, TypeConstraint::createSimple('scalar', $fieldNullAllowed), $defaultValue, $nullAllowed);
 	}
-	
+
+	/**
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
+	 */
+	public function reqValueObjectArray($name, $typeName, bool $nullAllowed = false, bool $fieldNullAllowed = false,
+			$keyType = null) {
+		$this->checkValueObjectTypeName($typeName);
+
+		return $this->reqArray($name, TypeConstraints::namedType($typeName, $fieldNullAllowed, true),
+				$nullAllowed, $keyType);
+	}
+
+	/**
+	 * @throws InvalidAttributeException
+	 */
+	public function optValueObjectArray($name, $typeName, $defaultValue = [],
+			bool $nullAllowed = false, bool $fieldNullAllowed = false, $keyType = null) {
+		$this->checkValueObjectTypeName($typeName);
+
+		return $this->optArray($name, TypeConstraints::namedType($typeName, $fieldNullAllowed, true),
+				$defaultValue, $nullAllowed, $keyType);
+	}
+
 	/**
 	 * @param string|AttributePath|string[] $path
-	 * @param mixed $defaultValue
 	 * @param bool $nullAllowed
-	 * @return \n2n\util\type\attrs\Attributes|null
+	 * @return Attributes|null
+	 * @throws InvalidAttributeException
+	 * @throws MissingAttributeFieldException
 	 */
 	public function reqDataSet($path, bool $nullAllowed = false) {
 		if (null !== ($array = $this->reqArray($path, null, $nullAllowed))) {
@@ -560,13 +622,14 @@ class DataMap implements AttributeReader, AttributeWriter, \JsonSerializable {
 			}
 		}
 	}
-	
+
 	/**
 	 *
 	 * @param array $attrs
 	 * @param array $attrs2
+	 * @return array
 	 */
-	protected function merge(array $attrs, array $attrs2) {
+	protected function merge(array $attrs, array $attrs2): array {
 		foreach ($attrs2 as $key => $value) {
 			if (is_numeric($key)) {
 				$attrs[] = $attrs2[$key];

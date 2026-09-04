@@ -4,6 +4,11 @@ namespace n2n\util\type;
 use n2n\util\StringUtils;
 use n2n\util\io\IoUtils;
 use n2n\util\EnumUtils;
+use n2n\spec\valobj\scalar\StringValueObject;
+use n2n\spec\valobj\scalar\IntValueObject;
+use n2n\spec\valobj\scalar\FloatValueObject;
+use n2n\spec\valobj\scalar\BoolValueObject;
+use n2n\spec\valobj\err\IllegalValueException;
 
 class TypeName {
 	const NULL = 'null';
@@ -26,27 +31,20 @@ class TypeName {
 	 * @param string $typeName
 	 * @return boolean
 	 */
-	static function isScalar(string $typeName) {
-		switch ($typeName) {
-			case self::STRING:
-			case self::INT:
-			case self::FLOAT:
-			case self::BOOL:
-			case self::TRUE:
-			case self::FALSE:
-			case self::PSEUDO_SCALAR:
-			case self::PSEUDO_NUMERIC:
-				return true;
-			default:
-				return false;
-		}
+	static function isScalar(string $typeName): bool {
+		return match ($typeName) {
+			self::STRING, self::INT, self::FLOAT, self::BOOL, self::TRUE, self::FALSE, self::PSEUDO_SCALAR, self::PSEUDO_NUMERIC => true,
+			default => false,
+		};
 	}
-	
+
 	/**
 	 * @param mixed $value
 	 * @param string $typeName
+	 *
+	 * @return mixed
 	 */
-	static function convertValue($value, string $typeName) {
+	static function convertValue(mixed $value, string $typeName): mixed {
 		switch ($typeName) {
 			case self::STRING;
 				if (is_scalar($value)) {
@@ -78,6 +76,10 @@ class TypeName {
 					return EnumUtils::valueToUnit($value, $typeName);
 				}
 
+				if (null !== ($valueObject = self::buildValueObject($value, $typeName))) {
+					return $valueObject;
+				}
+
 				throw new \InvalidArgumentException('It is not possible to convert a value to ' . $typeName);
 		}
 	}
@@ -87,7 +89,7 @@ class TypeName {
 	 * @param string $typeName
 	 * @return bool
 	 */
-	static function isValueConvertTo($value, string $typeName) {
+	static function isValueConvertTo(mixed $value, string $typeName): bool {
 		switch ($typeName) {
 			case self::STRING;
 				return is_scalar($value);
@@ -104,7 +106,7 @@ class TypeName {
 					return EnumUtils::isValueOfEnumType($value, $typeName);
 				}
 
-				return false;
+				return null !== self::buildValueObject($value, $typeName);
 		}
 	}
 	
@@ -112,17 +114,33 @@ class TypeName {
 	 * @param string $typeName
 	 * @return bool
 	 */
-	static function isConvertable(string $typeName) {
-		switch ($typeName) {
-			case self::STRING:
-			case self::BOOL:
-			case self::FALSE:
-			case self::TRUE:
-			case self::INT:
-			case self::FLOAT:
-				return true;
-			default:
-				return EnumUtils::isEnumType($typeName);
+	static function isConvertable(string $typeName): bool {
+		return match ($typeName) {
+			self::STRING, self::BOOL, self::FALSE, self::TRUE, self::INT, self::FLOAT => true,
+			default => EnumUtils::isEnumType($typeName) || self::isValueObject($typeName)
+		};
+	}
+
+	private static array $valueObjectTypeNames = [BoolValueObject::class, FloatValueObject::class, IntValueObject::class,
+			StringValueObject::class];
+
+	public static function isValueObject(string|\ReflectionClass|null $typeName): bool {
+		return array_any(self::$valueObjectTypeNames,
+				fn ($vTypeName) => TypeUtils::isTypeA($typeName, $vTypeName));
+	}
+
+	private static function buildValueObject(string|int|float|bool|null $value, $typeName): ?object {
+		if ($value === null || !self::isValueObject($typeName)) {
+			return null;
+		}
+
+		try {
+			$class = new \ReflectionClass($typeName);
+			return $class->newInstance($value);
+		} catch (\ReflectionException $e) {
+			return null;
+		} catch (IllegalValueException $e) {
+			return null;
 		}
 	}
 	
@@ -131,7 +149,7 @@ class TypeName {
 	 * @param string $typeName
 	 * @throws \InvalidArgumentException
 	 */
-	private static function createValueNotConvertableException($value, string $typeName) {
+	private static function createValueNotConvertableException(mixed $value, string $typeName) {
 		throw new \InvalidArgumentException('Value ' . TypeUtils::getTypeInfo($value) . ' is not convertable to ' . $typeName);
 	}
 	
@@ -176,46 +194,30 @@ class TypeName {
 	}
 
 	static function isValueA(mixed $value, string $typeName): bool {
-		switch ($typeName) {
-			case TypeName::PSEUDO_MIXED:
-				return true;
-			case TypeName::PSEUDO_SCALAR:
-				return is_scalar($value);
-			case TypeName::ARRAY:
-				return is_array($value);
-			case TypeName::STRING:
-				return is_string($value);
-			case TypeName::PSEUDO_NUMERIC:
-				return is_numeric($value);
-			case TypeName::INT:
-				return is_int($value);
-			case TypeName::FLOAT:
-				return is_float($value);
-			case TypeName::BOOL:
-				return is_bool($value);
-			case TypeName::FALSE:
-				return false === $value;
-			case TypeName::TRUE:
-				return true === $value;
-			case TypeName::OBJECT:
-				return is_object($value);
-			case TypeName::RESOURCE:
-				return is_resource($value);
-			case TypeName::PSEUDO_ARRAYLIKE:
-				return self::isValueArrayLike($value);
-			case TypeName::NULL:
-			case 'NULL':
-				return $value === null;
-			default:
-				return is_a($value, $typeName);
-		}
+		return match ($typeName) {
+			TypeName::PSEUDO_MIXED => true,
+			TypeName::PSEUDO_SCALAR => is_scalar($value),
+			TypeName::ARRAY => is_array($value),
+			TypeName::STRING => is_string($value),
+			TypeName::PSEUDO_NUMERIC => is_numeric($value),
+			TypeName::INT => is_int($value),
+			TypeName::FLOAT => is_float($value),
+			TypeName::BOOL => is_bool($value),
+			TypeName::FALSE => false === $value,
+			TypeName::TRUE => true === $value,
+			TypeName::OBJECT => is_object($value),
+			TypeName::RESOURCE => is_resource($value),
+			TypeName::PSEUDO_ARRAYLIKE => self::isValueArrayLike($value),
+			TypeName::NULL, 'NULL' => $value === null,
+			default => is_a($value, $typeName),
+		};
 	}
 	
 	/**
 	 * @param mixed $value
 	 * @return boolean
 	 */
-	static function isValueArrayLike($value) {
+	static function isValueArrayLike(mixed $value): bool {
 		return is_array($value) || ($value instanceof \ArrayAccess
 				&& $value instanceof \IteratorAggregate && $value instanceof \Countable);
 	}
@@ -224,7 +226,7 @@ class TypeName {
 	 * @param \ReflectionClass $class
 	 * @return boolean
 	 */
-	static function isClassArrayLike(\ReflectionClass $class) {
+	static function isClassArrayLike(\ReflectionClass $class): bool {
 		return $class->implementsInterface('ArrayAccess')
 				&& $class->implementsInterface('IteratorAggregate')
 				&& $class->implementsInterface('Countable');
@@ -234,36 +236,22 @@ class TypeName {
 	 * @param string $typeName
 	 * @return boolean
 	 */
-	static function isArrayLike(string $typeName) {
-		switch ($typeName) {
-			case self::ARRAY:
-			case self::PSEUDO_ARRAYLIKE:
-			case 'ArrayObject':
-				return true;
-			case self::STRING:
-			case self::INT:
-			case self::FLOAT:
-			case self::BOOL:
-			case self::TRUE:
-			case self::FALSE:
-			case self::RESOURCE:
-			case self::OBJECT:
-			case self::NULL:
-			case self::PSEUDO_SCALAR:
-			case self::PSEUDO_MIXED:
-			case self::PSEUDO_NUMERIC:
-				return false;
-		}
-		
-		return is_subclass_of($typeName, 'ArrayAccess')
-				&& is_subclass_of($typeName, 'IteratorAggregate')
-				&& is_subclass_of($typeName, 'Countable');
+	static function isArrayLike(string $typeName): bool {
+		return match ($typeName) {
+			self::ARRAY, self::PSEUDO_ARRAYLIKE, 'ArrayObject' => true,
+			self::STRING, self::INT, self::FLOAT, self::BOOL, self::TRUE, self::FALSE, self::RESOURCE, self::OBJECT, self::NULL, self::PSEUDO_SCALAR, self::PSEUDO_MIXED, self::PSEUDO_NUMERIC => false,
+			default => is_subclass_of($typeName, 'ArrayAccess')
+					&& is_subclass_of($typeName, 'IteratorAggregate')
+					&& is_subclass_of($typeName, 'Countable'),
+		};
+
 	}
-	
+
 	/**
 	 * @param string $typeName
+	 * @return bool
 	 */
-	static function isNullable(string $typeName) {
+	static function isNullable(string $typeName): bool {
 		switch ($typeName) {
 			case self::PSEUDO_MIXED:
 			case self::NULL:
@@ -297,7 +285,7 @@ class TypeName {
 
 	const NULLABLE_PREFIX = '?';
 
-	static function isUnionType(string|\ReflectionType $type) {
+	static function isUnionType(string|\ReflectionType $type): bool {
 		if (is_string($type)) {
 			return StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type);
 		}
@@ -318,7 +306,7 @@ class TypeName {
 		return !str_contains($trimedType, '(') && !str_contains($trimedType, ')');
 	}
 
-	static function isNamedType(string|\ReflectionType $type) {
+	static function isNamedType(string|\ReflectionType $type): bool {
 		if (is_string($type)) {
 			return !StringUtils::contains(self::UNION_TYPE_SEPARATOR, $type)
 					&& !StringUtils::contains(self::INTERSECTION_TYPE_SEPARATOR, $type);
@@ -347,7 +335,7 @@ class TypeName {
 		return [$type];
 	}
 
-	static function extractUnionTypeNames(string|\ReflectionUnionType $type) {
+	static function extractUnionTypeNames(string|\ReflectionUnionType $type): array {
 		if ($type instanceof \ReflectionUnionType) {
 			return array_map(function ($namedType) { return $namedType->getName(); }, $type->getTypes());
 		}
@@ -364,7 +352,7 @@ class TypeName {
 				}, explode(self::UNION_TYPE_SEPARATOR, $type));
 	}
 	
-	static function concatUnionTypeNames(array $typeNames) {
+	static function concatUnionTypeNames(array $typeNames): string {
 		ArgUtils::valArray($typeNames, 'string');
 		return implode(self::UNION_TYPE_SEPARATOR, $typeNames);
 	}
