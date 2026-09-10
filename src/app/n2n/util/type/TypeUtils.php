@@ -234,8 +234,11 @@ class TypeUtils {
 				return $expectedType == 'scalar';
 			case 'array':
 				return $expectedType == 'array';
+			case 'int':
+			case 'float':
+			case 'bool':
 			case 'string':
-				return $expectedType == 'string' || $expectedType == 'scalar';
+				return $expectedType == $type || $expectedType == 'scalar';
 			case 'numeric':
 				return $expectedType == 'numeric' || $expectedType == 'scalar';
 		}
