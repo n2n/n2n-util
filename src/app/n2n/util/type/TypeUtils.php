@@ -161,7 +161,7 @@ class TypeUtils {
 	public static function stripSpecialChars($string) {
 		return preg_replace('/[^0-9a-zA-Z_]/', '', $string);
 	}
-	
+
 	/**
 	 * @param string $namespace
 	 * @param string $namespaceLevelSeparator
@@ -183,18 +183,18 @@ class TypeUtils {
 	 * @return string
 	 * @throws \InvalidArgumentException
 	 */
-	public static function decodeNamespace(string $encodedNamespace, 
+	public static function decodeNamespace(string $encodedNamespace,
 			string $namespaceLevelSeparator = self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR): string {
 		$namespace = str_replace($namespaceLevelSeparator, '\\', trim((string) $encodedNamespace,
 				self::ENCODED_NAMESPACE_LEVEL_DEFAULT_SEPARATOR));
-		
+
 		if (self::hasSpecialChars($namespace, false)) {
 			throw new \InvalidArgumentException('Invalid namespace: ' . $namespace);
 		}
-		
+
 		return $namespace;
 	}
-	
+
 	/**
 	 * @param string $string
 	 * @return bool
@@ -202,7 +202,7 @@ class TypeUtils {
 	public static function hasSpecialChars(string $string, bool $treatSeparatorAsSpecial = true): bool {
 		return preg_match('/[^0-9a-zA-Z_' . ($treatSeparatorAsSpecial ? '' : '\\\\') . ']/', $string);
 	}
-	
+
 	/**
 	 * @param string $namespace
 	 * @return string
@@ -210,13 +210,13 @@ class TypeUtils {
 	public static function purifyNamespace(string $namespace): string {
 		return trim(str_replace('/', '\\', $namespace), '\\');
 	}
-	
+
 	public static function isValueA($value, $expectedType, bool $nullAllowed = false): bool {
 		if ($expectedType === null || ($nullAllowed && $value === null)) return true;
-		
+
 		return TypeConstraints::type($expectedType)->isValueValid($value);
 	}
-		
+
 	/**
 	 * @param mixed $value
 	 * @return boolean
@@ -224,11 +224,11 @@ class TypeUtils {
 	public static function isValueArrayLike($value) {
 		return ArrayUtils::isArrayLike($value);
 	}
-	
+
 	public static function isTypeA($type, $expectedType): bool {
 		if ($expectedType === null) return true;
 		if ($type === null) return false;
-		
+
 		switch ($type) {
 			case 'scalar':
 				return $expectedType == 'scalar';
@@ -242,15 +242,15 @@ class TypeUtils {
 			case 'numeric':
 				return $expectedType == 'numeric' || $expectedType == 'scalar';
 		}
-		
+
 		if ($type instanceof \ReflectionClass) {
 			$type = $type->getName();
 		}
-		
+
 		if ($expectedType instanceof \ReflectionClass) {
 			$expectedType = $expectedType->getName();
 		}
-		
+
 		return $type == $expectedType || is_subclass_of($type, $expectedType);
 	}
 
