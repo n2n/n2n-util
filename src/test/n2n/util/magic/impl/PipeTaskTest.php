@@ -68,4 +68,23 @@ class PipeTaskTest extends TestCase {
 						fn () => $magicTask3)
 				->exec($this->createMock(MagicContext::class))->isValid());
 	}
+
+	/**
+	 * @throws TaskInputMismatchException
+	 */
+	function testWrappedInputMismatchException(): void {
+		$this->expectException(WrappedTaskInputMismatchException::class);
+		$this->expectExceptionMessage('PipeTask threw an TaskInputMismatchException on step#2. Step type: Closure. Reason: Holeradio');
+
+		MagicTasks::pipe(
+						fn () => 'holeradio',
+						fn () => throw new SomeTaskInputException('Holeradio'))
+				->exec($this->createMock(MagicContext::class));
+
+
+	}
+}
+
+class SomeTaskInputException extends \Exception implements TaskInputMismatchException {
+
 }

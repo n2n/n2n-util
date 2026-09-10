@@ -108,39 +108,46 @@ class FsPath {
 	 * 
 	 * @return boolean
 	 */
-	public function isDir() {
+	public function isDir(): bool {
 		return is_dir($this->path);
 	}
 	/**
 	 * 
 	 * @return boolean
 	 */
-	public function isFile() {
+	public function isFile(): bool {
 		return is_file($this->path);
 	}
+
+	function isLink(): bool {
+		return is_link($this->path);
+	}
+
 	/**
 	 * 
 	 */
 	public function touch() {
 		return IoUtils::touch($this->path);
 	}
-	/**
-	 * 
-	 */
-	public function delete() {
+
+	public function delete(bool $symlinksFollowed = false): void {
+		if (!$symlinksFollowed && $this->isLink()) {
+			IoUtils::unlink($this->path);
+			return;
+		}
+
 		if ($this->isFile()) {
 			IoUtils::unlink($this->path);
 		} else if ($this->isDir()) {
-			IoUtils::rmdirs($this->path);
+			IoUtils::rmdirs($this->path, $symlinksFollowed);
 		}
 	}
-	/**
-	 * 
-	 * @param string $perm
-	 */
-	public function mkdirs(int|string|null $perm = null): void {
-		if ($this->isDir()) return;
 
+	/**
+	 * @throws FileOperationException
+	 */
+	public function mkdirs(FsPerm|int|string|null $perm = null): void {
+		if ($this->isDir()) return;
 		try {
 			IoUtils::mkdirs($this->path, $perm);
 		} catch (FileOperationException $e) {
@@ -435,7 +442,7 @@ class FsPath {
 	/**
 	 * @throws FileOperationException
 	 */
-	public function chmod(string|int $perm, bool $omitNoSuchFileOrDirectoryError = false): void {
+	public function chmod(FsPerm|string|int $perm, bool $omitNoSuchFileOrDirectoryError = false): void {
 		try {
 			IoUtils::chmod($this->path, $perm);
 		} catch (FileOperationException $e) {

@@ -21,6 +21,6 @@
  */
 namespace n2n\util;
 
-class DateParseException extends \RuntimeException {
+class DateParseException extends \Exception {
 	
 }

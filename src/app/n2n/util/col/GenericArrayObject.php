@@ -23,6 +23,9 @@ namespace n2n\util\col;
 
 use n2n\util\type\ArgUtils;
 
+/**
+ * @deprecated use {@link TypedArray}
+ */
 class GenericArrayObject extends \ArrayObject implements Collection {
 	private $genericType;
 	

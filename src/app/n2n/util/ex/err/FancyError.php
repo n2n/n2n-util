@@ -43,8 +43,10 @@ class FancyError extends \Error implements Documentable, EnhancedError {
 			?int $startLine = null, ?int $endLine = null, ?\Throwable $previous = null,
 			$documentId = null, $code = null) {
 		parent::__construct((string) $message, $code ?? 0, $previous);
-		 
-		$this->file = $file;
+
+		if ($file !== null) {
+			$this->file = $file;
+		}
 		if ($line !== null) {
 			$this->line = $line;
 		}

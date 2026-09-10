@@ -5,12 +5,18 @@ namespace n2n\util\calendar;
 use n2n\util\DateParseException;
 use DateTimeImmutable;
 use DateTime;
+use n2n\util\DateUtils;
+use n2n\util\ex\ExUtils;
 
 class Date implements \JsonSerializable, \Stringable {
 	private readonly int $day;
 	private readonly int $month;
 	private readonly int $year;
 
+	/**
+	 * @throws DateParseException if you do not wish to handle this checked exception use {@link Date::from()}
+	 *   or {@link Date::today()}.
+	 */
 	function __construct(?string $arg = null) {
 		$data = date_parse($arg ?? date('Y-m-d'));
 
@@ -65,6 +71,43 @@ class Date implements \JsonSerializable, \Stringable {
 		return DateTime::createFromFormat('Y-m-d H:i:s', $this->__toString() . ' 00:00:00');
 	}
 
+	function diff(Date|\DateTimeInterface $date, bool $absolute = false): \DateInterval {
+		return $this->toDateTime()->diff(ExUtils::try(fn () => DateUtils::createDateTime($date)), $absolute);
+	}
+
+	function spaceshipCompareWith(Date|\DateTimeInterface $date): int {
+		return $this->toDateTimeImmutable() <=> Date::from($date)->toDateTimeImmutable();
+	}
+
+	function isLessThan(Date|\DateTimeInterface $date): bool {
+		return $this->spaceshipCompareWith($date) === -1;
+	}
+
+	function isLessThanOrEqualTo(Date|\DateTimeInterface $date): bool {
+		return $this->spaceshipCompareWith($date) <= 0;
+	}
+
+	function isGreaterThan(Date|\DateTimeInterface $date): bool {
+		return $this->spaceshipCompareWith($date) === 1;
+	}
+
+	function isGreaterThanOrEqualTo(Date|\DateTimeInterface $date): bool {
+		return $this->spaceshipCompareWith($date) >= 0;
+	}
+
+	function isEqualTo(Date|\DateTimeInterface $date): bool {
+		return $this->spaceshipCompareWith($date) === 0;
+	}
+
+	function daysDiff(Date $date): int {
+		$dateInterval = $this->diff($date);
+		if ($dateInterval->invert) {
+			return -$dateInterval->days;
+		}
+
+		return $dateInterval->days;
+	}
+
 	function jsonSerialize(): string {
 		return $this->__toString();
 	}
@@ -73,10 +116,31 @@ class Date implements \JsonSerializable, \Stringable {
 		return sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day);
 	}
 
-	static function from(\DateTimeInterface|Date $dateTime): Date {
-		if ($dateTime instanceof Date) {
-			return $dateTime;
+	static function today(): Date {
+		return ExUtils::try(fn () => new Date());
+	}
+
+	static function from(\DateTimeInterface|Date|PlainDateTime|string|null $dateTime): ?Date {
+		if ($dateTime === null) {
+			return null;
 		}
-		return new Date($dateTime->format('Y-m-d'));
+		if (is_string($dateTime)) {
+			try {
+				return new Date($dateTime);
+			} catch (DateParseException $e) {
+				throw new \InvalidArgumentException($e->getMessage(), previous: $e);
+			}
+		}
+		if ($dateTime instanceof PlainDateTime) {
+			$dateTime = $dateTime->toDateTimeImmutable();
+		}
+		if ($dateTime instanceof Date) {
+			$dateTime = $dateTime->toDateTimeImmutable();
+		}
+		return self::from($dateTime->format('Y-m-d'));
+	}
+
+	static function fromDigits(int $year, int $month, int $day): Date {
+		return self::from($year . '-' . $month . '-' . $day);
 	}
 }

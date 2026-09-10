@@ -66,16 +66,11 @@ class NamedTypeConstraint extends TypeConstraint {
 	/**
 	 * @return bool
 	 */
-	public function isConvertable() {
+	public function isConvertable(): bool {
 		return $this->convertable;
 	}
-	
-	/**
-	 * @param bool $convertable
-	 * @throws IllegalStateException
-	 * @return NamedTypeConstraint
-	 */
-	public function setConvertable(bool $convertable) {
+
+	public function setConvertable(bool $convertable): static {
 		if ($convertable && !TypeName::isConvertable($this->typeName)) {
 			throw new IllegalStateException('Values are not convertable to ' . $this->typeName);
 		}
@@ -190,13 +185,13 @@ class NamedTypeConstraint extends TypeConstraint {
 		
 		if (!TypeName::isValueA($value, $this->typeName, false)) {
 			if (!$this->convertable) {
-				throw $this->createIncompatbleValueException($value);
+				throw $this->createIncompatibleValueException($value);
 			}
 			
 			try {
 				$value = TypeName::convertValue($value, $this->typeName);
 			} catch (\InvalidArgumentException $e) {
-				throw $this->createIncompatbleValueException($value, $e);
+				throw $this->createIncompatibleValueException($value, $e);
 			}
 		}
 		
@@ -206,7 +201,7 @@ class NamedTypeConstraint extends TypeConstraint {
 		
 		if (!ArrayUtils::isArrayLike($value)) {
 			if ($this->typeName === null) {
-				throw $this->createIncompatbleValueException($value);
+				throw $this->createIncompatibleValueException($value);
 			}
 			
 			throw new IllegalStateException('Illegal constraint ' . $this->__toString() . ' defined:'

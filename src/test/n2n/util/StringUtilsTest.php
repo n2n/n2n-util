@@ -137,5 +137,23 @@ class StringUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertFalse(StringUtils::isClean($dirtyString, false));
 	}
 
+	public function testIsLatin() {
+		//string are ok with utf8-chars like äöü, allowed where these: Basic Latin, Latin-1 Supplement, Latin Extended-A
+		$this->assertTrue(StringUtils::isLatin('asdf'));
+		$this->assertTrue(StringUtils::isLatin('asdf äöü'));
+		$this->assertTrue(StringUtils::isLatin('äüöàéèåçÿßœ'));
+		$this->assertTrue(StringUtils::isLatin('äüöàéèçåCuraçao'));
+
+		//string with a tab as whitespace are not allowed
+		$this->assertFalse(StringUtils::isLatin('äüöàéèçå	Curaçao'));
+		//emoji are not allowed
+		$this->assertTrue(StringUtils::isLatin('£$€'));
+		$this->assertFalse(StringUtils::isLatin('£🔧👺$'));
+
+		//string with special chars
+		$dirtyString = '  ​äüö‍‍‍àéè+‌"*ç%‎‏&/	()=?€å≈асдфCuraçao ';
+		$this->assertFalse(StringUtils::isLatin($dirtyString));
+	}
+
 
 }

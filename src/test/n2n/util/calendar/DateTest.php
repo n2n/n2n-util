@@ -9,7 +9,9 @@ use DateTimeImmutable;
 use n2n\util\DateUtils;
 
 class DateTest extends TestCase {
-
+	/**
+	 * this will test  {@link Date}
+	 */
 	function testConstruct(): void {
 		$date = new Date('2023-10-01');
 		$this->assertEquals(2023, $date->getYear());
@@ -83,5 +85,125 @@ class DateTest extends TestCase {
 	function testFromDate(): void {
 		$date = new Date('2023-10-01');
 		$this->assertEquals(Date::from($date), (string) $date);
+	}
+
+	function testDiff(): void {
+		$date = new Date('2023-01-01');
+		$date2 = new Date('2025-04-07');
+		$dateInterval = $date->diff($date2);
+
+		$this->assertSame(827, $dateInterval->days);
+		$this->assertSame(2, $dateInterval->y);
+		$this->assertSame(3, $dateInterval->m);
+		$this->assertSame(6, $dateInterval->d);
+		$this->assertSame(0, $dateInterval->h);
+		$this->assertSame(0, $dateInterval->i);
+		$this->assertSame(0, $dateInterval->s);
+		$this->assertSame(0.0, $dateInterval->f);
+		$this->assertSame(0, $dateInterval->invert);
+	}
+
+	function testDiffAbsolute(): void {
+		$date = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$dateInterval = $date->diff($date2, true);
+
+		$this->assertSame(827, $dateInterval->days);
+		$this->assertSame(2, $dateInterval->y);
+		$this->assertSame(3, $dateInterval->m);
+		$this->assertSame(0, $dateInterval->invert);
+
+		$dateInterval = $date->diff($date2);
+		$this->assertSame(827, $dateInterval->days);
+		$this->assertSame(2, $dateInterval->y);
+		$this->assertSame(3, $dateInterval->m);
+		$this->assertSame(1, $dateInterval->invert);
+	}
+
+	function testSpaceshipCompareWith(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertSame(-1, $date->spaceshipCompareWith($date1));
+		$this->assertSame(0, $date->spaceshipCompareWith($date2));
+		$this->assertSame(1, $date->spaceshipCompareWith($date3));
+	}
+
+	function testIsLessThan(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertTrue($date->isLessThan($date1));
+		$this->assertFalse($date->isLessThan($date2));
+		$this->assertFalse($date->isLessThan($date3));
+	}
+
+	function testIsLessThanOrEqualTo(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertTrue($date->isLessThanOrEqualTo($date1));
+		$this->assertTrue($date->isLessThanOrEqualTo($date2));
+		$this->assertFalse($date->isLessThanOrEqualTo($date3));
+	}
+
+	function testIsGreaterThan(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertFalse($date->isGreaterThan($date1));
+		$this->assertFalse($date->isGreaterThan($date2));
+		$this->assertTrue($date->isGreaterThan($date3));
+	}
+
+	function testIsGreaterThanOrEqualTo(): void {
+		$date = new Date('2023-01-01');
+		$date1 = new Date('2025-04-07');
+		$date2 = new DateTimeImmutable('2023-01-01');
+		$date3 = new DateTime('2021-06-07');
+
+		$this->assertFalse($date->isGreaterThanOrEqualTo($date1));
+		$this->assertTrue($date->isGreaterThanOrEqualTo($date2));
+		$this->assertTrue($date->isGreaterThanOrEqualTo($date3));
+	}
+
+	function testNullable(): void {
+		$this->assertNull(Date::from(null));
+	}
+
+
+	function testFromDigits(): void {
+		$date = new Date('2023-01-01');
+		$date1 = Date::fromDigits(2023,1,1);
+		$this->assertEquals($date, $date1);
+	}
+
+	function testDaysDiffPositive(): void {
+		$date = new Date('2023-01-01');
+		$date2 = new Date('2025-04-07');
+
+		$this->assertSame(827, $date->daysDiff($date2));
+	}
+
+	function testDaysDiffNegative(): void {
+		$date = new Date('2023-01-01');
+		$date2 = new Date('2025-04-07');
+
+		$this->assertSame(-827, $date2->daysDiff($date));
+	}
+
+	function testToday(): void {
+		// two tries due to race condition
+		$this->assertTrue(
+				date('Y-m-d') === Date::today()->toSql()
+						|| date('Y-m-d') === Date::today()->toSql());
 	}
 }

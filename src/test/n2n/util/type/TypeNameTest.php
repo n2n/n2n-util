@@ -3,6 +3,7 @@ namespace n2n\util\type;
 
 use PHPUnit\Framework\TestCase;
 use n2n\util\type\mock\TypedMethodsMock;
+use n2n\util\type\mock\StringValueMock;
 
 class TypeNameTest extends TestCase {
 	
@@ -64,5 +65,50 @@ class TypeNameTest extends TestCase {
 		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames('huii&hoi'));
 		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames('huii & hoi '));
 		$this->assertEquals(['huii', 'hoi'], TypeName::extractIntersectionTypeNames(' (huii&hoi)'));
+	}
+
+	function testFalse() {
+		$this->assertTrue(TypeName::isScalar('false'));
+		try {
+			$this->assertFalse(TypeName::convertValue('holeradio', 'false'));
+			$this->fail('Exception expected');
+		} catch (\InvalidArgumentException $e) {
+		}
+		$this->assertFalse(TypeName::isValueConvertTo('holeradio', 'false'));
+		$this->assertFalse(TypeName::convertValue(0, 'false'));
+		$this->assertTrue(TypeName::isValueConvertTo(0, 'false'));
+		$this->assertTrue(TypeName::isConvertable('false'));
+		$this->assertTrue(TypeName::isA('false', 'false'));
+		$this->assertTrue(TypeName::isValueA(false, 'false'));
+		$this->assertFalse(TypeName::isValueA(true, 'false'));
+		$this->assertFalse(TypeName::isValueA(0, 'false'));
+		$this->assertFalse(TypeName::isValueA('', 'false'));
+	}
+
+	function testTrue() {
+		$this->assertTrue(TypeName::isScalar('true'));
+		$this->assertTrue(TypeName::convertValue('holeradio', 'true'));
+		$this->assertTrue(TypeName::isValueConvertTo('holeradio', 'true'));
+		try {
+			$this->assertFalse(TypeName::convertValue(0, 'true'));
+			$this->fail('Exception expected');
+		} catch (\InvalidArgumentException $e) {
+		}
+		$this->assertFalse(TypeName::isValueConvertTo(0, 'true'));
+
+		$this->assertTrue(TypeName::isConvertable('true'));
+		$this->assertTrue(TypeName::isA('true', 'true'));
+		$this->assertTrue(TypeName::isValueA(true, 'true'));
+		$this->assertFalse(TypeName::isValueA(false, 'true'));
+		$this->assertFalse(TypeName::isValueA(1, 'true'));
+	}
+
+	function testConvert() {
+		$this->assertEquals('first last', TypeName::convertValue((new StringValueMock('first', 'last')), 'string'));
+	}
+
+	function testIsValueConvertTo() {
+		$this->assertTrue(TypeName::isValueConvertableTo((new StringValueMock('first', 'last')), 'string'));
+		$this->assertFalse(TypeName::isValueConvertableTo((new \DateTime()), 'string'));
 	}
 }

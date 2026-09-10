@@ -35,7 +35,7 @@ class HashSet implements Set {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\Set::add()
 	 */
-	public function add($arg) {
+	public function add($arg): void {
 		ArgUtils::valType($arg, $this->genericType);
 		
 		$this->values[HashUtils::hashCode($arg)] = $arg;
@@ -44,7 +44,7 @@ class HashSet implements Set {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\Set::addAll()
 	 */
-	public function addAll(array $args) {
+	public function addAll(array $args): void {
 		foreach ($args as $arg) {
 			$this->add($arg);
 		}
@@ -66,7 +66,7 @@ class HashSet implements Set {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\Set::clear()
 	 */
-	public function clear() {
+	public function clear(): void {
 		$this->values = array();
 	}
 
@@ -80,7 +80,7 @@ class HashSet implements Set {
 	/* (non-PHPdoc)
 	 * @see \n2n\util\Set::isEmpty()
 	 */
-	public function isEmpty() {
+	public function isEmpty(): bool {
 		return empty($this->values);	
 	}
 	

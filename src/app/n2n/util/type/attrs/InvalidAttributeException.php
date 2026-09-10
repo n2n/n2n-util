@@ -21,5 +21,8 @@
  */
 namespace n2n\util\type\attrs;
 
+/**
+ * @deprecated
+ */
 class InvalidAttributeException extends AttributesException {
 }

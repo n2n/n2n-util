@@ -29,10 +29,10 @@ final class Path {
 	const DELIMITER = '/';
 // 	const SPECIAL_CHARS = array(':', '?', '#', '[', ']', '@');
 	
-	private $pathParts;
-	private $str;
-	protected $leadingDelimiter;
-	protected $endingDelimiter;
+	private ?array $pathParts;
+	private ?string $str = null;
+	private bool $leadingDelimiter;
+	private bool $endingDelimiter;
 	
 	public function __construct(array $pathParts, bool $leadingDelimiter = false, bool $endingDelimiter = false) {
 		$this->pathParts = array();
@@ -46,7 +46,7 @@ final class Path {
 		}
 	} 
 	
-	private function applyPathPartArray(array $pathParts) {
+	private function applyPathPartArray(array $pathParts): void {
 		foreach ($pathParts as $pathPart) {
 			if (null === $pathPart) continue;
 			
@@ -67,17 +67,17 @@ final class Path {
 		}
 	}
 	
-	protected function setStr($str) {
+	private function setStr(string $str): void {
 		$this->pathParts = null;
 		$this->str = (string) $str;
 	}
 	
-	protected function setPathParts(array $pathParts) {
+	private function setPathParts(array $pathParts): void {
 		$this->pathParts = $pathParts;
 		$this->str = null;
 	}
 	
-	public function isEmpty(bool $checkDelimiters = false) {
+	public function isEmpty(bool $checkDelimiters = false): bool {
 		if ($checkDelimiters && ($this->leadingDelimiter || $this->endingDelimiter)) {
 			return true;
 		}
@@ -89,18 +89,18 @@ final class Path {
 		return 0 == mb_strlen($this->str);
 	}
 	
-	public function hasLeadingDelimiter() {
+	public function hasLeadingDelimiter(): bool {
 		return $this->leadingDelimiter;
 	}
 	
-	public function hasEndingDelimiter() {
+	public function hasEndingDelimiter(): bool {
 		return $this->endingDelimiter;
 	}
 	
 	/**
 	 * @return string[]
 	 */
-	public function getPathParts() {
+	public function getPathParts(): array {
 		if ($this->pathParts !== null) {
 			return $this->pathParts;
 		}
@@ -119,7 +119,7 @@ final class Path {
 	 * @throws IllegalStateException
 	 * @return string|null
 	 */
-	public function getFirstPathPart(bool $required = true) {
+	public function getFirstPathPart(bool $required = true): ?string {
 		$pathParts = $this->getPathParts();
 		if (!empty($pathParts)) {
 			return reset($pathParts);
@@ -135,7 +135,7 @@ final class Path {
 	 * @throws IllegalStateException
 	 * @return string|null
 	 */
-	public function getLastPathPart(bool $required = true) {
+	public function getLastPathPart(bool $required = true): ?string {
 		$pathParts = $this->getPathParts();
 		if (!empty($pathParts)) {
 			return end($pathParts);
@@ -146,7 +146,7 @@ final class Path {
 		throw new IllegalStateException('Path empty');
 	}
 	
-	public function toEncodedArray() {
+	public function toEncodedArray(): array {
 		$encArray = array();
 		
 		if ($this->str !== null) {
@@ -166,7 +166,7 @@ final class Path {
 		return $encArray;
 	}
 
-	public function size() {
+	public function size(): int {
 		return count($this->getPathParts());
 	}
 	
@@ -174,7 +174,7 @@ final class Path {
 		return $this->toRealString($this->leadingDelimiter, $this->endingDelimiter);
 	}
 	
-	public function toRealString(?bool $leadingDelimiter = null, ?bool $endingDelimiter = null) {
+	public function toRealString(?bool $leadingDelimiter = null, ?bool $endingDelimiter = null): string {
 		if ($leadingDelimiter === null) $leadingDelimiter = $this->leadingDelimiter;
 		if ($endingDelimiter === null) $endingDelimiter = $this->endingDelimiter;
 		
@@ -280,7 +280,7 @@ final class Path {
 	 * @param mixed ...$pathExts Use string, Path or array with string and Path fields.
 	 * @return \n2n\util\uri\Path
 	 */
-	public function extEnc(...$pathExts): Path {
+	public function extEnc(mixed ...$pathExts): Path {
 		$paths = array();
 		foreach ($pathExts as $pathExt) {
 			$paths[] = Path::create($pathExt);
@@ -302,7 +302,7 @@ final class Path {
 	 * @param int $num
 	 * @return \n2n\util\uri\Path
 	 */
-	public function reduced(int $num) {
+	public function reduced(int $num): Path {
 		return $this->sub(0, $this->size() - $num);
 	}	
 		
@@ -313,7 +313,7 @@ final class Path {
 	 * @return \n2n\util\uri\Path
 	 * @todo make new
 	 */
-	public function sub(int $start, ?int $num = null) {
+	public function sub(int $start, ?int $num = null): Path {
 		$pathParts = $this->getPathParts();
 		$numPathParts = count($pathParts);
 		if ($start < 0) {
@@ -349,7 +349,7 @@ final class Path {
 		return $subPath;
 	}
 	
-	public function toUrl($query = null, $fragment = null) {
+	public function toUrl(mixed $query = null, ?string $fragment = null): Url {
 		return new Url(null, null, $this, Query::create($query), $fragment);
 	}
 	
@@ -363,25 +363,25 @@ final class Path {
 
 
 
-	public function chLeadingDelimiter($leadingDelimiter) {
+	public function chLeadingDelimiter(bool $leadingDelimiter): Path {
 		if ($this->leadingDelimiter == $leadingDelimiter) return $this;
 		return new Path($this->getPathParts(), $leadingDelimiter);
 	}
 	
-	public function chEndingDelimiter($endingDelimiter) {
+	public function chEndingDelimiter(bool $endingDelimiter): Path {
 		if ($this->endingDelimiter == $endingDelimiter) return $this;
 		return new Path($this->getPathParts(), $this->leadingDelimiter, $endingDelimiter);
 	}
 	
-	public function chPathParts(array $pathParts) {
+	public function chPathParts(array $pathParts): Path {
 		return new Path($pathParts, $this->leadingDelimiter, $this->endingDelimiter);
 	}
 	
-	public function equals($obj) {
+	public function equals(mixed $obj): bool {
 		return $obj instanceof Path && $obj->__toString() === $this->__toString();
 	}
 	
-	public static function create($expression, bool $lenient = false) {
+	public static function create(mixed $expression, bool $lenient = false): Path {
 		if ($expression instanceof Path) {
 			return $expression;
 		}
@@ -427,7 +427,7 @@ final class Path {
 // 		return $path;
 // 	}
 	
-	public static function validatePathString($pathString) {
-		return (boolean) preg_match('#^[a-zA-Z0-9-._~!$&\'()*+,;=:@%/]+$#', $pathString);
+	public static function validatePathString(string $pathString): bool {
+		return (bool) preg_match('#^[a-zA-Z0-9-._~!$&\'()*+,;=:@%/]+$#', $pathString);
 	}
 }
