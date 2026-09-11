@@ -24,7 +24,7 @@ namespace n2n\util\uri;
 use n2n\util\type\ArgUtils;
 use Stringable;
 
-final class Authority implements Stringable {
+class Authority implements Stringable {
 	const USER_PASS_SEPARATOR = ':';
 	const USER_INFO_SUFFIX = '@';
 	const PORT_PREFIX = ':';

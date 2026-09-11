@@ -21,7 +21,7 @@
  */
 namespace n2n\util\uri;
 
-final class Query {
+class Query {
 	private array $attrs = array();
 	private bool $empty = true;
 	

@@ -25,7 +25,7 @@ use n2n\util\StringUtils;
 use n2n\util\type\ArgUtils;
 use n2n\util\ex\IllegalStateException;
 
-final class Path {
+class Path {
 	const DELIMITER = '/';
 // 	const SPECIAL_CHARS = array(':', '?', '#', '[', ']', '@');
 	

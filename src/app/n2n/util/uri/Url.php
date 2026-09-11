@@ -26,7 +26,7 @@ use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\UriFactoryInterface;
 use Stringable;
 
-final class Url implements \JsonSerializable, Stringable {
+class Url implements \JsonSerializable, Stringable {
 	const SCHEME_SEPARATOR = ':';
 	const AUTHORITY_PREFIX = '//';
 	const PATH_PREFIX = Path::DELIMITER;
