@@ -222,11 +222,11 @@ class MagicMethodInvoker {
 		if ($method instanceof \ReflectionMethod) {
 			$returnValue = $method->invokeArgs($object, $this->buildArgs($method, $firstArgs));
 		} else if ($method->isClosure()) {
+			// @todo: WIP This fixes late static binding, but it also changes repeated invocation of stateful closures. We should check whether anything relies on the previous copying behavior.
+			// Should this utility execute the supplied closure, or execute a fresh copy of it?
+			// if copy then maybe we must use clone instead to retain static variables too
 			$returnValue = call_user_func(
-					\Closure::bind(
-							$method->getClosure(),
-							$method->getClosureThis(),
-							$method->getClosureScopeClass()?->name ?? 'static'),
+					$method->getClosure(),
 					...$this->buildArgs($method, $firstArgs));
 		} else {
 			$returnValue = $method->invokeArgs($this->buildArgs($method, $firstArgs));
