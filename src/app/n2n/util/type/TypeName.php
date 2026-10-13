@@ -188,7 +188,7 @@ class TypeName {
 	 * @throws \InvalidArgumentException
 	 */
 	private static function createValueNotConvertableException(mixed $value, string $typeName,
-			\Throwable $previous = null): \InvalidArgumentException {
+			?\Throwable $previous = null): \InvalidArgumentException {
 		return new \InvalidArgumentException('Value ' . TypeUtils::getTypeInfo($value)
 				. ' is not convertable to ' . $typeName, previous: $previous);
 	}
