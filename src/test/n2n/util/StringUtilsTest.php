@@ -143,16 +143,43 @@ class StringUtilsTest extends \PHPUnit\Framework\TestCase {
 		$this->assertTrue(StringUtils::isLatin('asdf äöü'));
 		$this->assertTrue(StringUtils::isLatin('äüöàéèåçÿßœ'));
 		$this->assertTrue(StringUtils::isLatin('äüöàéèçåCuraçao'));
+		$this->assertTrue(StringUtils::isLatin('£$€'));
 
 		//string with a tab as whitespace are not allowed
 		$this->assertFalse(StringUtils::isLatin('äüöàéèçå	Curaçao'));
 		//emoji are not allowed
-		$this->assertTrue(StringUtils::isLatin('£$€'));
 		$this->assertFalse(StringUtils::isLatin('£🔧👺$'));
 
 		//string with special chars
 		$dirtyString = '  ​äüö‍‍‍àéè+‌"*ç%‎‏&/	()=?€å≈асдфCuraçao ';
 		$this->assertFalse(StringUtils::isLatin($dirtyString));
+	}
+
+	public function testStripNonLatin() {
+		//string are ok with utf8-chars like äöü, allowed where these: Basic Latin, Latin-1 Supplement, Latin Extended-A
+		$input = 'asdf';
+		$input2 = '£$€';
+		$input3 = 'äüöàéèåçÿßœ';
+		$input4 = 'äüöàéèçåCuraçao';
+		$this->assertTrue(StringUtils::stripNonLatin($input) === $input);
+		$this->assertTrue(StringUtils::stripNonLatin($input2) === $input2);
+		$this->assertTrue(StringUtils::stripNonLatin($input3) === $input3);
+		$this->assertTrue(StringUtils::stripNonLatin($input4) === $input4);
+
+		$this->assertTrue(StringUtils::isLatin(StringUtils::stripNonLatin('äüöàéèçå	Curaçao')));
+		$this->assertTrue(StringUtils::isLatin(StringUtils::stripNonLatin('äüöàéèçå	Curaçao', false)));
+		//tab is not allowed, and either convert to space, or removed
+		$this->assertEquals('äüöàéèçå Curaçao', StringUtils::stripNonLatin('äüöàéèçå	Curaçao'));
+		$this->assertEquals('äüöàéèçåCuraçao', StringUtils::stripNonLatin('äüöàéèçå	Curaçao', false));
+		//emoji are stripped
+		$this->assertEquals('£$',StringUtils::stripNonLatin('£🔧👺$'));
+
+		//string with special chars and a tab inside
+		$dirtyString = '  ​äüö‍‍‍àéè+‌"*ç%‎‏&/	()=?€å≈асдфCuraçao ';
+		//default would trim and normalize whitespaces. => no space on front and end, tab replaced by space
+		$this->assertEquals('äüöàéè+"*ç%&/ ()=?€åCuraçao', StringUtils::stripNonLatin($dirtyString));
+		//on false, no trim, but eliminate non-normal spaces => spaces on front and end, but no space where tab was
+		$this->assertEquals(' äüöàéè+"*ç%&/()=?€åCuraçao ', StringUtils::stripNonLatin($dirtyString, false));
 	}
 
 

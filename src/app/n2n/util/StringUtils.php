@@ -486,21 +486,43 @@ class StringUtils {
 	}
 
 
+	/*  allowed Latin Characters should be same as (Sprain\SwissQrBill\QrCode::SUPPORTED_CHARACTERS) */
+	private const LATIN_CHARACTERS =
+			'\x{0020}-\x{007E}' . // Basic Latin
+			'\x{00A0}-\x{00FF}' . // Latin-1 Supplement
+			'\x{0100}-\x{017F}' . // Latin Extended-A
+			'\x{0218}\x{0219}\x{021A}\x{021B}' . // Ș ș Ț ț (Romanian Chars from Latin Extended-B)
+			'\x{20AC}';  // €
+
+
 	/**
-	 * @param string $input that is none control char out of Basic Latin, Latin-1 Supplement, Latin Extended-A
+	 * @param string $input checks that it contains only Basic Latin, Latin-1 Supplement, Latin Extended-A chars.
+	 * but control chars are not allowed
 	 * @return bool
 	 */
 	public static function isLatin(string $input): bool {
 
-		$pattern = '/^[' .
-				'\x{0020}-\x{007E}' .   // Basic Latin
-				'\x{00A0}-\x{00FF}' .   // Latin-1 Supplement
-				'\x{0100}-\x{017F}' .   // Latin Extended-A
-				'\x{0218}\x{0219}\x{021A}\x{021B}' . // Ș ș Ț ț (Romanian Chars from Latin Extended-B)
-				'\x{20AC}' .            // €
-				']*$/u';
+		$pattern = '/^[' . self::LATIN_CHARACTERS . ']*$/u';
 
 		return preg_match($pattern, $input) === 1;
 	}
 
+	/**
+	 * Removes all characters that are not allowed by isLatin().
+	 *
+	 * @param string $input
+	 * @return string
+	 */
+	public static function stripNonLatin(string $input, bool $normalizeWhitespaces = true): string {
+		//trim and normalize several Unicode whitespaces, line/paragraph separators, tabs, CR and LF, instead of eliminate them.
+		if ($normalizeWhitespaces) {
+			$input = trim(preg_replace(
+					'/[\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}\t\r\n]+/u',
+					' ',
+					$input
+			));
+		}
+
+		return preg_replace('/[^' . self::LATIN_CHARACTERS . ']/u', '', $input);
+	}
 }
