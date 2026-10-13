@@ -4,6 +4,8 @@ namespace n2n\util\type;
 use PHPUnit\Framework\TestCase;
 use n2n\util\type\mock\TypedMethodsMock;
 use n2n\util\type\mock\StringValueMock;
+use n2n\util\test\TestValueObjEmailMock;
+use InvalidArgumentException;
 
 class TypeNameTest extends TestCase {
 	
@@ -110,5 +112,27 @@ class TypeNameTest extends TestCase {
 	function testIsValueConvertTo() {
 		$this->assertTrue(TypeName::isValueConvertableTo((new StringValueMock('first', 'last')), 'string'));
 		$this->assertFalse(TypeName::isValueConvertableTo((new \DateTime()), 'string'));
+	}
+
+	function testIsValueConvertToValObj() {
+		$this->assertTrue(TypeName::isValueConvertableTo('no-reply@appagic.test', TestValueObjEmailMock::class));
+		$this->assertFalse(TypeName::isValueConvertableTo('no-reply(at)appagic.test', TestValueObjEmailMock::class));
+	}
+	function testConvertValObj() {
+		$this->assertEquals(new TestValueObjEmailMock('no-reply@appagic.test') ,
+				TypeName::convertValue('no-reply@appagic.test', TestValueObjEmailMock::class));
+	}
+	function testConvertValObjExpectExceptionBecauseInvalidValue() {
+		$this->expectException(InvalidArgumentException::class);
+		TypeName::convertValue('no-reply(at)appagic.test', TestValueObjEmailMock::class);
+	}
+	function testIsValueObj() {
+		$this->assertTrue(TypeName::isValueObject(TestValueObjEmailMock::class));
+		$this->assertFalse(TypeName::isValueObject(StringValueMock::class));
+	}
+
+	function testIsConvertableValObj() {
+		$this->assertTrue(TypeName::isConvertable(TestValueObjEmailMock::class));
+		$this->assertFalse(TypeName::isConvertable(StringValueMock::class));
 	}
 }
