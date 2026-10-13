@@ -9,6 +9,7 @@ use n2n\spec\valobj\scalar\IntValueObject;
 use n2n\spec\valobj\scalar\FloatValueObject;
 use n2n\spec\valobj\scalar\BoolValueObject;
 use n2n\spec\valobj\err\IllegalValueException;
+use n2n\util\ex\ExUtils;
 
 class TypeName {
 	const NULL = 'null';
@@ -91,11 +92,19 @@ class TypeName {
 				
 			default:
 				if (EnumUtils::isEnumType($typeName)) {
-					return EnumUtils::valueToUnit($value, $typeName);
+					if (EnumUtils::isValueOfEnumType($value, $typeName)) {
+						return EnumUtils::valueToUnit($value, $typeName);
+					}
+
+					throw self::createValueNotConvertableException($value, $typeName);
 				}
 
-				if (null !== ($valueObject = self::buildValueObject($value, $typeName))) {
-					return $valueObject;
+				if (self::isValueObject($typeName)) {
+					try {
+						return self::buildValueObject($value, $typeName);
+					} catch (IllegalValueException $e) {
+						throw self::createValueNotConvertableException($value, $typeName, $e);
+					}
 				}
 
 				throw new \InvalidArgumentException('It is not possible to convert a value to ' . $typeName);
@@ -131,7 +140,17 @@ class TypeName {
 					return EnumUtils::isValueOfEnumType($value, $typeName);
 				}
 
-				return null !== self::buildValueObject($value, $typeName);
+				if (self::isValueObject($typeName)) {
+					try {
+						self::buildValueObject($value, $typeName);
+						return true;
+					} catch (IllegalValueException $e) {
+						return false;
+					}
+				}
+
+				return false;
+
 		}
 	}
 
@@ -145,31 +164,33 @@ class TypeName {
 	private static array $valueObjectTypeNames = [BoolValueObject::class, FloatValueObject::class, IntValueObject::class,
 			StringValueObject::class];
 
-	public static function isValueObject(string|\ReflectionClass|null $typeName): bool {
+	private static function isValueObject(string|\ReflectionClass|null $typeName): bool {
 		return array_any(self::$valueObjectTypeNames,
 				fn ($vTypeName) => TypeUtils::isTypeA($typeName, $vTypeName));
 	}
 
-	private static function buildValueObject(string|int|float|bool|null $value, $typeName): ?object {
+	/**
+	 * @param string|int|float|bool|null $value
+	 * @param string $typeName
+	 * @return object|null
+	 * @throws IllegalValueException
+	 */
+	private static function buildValueObject(string|int|float|bool|null $value, string $typeName): ?object {
 		if ($value === null || !self::isValueObject($typeName)) {
 			return null;
 		}
 
-		try {
-			$class = new \ReflectionClass($typeName);
-			return $class->newInstance($value);
-		} catch (\ReflectionException $e) {
-			return null;
-		} catch (IllegalValueException $e) {
-			return null;
-		}
+		$class = ExUtils::try(fn () => new \ReflectionClass($typeName));
+		return $class->newInstance($value);
 	}
 	
 	/**
 	 * @throws \InvalidArgumentException
 	 */
-	private static function createValueNotConvertableException(mixed $value, string $typeName) {
-		throw new \InvalidArgumentException('Value ' . TypeUtils::getTypeInfo($value) . ' is not convertable to ' . $typeName);
+	private static function createValueNotConvertableException(mixed $value, string $typeName,
+			\Throwable $previous = null): \InvalidArgumentException {
+		return new \InvalidArgumentException('Value ' . TypeUtils::getTypeInfo($value)
+				. ' is not convertable to ' . $typeName, previous: $previous);
 	}
 
 	static function isA(string $testingTypeName, string $typeName): bool {

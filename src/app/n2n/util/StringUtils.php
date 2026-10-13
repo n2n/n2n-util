@@ -486,8 +486,10 @@ class StringUtils {
 	}
 
 
-	/*  allowed Latin Characters should be same as (Sprain\SwissQrBill\QrCode::SUPPORTED_CHARACTERS) */
-	private const LATIN_CHARACTERS =
+	/**
+	 *  allowed Latin Characters should be same as (Sprain\SwissQrBill\QrCode::SUPPORTED_CHARACTERS)
+	 */
+	private const LATIN_CHARACTERS_REGEX =
 			'\x{0020}-\x{007E}' . // Basic Latin
 			'\x{00A0}-\x{00FF}' . // Latin-1 Supplement
 			'\x{0100}-\x{017F}' . // Latin Extended-A
@@ -502,7 +504,7 @@ class StringUtils {
 	 */
 	public static function isLatin(string $input): bool {
 
-		$pattern = '/^[' . self::LATIN_CHARACTERS . ']*$/u';
+		$pattern = '/^[' . self::LATIN_CHARACTERS_REGEX . ']*$/u';
 
 		return preg_match($pattern, $input) === 1;
 	}
@@ -519,10 +521,9 @@ class StringUtils {
 			$input = trim(preg_replace(
 					'/[\x{1680}\x{2000}-\x{200A}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}\t\r\n]+/u',
 					' ',
-					$input
-			));
+					$input));
 		}
 
-		return preg_replace('/[^' . self::LATIN_CHARACTERS . ']/u', '', $input);
+		return preg_replace('/[^' . self::LATIN_CHARACTERS_REGEX . ']/u', '', $input);
 	}
 }
