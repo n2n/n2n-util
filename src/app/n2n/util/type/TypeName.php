@@ -164,7 +164,7 @@ class TypeName {
 	private static array $valueObjectTypeNames = [BoolValueObject::class, FloatValueObject::class, IntValueObject::class,
 			StringValueObject::class];
 
-	private static function isValueObject(string|\ReflectionClass|null $typeName): bool {
+	static function isValueObject(string|\ReflectionClass|null $typeName): bool {
 		return array_any(self::$valueObjectTypeNames,
 				fn ($vTypeName) => TypeUtils::isTypeA($typeName, $vTypeName));
 	}
