@@ -104,7 +104,7 @@ class TypeConstraints {
 	 * @param bool $convertable
 	 * @return NamedTypeConstraint
 	 */
-	static function namedType(string|ReflectionClass|null $type, bool $allowsNull = true, bool $convertable = false) {
+	static function namedType(string|ReflectionClass|null $type, bool $allowsNull = true, bool $convertable = false): NamedTypeConstraint {
 		return NamedTypeConstraint::createSimple($type, $allowsNull, $convertable);
 	}
 	
