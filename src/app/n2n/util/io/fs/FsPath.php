@@ -39,7 +39,7 @@ class FsPath {
 	}
 	
 	public function isAbsolute() {
-		return (boolean) preg_match('#^([A-Za-z]:)?[/\\\\]+#', $this->path);
+		return (bool) preg_match('#^([A-Za-z]:)?[/\\\\]+#', $this->path);
 	}
 
 // 	public function setPermissionMode($permissionMode) {

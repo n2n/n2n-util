@@ -83,7 +83,7 @@ class HashUtils {
 		if ($param instanceof Hashable) {
 			return $param->hashCode();
 		} else if (is_object($param)) {
-			return spl_object_hash($param);
+			return spl_object_id($param);
 		} else if (is_scalar($param)) {
 			return $param;
 		}

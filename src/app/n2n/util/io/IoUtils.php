@@ -862,7 +862,6 @@ class IoUtils {
 					null, $e);
 		}
 
-		curl_close($ch);
 		return $result;
 	}
 

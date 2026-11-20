@@ -54,7 +54,7 @@ class TypeName {
 
 	static function convertValue(mixed $value, string $typeName): mixed{
 		switch ($typeName) {
-			case self::STRING;
+			case self::STRING:
 				$value = self::objToStr($value);
 				if (is_scalar($value)) {
 					return (string) $value;
@@ -120,7 +120,7 @@ class TypeName {
 
 	static function isValueConvertableTo(mixed $value, string $typeName): bool {
 		switch ($typeName) {
-			case self::STRING;
+			case self::STRING:
 				$value = self::objToStr($value);
 				return is_scalar($value);
 			case self::BOOL:
@@ -244,7 +244,7 @@ class TypeName {
 			TypeName::RESOURCE => is_resource($value),
 			TypeName::PSEUDO_ARRAYLIKE => self::isValueArrayLike($value),
 			TypeName::NULL, 'NULL' => $value === null,
-			default => is_a($value, $typeName),
+			default => $value instanceof $typeName,
 		};
 	}
 
