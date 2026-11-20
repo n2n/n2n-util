@@ -66,12 +66,20 @@ class HashUtilsTest extends TestCase {
 	}
 
 	function testBase36Sha256Hash(): void {
-		$this->assertEquals(
-				base_convert(hash('sha256', 'holeradio'), 16, 36),
+		$this->assertEquals('1wel6ur9y78qhiabqzonkdxmvp708e9ddfzj7wf9pe7j5fmhae',
 				HashUtils::base36Sha256Hash('holeradio'));
 
-		$this->assertEquals(
-				mb_substr(base_convert(hash('sha256', 'holeradio'), 16, 36), 0, 7),
-				HashUtils::base36Sha256Hash('holeradio', 7));
+		$this->assertEquals('1wel6ur', HashUtils::base36Sha256Hash('holeradio', 7));
+	}
+
+	function testBase36Md5HashIsLossless(): void {
+		// base_convert() would lose precision here (input > PHP_INT_MAX) and return r6p51cluyysk48ss8sws8s0k
+		$this->assertEquals('r6p51cluyxfm1x21kf967yw1', HashUtils::base36Md5Hash('a'));
+	}
+
+	function testBase36HashNull(): void {
+		$this->assertNull(HashUtils::base36Md5Hash(null));
+		$this->assertNull(HashUtils::base36Sha1Hash(null, 8));
+		$this->assertNull(HashUtils::base36Sha256Hash(null));
 	}
 }

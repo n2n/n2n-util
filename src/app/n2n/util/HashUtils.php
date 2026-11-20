@@ -24,62 +24,78 @@ namespace n2n\util;
 use n2n\util\col\Hashable;
 
 class HashUtils {
-	public static function base36Md5Hash($str, $length = null) {
-		$hash = base_convert(md5((string) $str), 16, 36);
-		if ($length === null) return $hash;
-		return mb_substr($hash, 0, (int) $length);
-	}
-	
-	public static function base36Sha1Hash($str, $length = null) {
-		$hash = base_convert(sha1((string) $str), 16, 36);
-		if (is_null($length)) return $hash;
-		return mb_substr($hash, 0, (int) $length);
-	}
+	public static function base36Md5Hash(?string $str, ?int $length = null): ?string {
+		if ($str === null) {
+			return null;
+		}
 
-	public static function base36Sha256Hash(string $str, ?int $length = null): string {
-		$hash = base_convert(hash('sha256', $str), 16, 36);
+		$hash = self::baseConvert(md5($str), 16, 36);
 		if ($length === null) {
 			return $hash;
 		}
 		return mb_substr($hash, 0, $length);
 	}
 
-	public static function base36Uniqid($moreEntropy = true) {
-		if ($moreEntropy == false) {
+	public static function base36Sha1Hash(?string $str, ?int $length = null): ?string {
+		if ($str === null) {
+			return null;
+		}
+
+		$hash = self::baseConvert(sha1($str), 16, 36);
+		if ($length === null) {
+			return $hash;
+		}
+		return mb_substr($hash, 0, $length);
+	}
+
+	public static function base36Sha256Hash(?string $str, ?int $length = null): ?string {
+		if ($str === null) {
+			return null;
+		}
+
+		$hash = self::baseConvert(hash('sha256', $str), 16, 36);
+		if ($length === null) {
+			return $hash;
+		}
+		return mb_substr($hash, 0, $length);
+	}
+
+	public static function base36Uniqid(bool $moreEntropy = true): string {
+		if (!$moreEntropy) {
 			return base_convert(uniqid(), 16, 36);
 		}
 
 		return self::baseConvert(str_replace('.', '', uniqid('', true)), 16, 36);
 	}
 	
-	private static function baseConvert($str, $frombase, $tobase) {
+	private static function baseConvert(string $str, int $fromBase, int $toBase): string {
 		$str = trim($str);
-		if (intval($frombase) != 10) {
+		if ($fromBase !== 10) {
 			$len = strlen($str);
-			$q = 0;
-			for ($i=0; $i<$len; $i++) {
-				$r = base_convert($str[$i], $frombase, 10);
-				$q = bcadd(bcmul($q, $frombase), $r);
+			$q = '0';
+			for ($i = 0; $i < $len; $i++) {
+				$r = base_convert($str[$i], $fromBase, 10);
+				$q = bcadd(bcmul($q, (string) $fromBase), $r);
 			}
 		} else {
 			$q = $str;
 		}
-	
-		if (intval($tobase) != 10) {
+
+		if ($toBase !== 10) {
 			$s = '';
 			while (bccomp($q, '0', 0) > 0) {
-				$r = intval(bcmod($q, $tobase));
-				$s = base_convert($r, 10, $tobase) . $s;
-				$q = bcdiv($q, $tobase, 0);
+				$r = bcmod($q, (string) $toBase);
+				$s = base_convert($r, 10, $toBase) . $s;
+				$q = bcdiv($q, (string) $toBase, 0);
 			}
 		} else {
 			$s = $q;
 		}
-	
-		return $s;
+
+		return $s === '' ? '0' : $s;
 	}
-	
-	public static function hashCode($param) {
+
+	public static function hashCode(mixed $param): string|int|float|bool {
 		if ($param instanceof Hashable) {
 			return $param->hashCode();
 		} else if (is_object($param)) {
